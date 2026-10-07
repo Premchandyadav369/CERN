@@ -1,0 +1,20 @@
+{
+  "name": "@cern-x/sim-core",
+  "version": "1.0.0-alpha",
+  "main": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "scripts": {
+    "build": "tsc",
+    "test": "vitest run",
+    "test:watch": "vitest",
+    "typecheck": "tsc --noEmit"
+  },
+  "dependencies": {
+    "@cern-x/content-schema": "*",
+    "comlink": "^4.4.2"
+  },
+  "devDependencies": {
+    "typescript": "^5.6.2",
+    "vitest": "^2.1.2"
+  }
+}

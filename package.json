@@ -1,0 +1,24 @@
+{
+  "name": "cern-x",
+  "version": "1.0.0-alpha",
+  "type": "module",
+  "private": true,
+  "description": "CERN-X: Interactive, open-source digital representation of CERN's scientific ecosystem",
+  "author": "Premchand Yadav <premchand.23bce7167@vitapstudent.ac.in>",
+  "license": "MIT",
+  "workspaces": [
+    "apps/*",
+    "packages/*"
+  ],
+  "scripts": {
+    "dev": "npm run dev --workspace=apps/web",
+    "build": "npm run build --workspaces",
+    "test": "npm run test --workspaces",
+    "test:physics": "npm run test --workspace=packages/sim-core",
+    "lint": "npm run lint --workspaces",
+    "verify:manifest": "node scripts/verify_manifest.js"
+  },
+  "devDependencies": {
+    "typescript": "^5.6.2"
+  }
+}

@@ -1,0 +1,19 @@
+cff-version: 1.2.0
+message: "If you use or reference CERN-X in academic or educational work, please cite it as below."
+title: "CERN-X: An Interactive Open-Source Digital Representation of CERN's Scientific Ecosystem"
+authors:
+  - family-names: "Yadav"
+    given-names: "Premchand"
+    email: "premchand.23bce7167@vitapstudent.ac.in"
+version: 1.0.0-alpha
+date-released: 2026-10-07
+url: "https://github.com/Premchandyadav369/CERN"
+keywords:
+  - "particle physics"
+  - "cern"
+  - "lhc"
+  - "scientific visualization"
+  - "machine learning"
+  - "digital twin"
+  - "physics simulation"
+license: MIT

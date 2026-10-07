@@ -1,0 +1,89 @@
+{
+  "version": "1.0.0",
+  "generatedAt": "2026-10-07T00:00:00Z",
+  "records": [
+    {
+      "id": "lhc-nominal-beam-energy-run3",
+      "title": "LHC Run 3 Nominal Proton Beam Energy",
+      "dataClass": "PUBLISHED",
+      "sourceTier": "T1_OFFICIAL",
+      "sourceUrl": "https://home.cern/science/accelerators/large-hadron-collider",
+      "doiOrRecordId": "CERN-2004-003-V-1",
+      "retrievalDate": "2024-03-15",
+      "license": "CC-BY-4.0",
+      "knownLimitations": "Operational beam energy is 6.8 TeV per beam during Run 3; varies slightly during commissioning and special physics runs.",
+      "category": "CERN_SOURCE",
+      "dataStatus": "verified"
+    },
+    {
+      "id": "lhc-dipole-field-nominal",
+      "title": "LHC Superconducting Main Dipole Magnetic Field",
+      "dataClass": "PUBLISHED",
+      "sourceTier": "T3_CDS",
+      "sourceUrl": "https://cds.cern.ch/record/782076",
+      "doiOrRecordId": "CERN-2004-003-V-1",
+      "retrievalDate": "2024-01-20",
+      "license": "CC-BY-4.0",
+      "formula": "B = p / (0.299792458 * rho)",
+      "knownLimitations": "8.33 T represents nominal design field at 7.0 TeV; at 6.8 TeV operating point field is approximately 8.09 T.",
+      "category": "CERN_SOURCE",
+      "dataStatus": "verified"
+    },
+    {
+      "id": "higgs-boson-mass-pdg",
+      "title": "Higgs Boson Mass (PDG 2024 Review)",
+      "dataClass": "PUBLISHED",
+      "sourceTier": "T5_PEER_REVIEWED",
+      "sourceUrl": "https://pdg.lbl.gov/2024/listings/rpp2024-list-higgs-boson.pdf",
+      "doiOrRecordId": "10.1103/PhysRevD.110.030001",
+      "retrievalDate": "2024-08-10",
+      "license": "Open Access (PDG citation policy)",
+      "knownLimitations": "Combined ATLAS and CMS value is 125.25 +/- 0.17 GeV. Educational simulations round to 125.0 GeV.",
+      "category": "PUBLICATION",
+      "dataStatus": "verified"
+    },
+    {
+      "id": "atlas-higgs-ml-challenge-dataset",
+      "title": "ATLAS Higgs Machine Learning Challenge Dataset (Simulation)",
+      "dataClass": "PUBLISHED",
+      "sourceTier": "T2_OPEN_DATA",
+      "sourceUrl": "https://opendata.cern.ch/record/328",
+      "doiOrRecordId": "10.7483/OPENDATA.ATLAS.Z55B.2V8K",
+      "retrievalDate": "2024-02-14",
+      "license": "CC-BY-4.0",
+      "transformScript": "research/scripts/load_higgs_ml.py",
+      "knownLimitations": "This dataset is official ATLAS GEANT4 simulation, NOT real collision data. Features are derived specifically for machine learning exploration.",
+      "category": "CERN_SOURCE",
+      "dataStatus": "verified"
+    },
+    {
+      "id": "triggermind-xgboost-benchmark",
+      "title": "LHC-TriggerMind XGBoost Benchmark on ATLAS Higgs Simulation",
+      "dataClass": "COMPUTED",
+      "sourceTier": "T5_PEER_REVIEWED",
+      "sourceUrl": "https://github.com/Premchandyadav369/CERN/tree/main/research",
+      "doiOrRecordId": "EXP-001-TRIGGERMIND",
+      "retrievalDate": "2024-09-01",
+      "license": "MIT",
+      "transformScript": "research/scripts/train_triggermind.py",
+      "gitCommit": "HEAD",
+      "seed": 42,
+      "formula": "AMS = sqrt(2 * ((s + b + br) * ln(1 + s / (b + br)) - s)) with br = 10",
+      "knownLimitations": "Evaluated on public simulated dataset; represents research exploration prototype, not operational ATLAS hardware L1 trigger.",
+      "category": "OUR_ML_EXPERIMENT",
+      "dataStatus": "computed"
+    },
+    {
+      "id": "wlcg-tier-topology",
+      "title": "WLCG Distributed Computing Worldwide Tier Hierarchy",
+      "dataClass": "PUBLISHED",
+      "sourceTier": "T1_OFFICIAL",
+      "sourceUrl": "https://wlcg.web.cern.ch/",
+      "retrievalDate": "2024-04-10",
+      "license": "CC-BY-4.0",
+      "knownLimitations": "Aggregated site count and average capacities. Real grid status fluctuates continuously with dynamic site availability.",
+      "category": "CERN_SOURCE",
+      "dataStatus": "verified"
+    }
+  ]
+}

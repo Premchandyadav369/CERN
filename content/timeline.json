@@ -1,0 +1,90 @@
+[
+  {
+    "year": 1954,
+    "title": "Establishment of CERN",
+    "category": "ORGANIZATION",
+    "description": "Twelve European countries ratify the CERN convention, establishing the European Organization for Nuclear Research near Geneva to foster peaceful fundamental science.",
+    "source": "CERN Official History (home.cern)",
+    "tier": "T1_OFFICIAL"
+  },
+  {
+    "year": 1959,
+    "title": "Proton Synchrotron (PS) Commissioning",
+    "category": "ACCELERATOR",
+    "description": "The PS accelerates protons to 24 GeV for the first time, briefly becoming the highest-energy particle accelerator in the world. It remains active today as the heart of the injector chain.",
+    "source": "CERN Document Server",
+    "tier": "T1_OFFICIAL"
+  },
+  {
+    "year": 1971,
+    "title": "Intersecting Storage Rings (ISR)",
+    "category": "ACCELERATOR",
+    "description": "World's first hadron collider begins operation, demonstrating that colliding counter-rotating beams achieves far higher center-of-mass energy than fixed-target accelerators.",
+    "source": "CERN History",
+    "tier": "T1_OFFICIAL"
+  },
+  {
+    "year": 1973,
+    "title": "Discovery of Neutral Currents (Gargamelle)",
+    "category": "DISCOVERY",
+    "description": "The Gargamelle heavy-liquid bubble chamber discovers weak neutral current neutrino interactions, confirming electroweak unification by Glashow, Salam, and Weinberg.",
+    "source": "Phys. Lett. B 46 (1973) 138",
+    "tier": "T5_PEER_REVIEWED"
+  },
+  {
+    "year": 1983,
+    "title": "Discovery of W and Z Bosons",
+    "category": "DISCOVERY",
+    "description": "Experiments UA1 and UA2 at the converted SPS proton-antiproton collider discover the W+, W-, and Z0 intermediate vector bosons, leading to the 1984 Nobel Prize in Physics for Carlo Rubbia and Simon van der Meer.",
+    "source": "Phys. Lett. B 122 (1983) 103; Phys. Lett. B 126 (1983) 398",
+    "tier": "T5_PEER_REVIEWED"
+  },
+  {
+    "year": 1989,
+    "title": "Invention of the World Wide Web",
+    "category": "COMPUTING",
+    "description": "Tim Berners-Lee submits 'Information Management: A Proposal' at CERN, creating the hypertext protocols (HTTP, HTML, URI) and first web server (info.cern.ch) to share particle physics data globally.",
+    "source": "CERN Document Server (CERN-DD-89-001)",
+    "tier": "T1_OFFICIAL"
+  },
+  {
+    "year": 1989,
+    "title": "Large Electron-Positron Collider (LEP)",
+    "category": "ACCELERATOR",
+    "description": "The 27 km LEP tunnel begins operation, conducting high-precision electroweak tests at the Z pole (91.2 GeV) and W-pair threshold (209 GeV), proving there are exactly three generations of light neutrinos.",
+    "source": "Phys. Lett. B 231 (1989) 519",
+    "tier": "T5_PEER_REVIEWED"
+  },
+  {
+    "year": 2008,
+    "title": "LHC First Beam",
+    "category": "ACCELERATOR",
+    "description": "Proton beams circulate around the 27 km superconducting LHC ring for the first time, cooled by 96 tonnes of superfluid liquid helium to 1.9 Kelvin.",
+    "source": "CERN News",
+    "tier": "T1_OFFICIAL"
+  },
+  {
+    "year": 2012,
+    "title": "Discovery of the Higgs Boson",
+    "category": "DISCOVERY",
+    "description": "ATLAS and CMS announce the observation of a new neutral scalar boson at 125.3 GeV with 5 sigma significance, completing the Standard Model of particle physics.",
+    "source": "Phys. Lett. B 716 (2012) 1-29; Phys. Lett. B 716 (2012) 30-61",
+    "tier": "T5_PEER_REVIEWED"
+  },
+  {
+    "year": 2022,
+    "title": "LHC Run 3 Startup at 13.6 TeV",
+    "category": "ACCELERATOR",
+    "description": "Following Long Shutdown 2 and injector upgrades (Linac4 commissioning), the LHC resumes physics operation at a record center-of-mass energy of 13.6 TeV.",
+    "source": "CERN Press Release",
+    "tier": "T1_OFFICIAL"
+  },
+  {
+    "year": 2029,
+    "title": "High-Luminosity LHC (HL-LHC) Era",
+    "category": "FUTURE",
+    "description": "Commissioning of HL-LHC target luminosity (5-7.5 x 10^34 cm^-2 s^-1) aiming to amass 3000 fb^-1 to measure rare Higgs decay branching fractions to sub-percent precision.",
+    "source": "HL-LHC Technical Design Report (CERN-2020-010)",
+    "tier": "T3_CDS"
+  }
+]

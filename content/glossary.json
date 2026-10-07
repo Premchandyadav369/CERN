@@ -1,0 +1,62 @@
+[
+  {
+    "id": "luminosity",
+    "term": "Instantaneous Luminosity",
+    "symbol": "L",
+    "units": "cm^-2 s^-1",
+    "equationLatex": "L = \\frac{N_1 N_2 n_b f_{rev} \\gamma}{4\\pi \\epsilon_n \\beta^*} F",
+    "beginner": "A measure of how tightly packed and intense particle beams are when they cross. Think of it like brightness: the brighter the beam, the more collisions happen each second.",
+    "undergrad": "The proportionality factor between the event rate dN/dt and the interaction cross section sigma: dN/dt = L * sigma. In a circular collider with round Gaussian beams, it depends on bunch populations N1, N2, bunch count nb, revolution frequency frev, beam energy gamma, normalized emittance eps_n, and beta* at the interaction point.",
+    "researcher": "LHC nominal design luminosity is 1.0 x 10^34 cm^-2 s^-1, exceeded in Run 2 (2.1 x 10^34) and Run 3 (2.2 x 10^34). HL-LHC targets leveled 5.0 to 7.5 x 10^34 cm^-2 s^-1 with beta* ~ 15 cm using crab cavities to eliminate crossing angle geometric degradation factor F.",
+    "cernContext": "Determines the total statistical data collection rate of ATLAS, CMS, ALICE, and LHCb.",
+    "manifestId": "lhc-nominal-beam-energy-run3"
+  },
+  {
+    "id": "magnetic-rigidity",
+    "term": "Magnetic Rigidity",
+    "symbol": "B * rho",
+    "units": "T * m",
+    "equationLatex": "B\\rho = \\frac{p}{q} = \\frac{p\\text{ [GeV/}c\\text{]}}{0.299792458 \\times |Z|}",
+    "beginner": "How hard it is to bend a charged particle with a magnet. Fast, heavy, high-energy particles have high rigidity and need gigantic, powerful magnets to keep them from flying off in a straight line.",
+    "undergrad": "The momentum per unit charge of a relativistic particle in a magnetic field: B * rho = p / q. For a singly charged particle with momentum p in GeV/c, B * rho [T*m] = p / 0.299792458.",
+    "researcher": "At 7.0 TeV per proton, LHC beam rigidity is 23,349.5 T*m. Given the 27 km tunnel geometry and 1232 main dipoles of length 14.3 m (bending radius rho = 2803.95 m), dipoles must operate at 8.33 T using superfluid helium-cooled Nb-Ti superconductors at 1.9 K.",
+    "cernContext": "Dictates the required magnetic field strength and tunnel radius for all accelerators in the complex.",
+    "manifestId": "lhc-dipole-field-nominal"
+  },
+  {
+    "id": "pseudorapidity",
+    "term": "Pseudorapidity",
+    "symbol": "eta",
+    "units": "dimensionless",
+    "equationLatex": "\\eta = -\\ln\\left(\\tan\\frac{\\theta}{2}\\right)",
+    "beginner": "A coordinate telling you which angle a particle was thrown out relative to the beam line. 0 means perpendicular to the pipe; large numbers mean it flew very close along the beam direction.",
+    "undergrad": "A spatial coordinate approximating true rapidity y = 0.5 * ln((E+pz)/(E-pz)) in the ultrarelativistic limit (m << p). Particle production in hadron collisions is approximately uniform in pseudorapidity per unit rapidity dN/dy.",
+    "researcher": "ATLAS and CMS tracking covers |eta| < 2.5; calorimeters cover |eta| < 4.9. LHCb forward spectrometer covers 2.0 < eta < 5.0. Differences in pseudorapidity deltaEta are Lorentz-invariant under longitudinal boosts along the beam axis.",
+    "cernContext": "Fundamental angular coordinate used in all detector coordinate frames and physics object reconstructions.",
+    "manifestId": "atlas-higgs-ml-challenge-dataset"
+  },
+  {
+    "id": "transverse-momentum",
+    "term": "Transverse Momentum",
+    "symbol": "p_T",
+    "units": "GeV/c",
+    "equationLatex": "p_T = p \\sin\\theta = \\sqrt{p_x^2 + p_y^2}",
+    "beginner": "The sideways momentum of a particle kicking out at right angles to the incoming beam. Since incoming beams had no sideways momentum, big sideways kicks signal violent, high-energy core collisions.",
+    "undergrad": "The component of 3-momentum perpendicular to the beam axis. In hadron colliders, parton longitudinal momentum fractions x1, x2 are unknown, so longitudinal momentum is not conserved, but initial transverse momentum is approximately zero (sum p_T ~ 0).",
+    "researcher": "Crucial discriminator against soft, non-diffractive QCD minimum bias background. High-pT leptons and photons indicate electroweak decays (W, Z, H) or new heavy resonance decays.",
+    "cernContext": "Primary selection variable used by hardware Level-1 and High-Level Triggers to filter 40 MHz collisions down to recording rates.",
+    "manifestId": "atlas-higgs-ml-challenge-dataset"
+  },
+  {
+    "id": "invariant-mass",
+    "term": "Invariant Mass",
+    "symbol": "M",
+    "units": "GeV/c^2",
+    "equationLatex": "M^2 = \\left(\\sum E_i\\right)^2 - \\left|\\sum \\vec{p}_i\\right|^2",
+    "beginner": "The parent mass of an unstable particle calculated backwards from the energies and directions of its decay daughters. If many events bunch up at the same mass number, a new particle has been discovered!",
+    "undergrad": "The Minkowski norm of the total 4-momentum vector P_mu = sum p_i,mu. Because the 4-vector inner product is a Lorentz scalar, invariant mass is identical in all inertial reference frames.",
+    "researcher": "Used to reconstruct resonant peaks (e.g. H -> gamma gamma at 125.25 GeV, Z -> mu+ mu- at 91.19 GeV) over continuous combinatorial backgrounds. Peak width is determined by natural Breit-Wigner decay width convoluted with detector resolution.",
+    "cernContext": "The cornerstone observable for particle discoveries at ATLAS, CMS, and LHCb.",
+    "manifestId": "higgs-boson-mass-pdg"
+  }
+]

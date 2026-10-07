@@ -1,0 +1,57 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  --bg-canvas: #060a12;
+  --bg-surface: #0d1422;
+  --bg-raised: #131c2e;
+  --bg-subsurface: #0a0f1a;
+
+  --primary-cern: #0033a0;
+  --primary-accent: #4c7dff;
+
+  --beam-cyan: #3dd6ff;
+  --ion-magenta: #e04fd0;
+  --antimatter-amber: #ffb020;
+  --success: #2ecc8f;
+  --error: #ff5c5c;
+
+  --text-primary: #e8eef9;
+  --text-secondary: #9fb0cc;
+  --text-muted: #6b7c99;
+  --text-mono: #c8d7f0;
+
+  --border-subtle: rgba(255, 255, 255, 0.08);
+  --border-strong: rgba(255, 255, 255, 0.16);
+}
+
+body {
+  background-color: var(--bg-canvas);
+  color: var(--text-primary);
+  font-family: 'Inter', system-ui, -apple-system, sans-serif;
+  overflow-x: hidden;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+/* Custom scrollbars */
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+::-webkit-scrollbar-track {
+  background: #0a0f1a;
+}
+::-webkit-scrollbar-thumb {
+  background: #1c273c;
+  border-radius: 3px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: #2a3b5c;
+}
+
+/* Tabular numerals for code & numbers */
+.tabular-nums {
+  font-variant-numeric: tabular-nums;
+}

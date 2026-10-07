@@ -1,0 +1,58 @@
+{
+  "datasetId": "atlas-open-data-13tev-samples",
+  "doi": "10.7483/OPENDATA.ATLAS.Z55B.2V8K",
+  "dataClass": "REAL",
+  "license": "CC0-1.0",
+  "events": [
+    {
+      "id": "evt-atlas-13tev-4l-001",
+      "runNumber": 300422,
+      "eventNumber": 1029482,
+      "sqrtSGev": 13000,
+      "process": "H -> ZZ* -> 4l (4-lepton candidate)",
+      "isRealData": true,
+      "provenanceManifestId": "atlas-higgs-ml-challenge-dataset",
+      "physicsObjects": [
+        { "id": "mu-1", "type": "MUON", "ptGev": 61.3, "eta": 0.42, "phi": 1.25, "energyGev": 66.8, "charge": -1 },
+        { "id": "mu-2", "type": "MUON", "ptGev": 48.7, "eta": -0.31, "phi": -1.88, "energyGev": 51.1, "charge": 1 },
+        { "id": "el-1", "type": "ELECTRON", "ptGev": 18.2, "eta": 1.15, "phi": -0.62, "energyGev": 31.6, "charge": -1 },
+        { "id": "el-2", "type": "ELECTRON", "ptGev": 12.4, "eta": 0.88, "phi": 2.54, "energyGev": 17.5, "charge": 1 }
+      ],
+      "metGev": 14.2,
+      "reconstructedMassGev": 125.4
+    },
+    {
+      "id": "evt-atlas-13tev-yy-002",
+      "runNumber": 302877,
+      "eventNumber": 894412,
+      "sqrtSGev": 13000,
+      "process": "H -> yy (diphoton candidate)",
+      "isRealData": true,
+      "provenanceManifestId": "atlas-higgs-ml-challenge-dataset",
+      "physicsObjects": [
+        { "id": "ph-1", "type": "PHOTON", "ptGev": 64.8, "eta": 0.28, "phi": 0.85, "energyGev": 67.4, "charge": 0 },
+        { "id": "ph-2", "type": "PHOTON", "ptGev": 58.2, "eta": -0.72, "phi": -2.29, "energyGev": 74.1, "charge": 0 }
+      ],
+      "metGev": 8.6,
+      "reconstructedMassGev": 124.9
+    },
+    {
+      "id": "evt-atlas-13tev-ttbar-003",
+      "runNumber": 310804,
+      "eventNumber": 4839201,
+      "sqrtSGev": 13000,
+      "process": "ttbar -> bW bW (semileptonic)",
+      "isRealData": true,
+      "provenanceManifestId": "atlas-higgs-ml-challenge-dataset",
+      "physicsObjects": [
+        { "id": "mu-1", "type": "MUON", "ptGev": 52.1, "eta": -0.64, "phi": 1.94, "energyGev": 63.2, "charge": 1 },
+        { "id": "jet-1", "type": "B_JET", "ptGev": 88.4, "eta": 0.15, "phi": -1.22, "energyGev": 89.4, "charge": 0 },
+        { "id": "jet-2", "type": "B_JET", "ptGev": 64.2, "eta": 1.42, "phi": 0.35, "energyGev": 141.2, "charge": 0 },
+        { "id": "jet-3", "type": "JET", "ptGev": 45.1, "eta": -1.10, "phi": -2.61, "energyGev": 75.3, "charge": 0 },
+        { "id": "jet-4", "type": "JET", "ptGev": 38.6, "eta": 0.82, "phi": 2.89, "energyGev": 52.5, "charge": 0 }
+      ],
+      "metGev": 62.4,
+      "reconstructedMassGev": 173.2
+    }
+  ]
+}

@@ -1,0 +1,122 @@
+[
+  {
+    "id": "higgs",
+    "name": "Higgs Boson",
+    "symbol": "H0",
+    "pdgId": 25,
+    "type": "Scalar Boson",
+    "charge": 0,
+    "massGev": 125.25,
+    "spin": "0",
+    "lifetimeSeconds": 1.56e-22,
+    "decayModes": [
+      { "channel": "b b-bar", "branchingRatio": 0.582 },
+      { "channel": "W W*", "branchingRatio": 0.214 },
+      { "channel": "g g (gluons)", "branchingRatio": 0.082 },
+      { "channel": "tau+ tau-", "branchingRatio": 0.063 },
+      { "channel": "c c-bar", "branchingRatio": 0.029 },
+      { "channel": "Z Z*", "branchingRatio": 0.026 },
+      { "channel": "gamma gamma", "branchingRatio": 0.00227 },
+      { "channel": "Z gamma", "branchingRatio": 0.00154 }
+    ],
+    "discoveryYear": 2012,
+    "discoveredAt": "CERN LHC (ATLAS and CMS)",
+    "source": "PDG 2024 Review (PhysRevD.110.030001)",
+    "manifestId": "higgs-boson-mass-pdg"
+  },
+  {
+    "id": "z-boson",
+    "name": "Z Boson",
+    "symbol": "Z0",
+    "pdgId": 23,
+    "type": "Gauge Boson",
+    "charge": 0,
+    "massGev": 91.1876,
+    "spin": "1",
+    "lifetimeSeconds": 2.64e-25,
+    "decayModes": [
+      { "channel": "hadrons (q q-bar)", "branchingRatio": 0.699 },
+      { "channel": "invisible (neutrinos)", "branchingRatio": 0.200 },
+      { "channel": "e+ e-", "branchingRatio": 0.0336 },
+      { "channel": "mu+ mu-", "branchingRatio": 0.0336 },
+      { "channel": "tau+ tau-", "branchingRatio": 0.0337 }
+    ],
+    "discoveryYear": 1983,
+    "discoveredAt": "CERN SPS (UA1 and UA2)",
+    "source": "PDG 2024 Review",
+    "manifestId": "higgs-boson-mass-pdg"
+  },
+  {
+    "id": "w-boson",
+    "name": "W Boson",
+    "symbol": "W±",
+    "pdgId": 24,
+    "type": "Gauge Boson",
+    "charge": 1,
+    "massGev": 80.377,
+    "spin": "1",
+    "lifetimeSeconds": 3.16e-25,
+    "decayModes": [
+      { "channel": "hadrons (q q'-bar)", "branchingRatio": 0.674 },
+      { "channel": "e+ nu_e", "branchingRatio": 0.108 },
+      { "channel": "mu+ nu_mu", "branchingRatio": 0.106 },
+      { "channel": "tau+ nu_tau", "branchingRatio": 0.112 }
+    ],
+    "discoveryYear": 1983,
+    "discoveredAt": "CERN SPS (UA1 and UA2)",
+    "source": "PDG 2024 Review",
+    "manifestId": "higgs-boson-mass-pdg"
+  },
+  {
+    "id": "top-quark",
+    "name": "Top Quark",
+    "symbol": "t",
+    "pdgId": 6,
+    "type": "Quark (3rd generation)",
+    "charge": 0.666667,
+    "massGev": 172.69,
+    "spin": "1/2",
+    "lifetimeSeconds": 5.0e-25,
+    "decayModes": [
+      { "channel": "W+ b", "branchingRatio": 0.998 }
+    ],
+    "discoveryYear": 1995,
+    "discoveredAt": "Fermilab Tevatron (CDF and D0)",
+    "source": "PDG 2024 Review",
+    "manifestId": "higgs-boson-mass-pdg"
+  },
+  {
+    "id": "proton",
+    "name": "Proton",
+    "symbol": "p",
+    "pdgId": 2212,
+    "type": "Baryon (uud)",
+    "charge": 1,
+    "massGev": 0.938272,
+    "spin": "1/2",
+    "lifetimeSeconds": null,
+    "decayModes": [],
+    "discoveryYear": 1919,
+    "discoveredAt": "Ernest Rutherford",
+    "source": "PDG 2024 Review / CODATA",
+    "manifestId": "lhc-nominal-beam-energy-run3"
+  },
+  {
+    "id": "muon",
+    "name": "Muon",
+    "symbol": "μ-",
+    "pdgId": 13,
+    "type": "Lepton (2nd generation)",
+    "charge": -1,
+    "massGev": 0.105658,
+    "spin": "1/2",
+    "lifetimeSeconds": 2.19698e-6,
+    "decayModes": [
+      { "channel": "e- nu_e-bar nu_mu", "branchingRatio": 1.0 }
+    ],
+    "discoveryYear": 1936,
+    "discoveredAt": "Carl Anderson and Seth Neddermeyer",
+    "source": "PDG 2024 Review",
+    "manifestId": "higgs-boson-mass-pdg"
+  }
+]

@@ -1,0 +1,38 @@
+{
+  "datasetId": "cms-open-data-run2012b-samples",
+  "doi": "10.7483/OPENDATA.CMS.J7RR.T5N9",
+  "dataClass": "REAL",
+  "license": "CC0-1.0",
+  "events": [
+    {
+      "id": "evt-cms-8tev-2mu-001",
+      "runNumber": 194075,
+      "eventNumber": 14209841,
+      "sqrtSGev": 8000,
+      "process": "Z -> mu+ mu-",
+      "isRealData": true,
+      "provenanceManifestId": "lhc-run3-nominal-parameters",
+      "physicsObjects": [
+        { "id": "cms-mu-1", "type": "MUON", "ptGev": 44.8, "eta": -0.85, "phi": 2.11, "energyGev": 62.1, "charge": -1 },
+        { "id": "cms-mu-2", "type": "MUON", "ptGev": 46.2, "eta": 1.12, "phi": -1.04, "energyGev": 78.4, "charge": 1 }
+      ],
+      "metGev": 5.8,
+      "reconstructedMassGev": 91.2
+    },
+    {
+      "id": "evt-cms-8tev-dijet-002",
+      "runNumber": 195390,
+      "eventNumber": 9920155,
+      "sqrtSGev": 8000,
+      "process": "QCD dijet high-pT event",
+      "isRealData": true,
+      "provenanceManifestId": "lhc-run3-nominal-parameters",
+      "physicsObjects": [
+        { "id": "cms-jet-1", "type": "JET", "ptGev": 285.4, "eta": 0.22, "phi": 0.44, "energyGev": 292.3, "charge": 0 },
+        { "id": "cms-jet-2", "type": "JET", "ptGev": 279.1, "eta": -0.35, "phi": -2.71, "energyGev": 296.5, "charge": 0 }
+      ],
+      "metGev": 18.2,
+      "reconstructedMassGev": 578.4
+    }
+  ]
+}

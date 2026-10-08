@@ -32,31 +32,76 @@ export default function DetectorsPage() {
         <DetectorTwin />
       </section>
 
-      {/* Comparison Section: Complementary Architectures */}
+      {/* Comparison Section: The Four Flagship LHC Architectures */}
       <section className="p-6 bg-canvas-surface border border-canvas-border rounded-panel space-y-4">
-        <h2 className="text-lg font-display font-bold text-text-primary">
-          The Two Pillars: Why ATLAS and CMS Cross-Validate Discoveries
-        </h2>
+        <div>
+          <h2 className="text-lg font-display font-bold text-text-primary">
+            The Four Pillars of LHC Discovery: Complementary Detector Architectures
+          </h2>
+          <p className="text-xs text-text-muted mt-0.5">
+            Independent detector technologies and geometries ensure cross-validation of discoveries and coverage of distinct physics regimes.
+          </p>
+        </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-6 text-xs text-text-secondary leading-relaxed">
-          <div className="space-y-2 p-4 bg-canvas-sub border border-canvas-border rounded">
-            <h3 className="font-mono font-bold text-sm text-cern-cyan">ATLAS Design Strategy</h3>
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 text-xs text-text-secondary leading-relaxed">
+          <div className="space-y-2 p-4 bg-canvas-sub border border-canvas-border hover:border-cern-cyan/60 rounded transition-all">
+            <div className="flex items-center justify-between">
+              <h3 className="font-mono font-bold text-sm text-cern-cyan">ATLAS</h3>
+              <span className="text-[10px] font-mono px-1.5 py-0.5 rounded bg-cern-cyan/10 text-cern-cyan">General Purpose</span>
+            </div>
             <p>
-              Employs an enormous outer air-core superconducting toroid magnet system (25 m diameter)
-              that minimizes multiple scattering for high-precision standalone muon momentum
-              measurement. Calorimetry relies on accordion-geometry liquid argon samplers with exceptional
-              radiation hardness and fine lateral granularity.
+              Employs an outer air-core superconducting toroid magnet system (25 m diameter)
+              minimizing multiple scattering for standalone muon spectrometry. Calorimetry uses accordion-geometry
+              liquid argon (LAr) samplers with fine shower segmentation.
             </p>
+            <div className="pt-2 border-t border-canvas-border text-[11px] font-mono text-text-muted">
+              Weight: 7,000 t · Dimensions: 46m × 25m
+            </div>
           </div>
 
-          <div className="space-y-2 p-4 bg-canvas-sub border border-canvas-border rounded">
-            <h3 className="font-mono font-bold text-sm text-cern-accent">CMS Design Strategy</h3>
+          <div className="space-y-2 p-4 bg-canvas-sub border border-canvas-border hover:border-cern-accent/60 rounded transition-all">
+            <div className="flex items-center justify-between">
+              <h3 className="font-mono font-bold text-sm text-cern-accent">CMS</h3>
+              <span className="text-[10px] font-mono px-1.5 py-0.5 rounded bg-cern-accent/10 text-cern-accent">General Purpose</span>
+            </div>
             <p>
-              Built around a single, ultra-high-field 3.8 Tesla superconducting solenoid coil containing
-              an all-silicon tracker and 75,848 scintillating lead tungstate (PbWO4) crystals. The crystals
-              yield superior photon energy resolution for resolving the narrow $H \rightarrow \gamma\gamma$
-              resonance peak.
+              Centered on a 3.8 Tesla superconducting solenoid coil containing an all-silicon tracker
+              and 75,848 scintillating lead tungstate ($PbWO_4$) crystals. Yields exceptional photon energy
+              resolution for resolving narrow Higgs resonances ($H \rightarrow \gamma\gamma$).
             </p>
+            <div className="pt-2 border-t border-canvas-border text-[11px] font-mono text-text-muted">
+              Weight: 14,000 t · Dimensions: 21m × 15m
+            </div>
+          </div>
+
+          <div className="space-y-2 p-4 bg-canvas-sub border border-canvas-border hover:border-pink-400/60 rounded transition-all">
+            <div className="flex items-center justify-between">
+              <h3 className="font-mono font-bold text-sm text-pink-400">ALICE</h3>
+              <span className="text-[10px] font-mono px-1.5 py-0.5 rounded bg-pink-400/10 text-pink-400">Heavy Ion / QGP</span>
+            </div>
+            <p>
+              Engineered for extreme particle density (dN&#123;ch&#125;/d&eta; ~ 2000) in Lead-Lead collisions. Features
+              the world&apos;s largest cylindrical Time Projection Chamber (TPC) with continuous GEM readout and
+              a 7-layer MAPS Inner Tracking System.
+            </p>
+            <div className="pt-2 border-t border-canvas-border text-[11px] font-mono text-text-muted">
+              Weight: 10,000 t · Dimensions: 26m × 16m
+            </div>
+          </div>
+
+          <div className="space-y-2 p-4 bg-canvas-sub border border-canvas-border hover:border-amber-400/60 rounded transition-all">
+            <div className="flex items-center justify-between">
+              <h3 className="font-mono font-bold text-sm text-amber-400">LHCb</h3>
+              <span className="text-[10px] font-mono px-1.5 py-0.5 rounded bg-amber-400/10 text-amber-400">b &amp; c Physics</span>
+            </div>
+            <p>
+              Forward single-arm spectrometer ($2 &lt; \eta &lt; 5$) dedicated to CP violation and ultra-rare
+              flavour decays. Features the Vertex Locator (VELO) operating 5.1 mm from colliding beams
+              and dual RICH Cherenkov PID detectors.
+            </p>
+            <div className="pt-2 border-t border-canvas-border text-[11px] font-mono text-text-muted">
+              Weight: 5,600 t · Dimensions: 20m × 10m
+            </div>
           </div>
         </div>
       </section>

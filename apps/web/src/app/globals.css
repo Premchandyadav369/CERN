@@ -55,3 +55,58 @@ body {
 .tabular-nums {
   font-variant-numeric: tabular-nums;
 }
+
+/* CERN Control Room Aesthetics */
+.glow-cyan {
+  text-shadow: 0 0 16px rgba(61, 214, 255, 0.5);
+}
+
+.glow-accent {
+  text-shadow: 0 0 16px rgba(76, 125, 255, 0.5);
+}
+
+.glow-emerald {
+  text-shadow: 0 0 16px rgba(46, 204, 143, 0.5);
+}
+
+.glow-amber {
+  text-shadow: 0 0 16px rgba(245, 158, 11, 0.5);
+}
+
+.glow-pink {
+  text-shadow: 0 0 16px rgba(244, 63, 94, 0.5);
+}
+
+.border-glow-cyan {
+  box-shadow: 0 0 20px -3px rgba(61, 214, 255, 0.2);
+}
+
+.border-glow-blue {
+  box-shadow: 0 0 20px -3px rgba(0, 51, 160, 0.35);
+}
+
+.border-glow-magenta {
+  box-shadow: 0 0 20px -3px rgba(224, 79, 208, 0.25);
+}
+
+.border-glow-amber {
+  box-shadow: 0 0 20px -3px rgba(255, 176, 32, 0.25);
+}
+
+.glass-card {
+  background: rgba(13, 20, 34, 0.7);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.glass-card-hover:hover {
+  background: rgba(19, 28, 46, 0.85);
+  border-color: rgba(61, 214, 255, 0.3);
+}
+
+/* High contrast selection */
+::selection {
+  background: #0055d4;
+  color: #ffffff;
+}

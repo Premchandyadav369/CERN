@@ -62,9 +62,9 @@ export const TopBar: React.FC = () => {
                 <Link
                   key={link.href}
                   href={link.href}
-                  className={`px-2.5 py-1.5 rounded transition-colors ${
+                  className={`px-2.5 py-1.5 rounded transition-all ${
                     isActive
-                      ? 'bg-cern-blue text-white font-semibold'
+                      ? 'bg-cern-blue text-white font-semibold shadow-sm shadow-cern-blue/30'
                       : 'text-text-secondary hover:text-text-primary hover:bg-canvas-raised'
                   }`}
                 >
@@ -76,7 +76,13 @@ export const TopBar: React.FC = () => {
         </div>
 
         {/* Right Utility Bar */}
-        <div className="flex items-center gap-3">
+        <div className="flex items-center gap-2.5">
+          {/* Live Accelerator Status Beacon */}
+          <div className="hidden lg:flex items-center gap-1.5 px-2.5 py-1 rounded bg-canvas-surface border border-emerald-500/30 text-[11px] font-mono text-emerald-400">
+            <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse" />
+            <span className="font-semibold tracking-wider">LHC: BEAM 1 &amp; 2 (6.8 TeV)</span>
+          </div>
+
           {/* Command Palette Trigger */}
           <button
             onClick={() => setCommandPaletteOpen(true)}
@@ -108,6 +114,20 @@ export const TopBar: React.FC = () => {
             ))}
           </div>
 
+          {/* Reduce Motion Accessibility Toggle */}
+          <button
+            onClick={() => setReduceMotion(!reduceMotion)}
+            className={`flex items-center gap-1.5 px-2 py-1 text-xs font-mono rounded border transition-colors ${
+              reduceMotion
+                ? 'bg-amber-950/60 border-amber-500 text-amber-300'
+                : 'bg-canvas-surface border-canvas-border text-text-muted hover:text-text-primary'
+            }`}
+            title={reduceMotion ? 'Reduced motion active (click to restore animation)' : 'Toggle reduced motion'}
+          >
+            <span className={`w-1.5 h-1.5 rounded-full ${reduceMotion ? 'bg-amber-400' : 'bg-text-muted'}`} />
+            <span className="hidden xl:inline text-[11px]">MOTION</span>
+          </button>
+
           {/* Data Class Overlay Toggle */}
           <button
             onClick={() => setDataClassOverlay(!dataClassOverlay)}
@@ -125,18 +145,23 @@ export const TopBar: React.FC = () => {
       </div>
 
       {/* Mobile Nav Sub-bar */}
-      <div className="xl:hidden flex items-center overflow-x-auto gap-2 px-4 py-1.5 border-t border-canvas-border bg-canvas-surface text-xs scrollbar-none">
-        {navLinks.map((link) => (
-          <Link
-            key={link.href}
-            href={link.href}
-            className={`whitespace-nowrap px-2 py-1 rounded ${
-              pathname === link.href ? 'bg-cern-blue text-white' : 'text-text-secondary'
-            }`}
-          >
-            {link.label}
-          </Link>
-        ))}
+      <div className="xl:hidden flex items-center overflow-x-auto gap-1.5 px-4 py-2 border-t border-canvas-border bg-canvas-surface/90 backdrop-blur-md text-xs scrollbar-none">
+        {navLinks.map((link) => {
+          const isActive = pathname === link.href || (link.href !== '/' && pathname.startsWith(link.href));
+          return (
+            <Link
+              key={link.href}
+              href={link.href}
+              className={`whitespace-nowrap px-2.5 py-1 rounded text-xs font-mono transition-colors ${
+                isActive
+                  ? 'bg-cern-blue text-white font-semibold'
+                  : 'text-text-secondary hover:text-text-primary hover:bg-canvas-raised'
+              }`}
+            >
+              {link.label}
+            </Link>
+          );
+        })}
       </div>
     </header>
   );

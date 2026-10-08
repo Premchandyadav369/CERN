@@ -3,7 +3,7 @@
 import React, { useState } from 'react';
 import { Value } from '@/components/provenance/Value';
 import { FidelityBadge } from '@/components/provenance/FidelityBadge';
-import { Sliders, Cpu, Activity, AlertTriangle, ShieldCheck, Gauge } from 'lucide-react';
+import { Sliders, Cpu, Activity, AlertTriangle, ShieldCheck, Gauge, Download } from 'lucide-react';
 
 export const TriggerLab: React.FC = () => {
   // Threshold sliders
@@ -43,6 +43,50 @@ export const TriggerLab: React.FC = () => {
   const hltBudgetMaxHz = 2000;
   const isL1OverBudget = baseL1RateKhz > l1BudgetMaxKhz;
   const isHltOverBudget = baseHltRateHz > hltBudgetMaxHz;
+
+  // Export JSON
+  const exportJson = () => {
+    const payload = {
+      scenario: 'L1 & HLT Trigger / DAQ Filter Configuration',
+      timestamp: new Date().toISOString(),
+      cuts: {
+        muonPtCutGev,
+        electronPtCutGev,
+        jetPtCutGev,
+        metCutGev,
+      },
+      results: {
+        l1RateKhz: baseL1RateKhz,
+        isL1OverBudget,
+        hltRateHz: baseHltRateHz,
+        isHltOverBudget,
+        higgsSignalEfficiencyPct: higgsSignalEfficiency,
+        backgroundRejectionPct: backgroundRejection,
+        dailyDataVolumeTb: (baseHltRateHz * 1.5 * 86400) / 1e6,
+      },
+      fidelity: 'TOY',
+      reference: 'ATLAS Trigger TDR (CERN-LHCC-2013-018)',
+    };
+    const blob = new Blob([JSON.stringify(payload, null, 2)], { type: 'application/json' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = `trigger_menu_scenario_${Date.now()}.json`;
+    a.click();
+    URL.revokeObjectURL(url);
+  };
+
+  // Export CSV
+  const exportCsv = () => {
+    const csv = `parameter,value,unit\nmuon_pt_cut,${muonPtCutGev},GeV\nelectron_pt_cut,${electronPtCutGev},GeV\njet_pt_cut,${jetPtCutGev},GeV\nmet_cut,${metCutGev},GeV\nl1_rate,${baseL1RateKhz.toFixed(1)},kHz\nhlt_rate,${baseHltRateHz},Hz\nhiggs_efficiency,${higgsSignalEfficiency.toFixed(1)},%\nbackground_rejection,${backgroundRejection.toFixed(2)},%\ndaily_volume,${(((baseHltRateHz * 1.5 * 86400) / 1e6)).toFixed(1)},TB/day\n`;
+    const blob = new Blob([csv], { type: 'text/csv' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = `trigger_menu_${Date.now()}.csv`;
+    a.click();
+    URL.revokeObjectURL(url);
+  };
 
   return (
     <div className="w-full flex flex-col xl:flex-row gap-6 p-4 lg:p-6 bg-canvas-sub border border-canvas-border rounded-panel">
@@ -131,16 +175,35 @@ export const TriggerLab: React.FC = () => {
           </div>
         </div>
 
-        {/* Warning Box */}
-        {(isL1OverBudget || isHltOverBudget) && (
-          <div className="p-2.5 bg-red-950/40 border border-red-500/50 rounded text-[11px] font-mono text-red-300 flex items-start gap-2">
-            <AlertTriangle className="w-4 h-4 shrink-0 text-red-400 mt-0.5" />
-            <span>
-              <strong>Trigger Throttle / Deadtime:</strong> Selected cuts exceed readout bandwidth
-              budget! Increase thresholds to avoid buffer loss.
-            </span>
+        {/* Warning Box & Export */}
+        <div className="space-y-3 pt-3 border-t border-canvas-border">
+          {(isL1OverBudget || isHltOverBudget) && (
+            <div className="p-2.5 bg-red-950/40 border border-red-500/50 rounded text-[11px] font-mono text-red-300 flex items-start gap-2">
+              <AlertTriangle className="w-4 h-4 shrink-0 text-red-400 mt-0.5" />
+              <span>
+                <strong>Trigger Throttle / Deadtime:</strong> Selected cuts exceed readout bandwidth
+                budget! Increase thresholds to avoid buffer loss.
+              </span>
+            </div>
+          )}
+
+          <div className="grid grid-cols-2 gap-2">
+            <button
+              onClick={exportJson}
+              className="py-1 px-2 rounded bg-canvas-sub hover:bg-canvas-raised border border-canvas-border text-xs font-mono text-text-secondary flex items-center justify-center gap-1 transition-colors"
+            >
+              <Download className="w-3 h-3" />
+              <span>JSON</span>
+            </button>
+            <button
+              onClick={exportCsv}
+              className="py-1 px-2 rounded bg-canvas-sub hover:bg-canvas-raised border border-canvas-border text-xs font-mono text-text-secondary flex items-center justify-center gap-1 transition-colors"
+            >
+              <Download className="w-3 h-3" />
+              <span>CSV</span>
+            </button>
           </div>
-        )}
+        </div>
       </div>
 
       {/* CENTER: Multi-Stage Trigger Pipeline Graphic & ROC Curve */}
@@ -230,7 +293,7 @@ export const TriggerLab: React.FC = () => {
               <div className="flex justify-between">
                 <span className="text-text-muted">Bandwidth:</span>
                 <span className="text-cern-cyan font-bold">
-                  {(baseHltRateHz * 1.5 / 1000).toFixed(2)} GB/s
+                  {((baseHltRateHz * 1.5) / 1000).toFixed(2)} GB/s
                 </span>
               </div>
               <div className="flex justify-between">

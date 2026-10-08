@@ -4,7 +4,7 @@ import React, { useState, useMemo } from 'react';
 import { SeededRNG, asimovSignificance, simpleSignificance } from '@cern-x/sim-core';
 import { FidelityBadge } from '@/components/provenance/FidelityBadge';
 import { Value } from '@/components/provenance/Value';
-import { Sliders, Sparkles, AlertCircle, Eye, RefreshCw, CheckCircle2 } from 'lucide-react';
+import { Sliders, Sparkles, AlertCircle, Eye, RefreshCw, CheckCircle2, Download } from 'lucide-react';
 
 export const DiscoveryExercise: React.FC = () => {
   const [minPt1Gev, setMinPt1Gev] = useState<number>(35);
@@ -64,6 +64,45 @@ export const DiscoveryExercise: React.FC = () => {
   }, [minPt1Gev, minPt2Gev, seed]);
 
   const maxBin = Math.max(...bins, 1);
+
+  // Export CSV
+  const exportCsv = () => {
+    let csv = 'mass_bin_gev,event_count\n';
+    bins.forEach((cnt, idx) => {
+      csv += `${100 + idx},${cnt}\n`;
+    });
+    const blob = new Blob([csv], { type: 'text/csv' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = `discovery_histogram_seed${seed}.csv`;
+    a.click();
+    URL.revokeObjectURL(url);
+  };
+
+  // Export JSON
+  const exportJson = () => {
+    const payload = {
+      exercise: '5-Sigma Resonance Discovery',
+      seed,
+      cuts: { minPt1Gev, minPt2Gev },
+      results: {
+        signalFitted: signalCount,
+        backgroundEstimated: backgroundCount,
+        asimovSignificanceZ: significance,
+      },
+      bins: bins.map((c, idx) => ({ massGev: 100 + idx, count: c })),
+      fidelity: 'MONTE_CARLO_TOY',
+      disclaimer: 'Educational exercise, not real LHC data.',
+    };
+    const blob = new Blob([JSON.stringify(payload, null, 2)], { type: 'application/json' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = `discovery_exercise_seed${seed}.json`;
+    a.click();
+    URL.revokeObjectURL(url);
+  };
 
   return (
     <div className="w-full flex flex-col xl:flex-row gap-6 p-4 lg:p-6 bg-canvas-sub border border-canvas-border rounded-panel">
@@ -152,8 +191,8 @@ export const DiscoveryExercise: React.FC = () => {
           </div>
         </div>
 
-        {/* Action: Reveal Truth */}
-        <div className="pt-3 border-t border-canvas-border">
+        {/* Action: Reveal Truth & Export */}
+        <div className="pt-3 border-t border-canvas-border space-y-2">
           <button
             onClick={() => setRevealed(!revealed)}
             className="w-full py-2 px-3 rounded bg-cern-blue hover:bg-cern-accent text-white font-mono font-bold text-xs transition-colors flex items-center justify-center gap-1.5"
@@ -161,6 +200,23 @@ export const DiscoveryExercise: React.FC = () => {
             <Eye className="w-3.5 h-3.5" />
             {revealed ? 'Hide Benchmark Truth' : 'Reveal Truth & Look-Elsewhere'}
           </button>
+
+          <div className="grid grid-cols-2 gap-2">
+            <button
+              onClick={exportJson}
+              className="py-1 px-2 rounded bg-canvas-sub hover:bg-canvas-raised border border-canvas-border text-xs font-mono text-text-secondary flex items-center justify-center gap-1 transition-colors"
+            >
+              <Download className="w-3 h-3" />
+              <span>JSON</span>
+            </button>
+            <button
+              onClick={exportCsv}
+              className="py-1 px-2 rounded bg-canvas-sub hover:bg-canvas-raised border border-canvas-border text-xs font-mono text-text-secondary flex items-center justify-center gap-1 transition-colors"
+            >
+              <Download className="w-3 h-3" />
+              <span>CSV</span>
+            </button>
+          </div>
         </div>
       </div>
 

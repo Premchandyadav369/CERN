@@ -4,8 +4,9 @@ import React, { useState } from 'react';
 import Link from 'next/link';
 import acceleratorsData from '../../../../../content/accelerators.json';
 import { LhcSimulator } from '@/components/simulations/LhcSimulator';
+import { BeamOpticsSandbox } from '@/components/simulations/BeamOpticsSandbox';
 import { Value } from '@/components/provenance/Value';
-import { Zap, Play, ArrowRight, ExternalLink, Activity, Info } from 'lucide-react';
+import { Zap, Play, ArrowRight, ExternalLink, Activity, Info, Orbit } from 'lucide-react';
 
 export default function AcceleratorsPage() {
   const [selectedAcceleratorId, setSelectedAcceleratorId] = useState<string>('lhc');
@@ -14,7 +15,7 @@ export default function AcceleratorsPage() {
     acceleratorsData.find((a) => a.id === selectedAcceleratorId) || acceleratorsData[0];
 
   return (
-    <div className="w-full max-w-7xl mx-auto px-4 lg:px-8 py-8 space-y-8">
+    <div className="w-full max-w-7xl mx-auto px-4 lg:px-8 py-8 space-y-10">
       {/* Page Header */}
       <div>
         <span className="text-xs font-mono uppercase text-cern-cyan font-bold tracking-wider">
@@ -30,7 +31,7 @@ export default function AcceleratorsPage() {
         </p>
       </div>
 
-      {/* Simulator Section */}
+      {/* LHC Simulator Section */}
       <section className="space-y-3">
         <div className="flex items-center justify-between">
           <h2 className="text-lg font-display font-bold text-text-primary flex items-center gap-2">
@@ -40,8 +41,18 @@ export default function AcceleratorsPage() {
         <LhcSimulator />
       </section>
 
+      {/* Beam Optics & FODO Lattice Section */}
+      <section className="space-y-3">
+        <div className="flex items-center justify-between">
+          <h2 className="text-lg font-display font-bold text-text-primary flex items-center gap-2">
+            <Orbit className="w-4 h-4 text-sky-400" /> Beam Optics &amp; Alternating Gradient Focusing
+          </h2>
+        </div>
+        <BeamOpticsSandbox />
+      </section>
+
       {/* Accelerators Grid Directory */}
-      <section className="space-y-4 pt-4">
+      <section className="space-y-4 pt-4 border-t border-canvas-border">
         <div>
           <h2 className="text-lg font-display font-bold text-text-primary">
             Catalogue of CERN Accelerators

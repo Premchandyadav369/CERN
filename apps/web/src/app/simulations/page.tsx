@@ -5,7 +5,8 @@ import { useSearchParams } from 'next/navigation';
 import { LhcSimulator } from '@/components/simulations/LhcSimulator';
 import { TriggerLab } from '@/components/simulations/TriggerLab';
 import { DiscoveryExercise } from '@/components/simulations/DiscoveryExercise';
-import { Zap, Gauge, Sparkles } from 'lucide-react';
+import { BeamOpticsSandbox } from '@/components/simulations/BeamOpticsSandbox';
+import { Zap, Gauge, Sparkles, Orbit } from 'lucide-react';
 
 function SimulationsContent() {
   const searchParams = useSearchParams();
@@ -29,7 +30,7 @@ function SimulationsContent() {
         </h1>
         <p className="text-sm text-text-secondary mt-1 max-w-3xl leading-relaxed">
           Executable models running on closed-form relativistic physics, exact magnetic rigidity laws,
-          and deterministic seeded pseudo-random processes. No hard-coded animations.
+          Courant-Snyder transfer matrices, and deterministic seeded pseudo-random processes. No hard-coded animations.
         </p>
       </div>
 
@@ -45,6 +46,18 @@ function SimulationsContent() {
         >
           <Zap className="w-4 h-4 text-cern-cyan" />
           <span>LHC Beam Dynamics &amp; Luminosity</span>
+        </button>
+
+        <button
+          onClick={() => setActiveTab('optics')}
+          className={`flex items-center gap-2 px-4 py-2 rounded-panel border transition-all ${
+            activeTab === 'optics'
+              ? 'bg-cern-blue border-cern-accent text-white font-bold'
+              : 'bg-canvas-surface border-canvas-border text-text-secondary hover:text-text-primary'
+          }`}
+        >
+          <Orbit className="w-4 h-4 text-sky-400" />
+          <span>Beam Optics &amp; FODO Lattice</span>
         </button>
 
         <button
@@ -75,6 +88,7 @@ function SimulationsContent() {
       {/* Tab Viewport */}
       <div>
         {activeTab === 'lhc' && <LhcSimulator />}
+        {activeTab === 'optics' && <BeamOpticsSandbox />}
         {activeTab === 'trigger' && <TriggerLab />}
         {activeTab === 'discovery' && <DiscoveryExercise />}
       </div>

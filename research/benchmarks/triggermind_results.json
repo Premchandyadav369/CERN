@@ -1,61 +1,150 @@
 {
+  "metadata": {
+    "dataset": "ATLAS Higgs ML Benchmark",
+    "doi": "10.7483/OPENDATA.ATLAS.Z55B.2V8K",
+    "cern_open_data_record": 328,
+    "seed": 42,
+    "train_events": 10800,
+    "val_events": 3600,
+    "test_events": 3600,
+    "timestamp": "2026-10-08T05:04:18Z",
+    "provenance": "RESEARCH_SCRIPT_REPRODUCIBLE"
+  },
+  "models": {
+    "Cut_Baseline": {
+      "type": "Deterministic Kinematic Cuts",
+      "description": "Rectangular cuts on visible mass and tau pT",
+      "ams": 8.081,
+      "ams_ci_95": [
+        6.805,
+        9.156
+      ],
+      "roc_auc": 0.357,
+      "latency_ms": 0.00025,
+      "size_kb": 0.12,
+      "fidelity": "ANALYTIC"
+    },
+    "Logistic_Regression": {
+      "type": "Linear Classifier",
+      "ams": 7.749,
+      "ams_ci_95": [
+        4.987,
+        16.318
+      ],
+      "roc_auc": 0.896,
+      "latency_ms": 0.092,
+      "size_kb": 1.4,
+      "fidelity": "OUR_ML_EXPERIMENT"
+    },
+    "MLP_32_16": {
+      "type": "Multi-Layer Perceptron (Neural Network)",
+      "architecture": "6 -> 32 (ReLU) -> 16 (ReLU) -> 1 (Sigmoid)",
+      "parameters": 769,
+      "ams": 17.977,
+      "ams_ci_95": [
+        14.852,
+        35.571
+      ],
+      "roc_auc": 0.966,
+      "latency_ms": 0.0102,
+      "size_kb": 6.8,
+      "fidelity": "OUR_ML_EXPERIMENT"
+    },
+    "XGBoost": {
+      "type": "Gradient Boosted Trees (100 estimators, depth 4)",
+      "ams": 11.86,
+      "ams_ci_95": [
+        10.182,
+        15.6
+      ],
+      "roc_auc": 0.941,
+      "latency_ms": 0.9012,
+      "size_kb": 412.0,
+      "fidelity": "OUR_ML_EXPERIMENT"
+    }
+  },
   "experimentId": "EXP-001-TRIGGERMIND",
   "title": "LHC-TriggerMind: Low-Latency Event Selection on ATLAS Higgs Simulation",
   "dataset": {
     "name": "ATLAS Higgs Boson Machine Learning Challenge",
     "doi": "10.7483/OPENDATA.ATLAS.Z55B.2V8K",
+    "cern_open_data_record": 328,
     "dataClass": "COMPUTED (Official ATLAS Simulation)",
     "eventsTotal": 250000,
-    "trainSplit": 0.70,
+    "trainSplit": 0.7,
     "valSplit": 0.15,
     "testSplit": 0.15,
     "seed": 42
   },
+  "provenanceManifestId": "triggermind-xgboost-benchmark",
   "benchmarks": [
     {
       "model": "Physics Cut-Based Baseline",
-      "architecture": "Sequential Threshold Cuts on DER_mass_MMC & DER_mass_transverse_met_lep",
-      "ams": 1.841,
-      "amsUncertainty": 0.035,
+      "architecture": "Sequential Threshold Cuts on DER_mass_vis & PRI_tau_pt",
+      "ams": 8.081,
+      "amsUncertainty": 0.588,
       "signalEfficiency": 0.142,
       "backgroundRejection": 0.985,
-      "medianLatencyMs": 0.002,
+      "medianLatencyMs": 0.0003,
       "throughputEventsPerSec": 4500000,
       "modelSizeBytes": 128,
       "quantization": "N/A (Analytical rules)"
     },
     {
       "model": "MLP (16-8-1)",
-      "architecture": "Quantized 2-layer Perceptron (16-8) with ReLU activations",
-      "ams": 3.022,
-      "amsUncertainty": 0.028,
+      "architecture": "Quantized 2-layer Perceptron (32-16) with ReLU activations",
+      "ams": 17.977,
+      "amsUncertainty": 5.18,
       "signalEfficiency": 0.245,
       "backgroundRejection": 0.988,
-      "medianLatencyMs": 0.115,
+      "medianLatencyMs": 0.0102,
       "throughputEventsPerSec": 820000,
       "modelSizeBytes": 6451,
       "quantization": "INT8"
     },
     {
       "model": "Compact XGBoost",
-      "architecture": "Gradient Boosted Decision Trees (150 trees, max_depth=5)",
-      "ams": 3.339,
-      "amsUncertainty": 0.022,
+      "architecture": "Gradient Boosted Decision Trees (100 trees, max_depth=4)",
+      "ams": 11.86,
+      "amsUncertainty": 1.354,
       "signalEfficiency": 0.282,
       "backgroundRejection": 0.992,
-      "medianLatencyMs": 0.547,
+      "medianLatencyMs": 0.9012,
       "throughputEventsPerSec": 299791,
       "modelSizeBytes": 823500,
       "quantization": "FP32 (ONNX runtime optimized)"
     }
   ],
   "featureImportance": [
-    { "feature": "DER_mass_MMC", "importanceScore": 0.342, "description": "Estimated invariant mass of the tau-tau pair using Missing Mass Calculator" },
-    { "feature": "DER_mass_transverse_met_lep", "importanceScore": 0.185, "description": "Transverse mass between the lepton and missing transverse energy" },
-    { "feature": "DER_mass_vis", "importanceScore": 0.124, "description": "Invariant mass of the visible decay components" },
-    { "feature": "DER_pt_h", "importanceScore": 0.098, "description": "Reconstructed transverse momentum of the candidate Higgs system" },
-    { "feature": "DER_deltar_tau_lep", "importanceScore": 0.081, "description": "Angular separation DeltaR in (eta, phi) space between tau and lepton" },
-    { "feature": "DER_met_phi_centrality", "importanceScore": 0.065, "description": "Centrality of missing transverse momentum azimuth relative to visible decay products" }
-  ],
-  "provenanceManifestId": "triggermind-xgboost-benchmark"
+    {
+      "feature": "DER_mass_MMC",
+      "importanceScore": 0.342,
+      "description": "Estimated invariant mass of the tau-tau pair using Missing Mass Calculator"
+    },
+    {
+      "feature": "DER_mass_transverse_met_lep",
+      "importanceScore": 0.185,
+      "description": "Transverse mass between the lepton and missing transverse energy"
+    },
+    {
+      "feature": "DER_mass_vis",
+      "importanceScore": 0.124,
+      "description": "Invariant mass of the visible decay components"
+    },
+    {
+      "feature": "DER_pt_h",
+      "importanceScore": 0.098,
+      "description": "Reconstructed transverse momentum of the candidate Higgs system"
+    },
+    {
+      "feature": "DER_deltar_tau_lep",
+      "importanceScore": 0.081,
+      "description": "Angular separation DeltaR in (eta, phi) space between tau and lepton"
+    },
+    {
+      "feature": "DER_met_phi_centrality",
+      "importanceScore": 0.065,
+      "description": "Centrality of missing transverse momentum azimuth relative to visible decay products"
+    }
+  ]
 }

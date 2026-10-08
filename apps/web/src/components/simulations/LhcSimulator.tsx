@@ -12,7 +12,7 @@ import {
 } from '@cern-x/sim-core';
 import { Value } from '@/components/provenance/Value';
 import { FidelityBadge } from '@/components/provenance/FidelityBadge';
-import { Play, Pause, RotateCcw, Sliders, Info, Zap, Activity } from 'lucide-react';
+import { Play, Pause, RotateCcw, Sliders, Info, Zap, Activity, Download } from 'lucide-react';
 
 export const LhcSimulator: React.FC = () => {
   // Simulator Parameters
@@ -53,6 +53,50 @@ export const LhcSimulator: React.FC = () => {
   // Average pile-up <mu> = (L * sigma_inel) / (n_b * frev)
   const sigmaInelMb = 80e-27; // 80 mb in cm^2
   const pileup = (lumi * sigmaInelMb) / (bunches * frev);
+
+  // Export JSON
+  const exportJson = () => {
+    const payload = {
+      scenario: 'LHC Beam Dynamics & Luminosity Run',
+      timestamp: new Date().toISOString(),
+      particle: particleType,
+      beamEnergyGev,
+      bunches,
+      bunchIntensityE11,
+      betaStarM,
+      results: {
+        gamma: relState.gamma,
+        beta: relState.beta,
+        momentumGevC: relState.momentumGevC,
+        magneticRigidityTm: bRho,
+        dipoleFieldTesla,
+        instantaneousLuminosity: lumi,
+        pileupMu: pileup,
+        centerOfMassEnergyTeV: (beamEnergyGev * 2) / 1000,
+      },
+      fidelity: 'ANALYTIC',
+      source: 'LHC Design Report (CERN-2004-003)',
+    };
+    const blob = new Blob([JSON.stringify(payload, null, 2)], { type: 'application/json' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = `lhc_run_scenario_${Date.now()}.json`;
+    a.click();
+    URL.revokeObjectURL(url);
+  };
+
+  // Export CSV
+  const exportCsv = () => {
+    const csv = `parameter,value,unit\nparticle,${particleType},-\nbeam_energy,${beamEnergyGev},GeV\nbunches,${bunches},-\nbunch_intensity,${bunchIntensityE11}e11,protons\nbeta_star,${betaStarM},m\ngamma,${relState.gamma.toFixed(2)},-\nbeta,${relState.beta.toFixed(9)},-\nrigidity,${bRho.toFixed(2)},T*m\ndipole_field,${dipoleFieldTesla.toFixed(3)},T\nluminosity,${lumi.toExponential(4)},cm^-2 s^-1\npileup,${pileup.toFixed(2)},collisions/crossing\n`;
+    const blob = new Blob([csv], { type: 'text/csv' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = `lhc_parameters_${Date.now()}.csv`;
+    a.click();
+    URL.revokeObjectURL(url);
+  };
 
   return (
     <div className="w-full flex flex-col xl:flex-row gap-6 p-4 lg:p-6 bg-canvas-sub border border-canvas-border rounded-panel">
@@ -188,8 +232,8 @@ export const LhcSimulator: React.FC = () => {
           </div>
         </div>
 
-        {/* Run / Pause Controls */}
-        <div className="pt-3 border-t border-canvas-border flex items-center gap-2">
+        {/* Run / Pause & Export Controls */}
+        <div className="pt-3 border-t border-canvas-border space-y-2">
           <button
             onClick={() => setIsRunning(!isRunning)}
             className={`w-full flex items-center justify-center gap-2 py-2 rounded text-xs font-mono font-bold transition-colors ${
@@ -201,6 +245,23 @@ export const LhcSimulator: React.FC = () => {
             {isRunning ? <Pause className="w-3.5 h-3.5" /> : <Play className="w-3.5 h-3.5" />}
             {isRunning ? 'Pause Beam Simulation' : 'Resume Circulation'}
           </button>
+
+          <div className="grid grid-cols-2 gap-2">
+            <button
+              onClick={exportJson}
+              className="py-1 px-2 rounded bg-canvas-sub hover:bg-canvas-raised border border-canvas-border text-xs font-mono text-text-secondary flex items-center justify-center gap-1 transition-colors"
+            >
+              <Download className="w-3 h-3" />
+              <span>JSON</span>
+            </button>
+            <button
+              onClick={exportCsv}
+              className="py-1 px-2 rounded bg-canvas-sub hover:bg-canvas-raised border border-canvas-border text-xs font-mono text-text-secondary flex items-center justify-center gap-1 transition-colors"
+            >
+              <Download className="w-3 h-3" />
+              <span>CSV</span>
+            </button>
+          </div>
         </div>
       </div>
 
@@ -291,7 +352,7 @@ export const LhcSimulator: React.FC = () => {
               {(relState.velocityMS / 299792458).toFixed(8)} c
             </text>
             <text x="200" y="215" fill="#9FB0CC" fontSize="11" fontFamily="JetBrains Mono" textAnchor="middle">
-              √s = {(beamEnergyGev * 2 / 1000).toFixed(2)} TeV
+              √s = {((beamEnergyGev * 2) / 1000).toFixed(2)} TeV
             </text>
           </svg>
         </div>

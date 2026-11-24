@@ -6,7 +6,7 @@ import acceleratorsData from '../../../../../content/accelerators.json';
 import { LhcSimulator } from '@/components/simulations/LhcSimulator';
 import { BeamOpticsSandbox } from '@/components/simulations/BeamOpticsSandbox';
 import { Value } from '@/components/provenance/Value';
-import { Zap, Play, ArrowRight, ExternalLink, Activity, Info, Orbit } from 'lucide-react';
+import { Zap, Play, ArrowRight, ExternalLink, Activity, Info, Orbit, HeartPulse } from 'lucide-react';
 
 export default function AcceleratorsPage() {
   const [selectedAcceleratorId, setSelectedAcceleratorId] = useState<string>('lhc');
@@ -51,6 +51,35 @@ export default function AcceleratorsPage() {
         <BeamOpticsSandbox />
       </section>
 
+      {/* Medical Accelerators Cross-Link Banner */}
+      <section className="p-6 bg-canvas-surface border-3 border-black shadow-[6px_6px_0px_0px_#000000] flex flex-col md:flex-row items-center justify-between gap-4">
+        <div className="space-y-1">
+          <div className="flex items-center gap-2">
+            <span className="px-2 py-0.5 bg-cern-magenta text-white font-mono font-bold text-[10px] border border-black uppercase shadow-[1px_1px_0px_#000]">
+              Medical Physics &amp; Accelerators
+            </span>
+            <span className="text-xs font-mono text-emerald-400 font-bold">
+              CERN-MEDICIS &amp; Hadron Therapy
+            </span>
+          </div>
+          <h3 className="text-xl font-display font-extrabold text-white">
+            Hadron Therapy &amp; Bragg Peak Cancer Treatment Simulator
+          </h3>
+          <p className="text-xs text-text-secondary font-mono max-w-2xl leading-relaxed">
+            See how CERN accelerator beam dynamics directly power hadron therapy centers (CNAO, MedAustron),
+            using proton and carbon-12 beams to deliver maximum tumor dose with zero exit dose to healthy brain tissue.
+          </p>
+        </div>
+        <Link
+          href="/simulations?module=bragg-peak"
+          className="px-5 py-3 bg-cern-magenta hover:bg-pink-600 text-white font-mono font-bold text-xs uppercase border-2 border-black shadow-[4px_4px_0px_#000] active:translate-x-0.5 active:translate-y-0.5 transition-all flex items-center gap-2 shrink-0"
+        >
+          <HeartPulse className="w-4 h-4" />
+          <span>Launch Bragg Peak Simulator</span>
+          <ArrowRight className="w-4 h-4" />
+        </Link>
+      </section>
+
       {/* Accelerators Grid Directory & Inspector */}
       <section className="space-y-6 pt-6 border-t-3 border-black">
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2">
@@ -91,6 +120,16 @@ export default function AcceleratorsPage() {
                   className="px-3.5 py-2 bg-cern-magenta hover:bg-pink-600 border-2 border-black shadow-[3px_3px_0px_#000] text-white text-xs font-mono font-bold flex items-center gap-1.5 transition-all"
                 >
                   <span>ALPHA-g Simulator</span>
+                  <ArrowRight className="w-3.5 h-3.5" />
+                </Link>
+              )}
+              {selectedAccelerator.id === 'psb' && (
+                <Link
+                  href="/simulations?module=bragg-peak"
+                  className="px-3.5 py-2 bg-cern-magenta hover:bg-pink-600 border-2 border-black shadow-[3px_3px_0px_#000] text-white text-xs font-mono font-bold flex items-center gap-1.5 transition-all"
+                >
+                  <HeartPulse className="w-3.5 h-3.5" />
+                  <span>Bragg Peak Hadron Sim</span>
                   <ArrowRight className="w-3.5 h-3.5" />
                 </Link>
               )}

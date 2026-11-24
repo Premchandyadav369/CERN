@@ -2,7 +2,8 @@
 
 import React from 'react';
 import { DetectorTwin } from '@/components/detectors/DetectorTwin';
-import { Layers, ShieldCheck, Database, Info } from 'lucide-react';
+import { DetectorMaterialViewer } from '@/components/detectors/DetectorMaterialViewer';
+import { Layers, ShieldCheck, Database, Info, Box } from 'lucide-react';
 
 export default function DetectorsPage() {
   return (
@@ -30,6 +31,16 @@ export default function DetectorsPage() {
       {/* Main Interactive Detector Twin Module */}
       <section>
         <DetectorTwin />
+      </section>
+
+      {/* 3D Detector Crystals & Superconductor Materials Inspector */}
+      <section className="space-y-3">
+        <div className="flex items-center justify-between pb-2 border-b-2 border-black">
+          <h2 className="text-lg font-display font-bold text-white flex items-center gap-2">
+            <Box className="w-5 h-5 text-amber-300" /> /// 3D Detector Crystal &amp; Superconducting Magnet Inspector ///
+          </h2>
+        </div>
+        <DetectorMaterialViewer />
       </section>
 
       {/* Comparison Section: The Four Flagship LHC Architectures */}

@@ -12,6 +12,8 @@ import { AliceFlowSimulator } from '@/components/simulations/AliceFlowSimulator'
 import { LhcbDecaySimulator } from '@/components/simulations/LhcbDecaySimulator';
 import { CrabCavitySimulator } from '@/components/simulations/CrabCavitySimulator';
 import { FccSimulator } from '@/components/simulations/FccSimulator';
+import { BraggPeakSimulator } from '@/components/simulations/BraggPeakSimulator';
+import { DetectorMaterialViewer } from '@/components/detectors/DetectorMaterialViewer';
 import { ScienceLiteratureBridge } from '@/components/knowledge/ScienceLiteratureBridge';
 import {
   Zap,
@@ -25,6 +27,8 @@ import {
   Compass,
   Radio,
   BookOpen,
+  HeartPulse,
+  Box,
 } from 'lucide-react';
 
 function SimulationsContent() {
@@ -46,6 +50,8 @@ function SimulationsContent() {
     { id: 'lhcb', label: 'LHCb Rare Decays', icon: Sparkles, color: 'text-purple-400', shadow: 'shadow-[4px_4px_0px_#C084FC]' },
     { id: 'crab', label: 'HL-LHC Crab Cavity', icon: Layers, color: 'text-emerald-400', shadow: 'shadow-[4px_4px_0px_#00FF66]' },
     { id: 'fcc', label: 'FCC 91km Collider', icon: Compass, color: 'text-cern-cyan', shadow: 'shadow-[4px_4px_0px_#00E5FF]' },
+    { id: 'bragg-peak', label: 'Hadron Therapy & Bragg Peak', icon: HeartPulse, color: 'text-cern-magenta', shadow: 'shadow-[4px_4px_0px_#FF0055]' },
+    { id: 'materials', label: '3D Detector Crystals & Nb₃Sn', icon: Box, color: 'text-amber-300', shadow: 'shadow-[4px_4px_0px_#FFE600]' },
     { id: 'trigger', label: 'Trigger & DAQ', icon: Gauge, color: 'text-amber-400', shadow: 'shadow-[4px_4px_0px_#FFE600]' },
     { id: 'discovery', label: '5-Sigma Discovery', icon: Radio, color: 'text-pink-400', shadow: 'shadow-[4px_4px_0px_#FF0055]' },
     { id: 'literature', label: 'arXiv & Research Bridge', icon: BookOpen, color: 'text-emerald-400', shadow: 'shadow-[4px_4px_0px_#00FF66]' },
@@ -118,6 +124,8 @@ function SimulationsContent() {
         {activeTab === 'lhcb' && <LhcbDecaySimulator />}
         {activeTab === 'crab' && <CrabCavitySimulator />}
         {activeTab === 'fcc' && <FccSimulator />}
+        {activeTab === 'bragg-peak' && <BraggPeakSimulator />}
+        {activeTab === 'materials' && <DetectorMaterialViewer />}
         {activeTab === 'trigger' && <TriggerLab />}
         {activeTab === 'discovery' && <DiscoveryExercise />}
         {activeTab === 'literature' && <ScienceLiteratureBridge />}

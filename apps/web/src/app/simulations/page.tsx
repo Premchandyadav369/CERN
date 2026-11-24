@@ -6,7 +6,24 @@ import { LhcSimulator } from '@/components/simulations/LhcSimulator';
 import { TriggerLab } from '@/components/simulations/TriggerLab';
 import { DiscoveryExercise } from '@/components/simulations/DiscoveryExercise';
 import { BeamOpticsSandbox } from '@/components/simulations/BeamOpticsSandbox';
-import { Zap, Gauge, Sparkles, Orbit } from 'lucide-react';
+import { AntimatterSimulator } from '@/components/simulations/AntimatterSimulator';
+import { AwakeSimulator } from '@/components/simulations/AwakeSimulator';
+import { AliceFlowSimulator } from '@/components/simulations/AliceFlowSimulator';
+import { LhcbDecaySimulator } from '@/components/simulations/LhcbDecaySimulator';
+import { CrabCavitySimulator } from '@/components/simulations/CrabCavitySimulator';
+import { FccSimulator } from '@/components/simulations/FccSimulator';
+import {
+  Zap,
+  Gauge,
+  Sparkles,
+  Orbit,
+  Atom,
+  Flame,
+  Activity,
+  Layers,
+  Compass,
+  Radio,
+} from 'lucide-react';
 
 function SimulationsContent() {
   const searchParams = useSearchParams();
@@ -17,6 +34,28 @@ function SimulationsContent() {
     const mod = searchParams.get('module');
     if (mod) setActiveTab(mod);
   }, [searchParams]);
+
+  const tabs = [
+    { id: 'lhc', label: 'LHC Dynamics', icon: Zap, color: 'text-cern-cyan', shadow: 'shadow-[4px_4px_0px_#00E5FF]' },
+    { id: 'optics', label: 'Beam Optics', icon: Orbit, color: 'text-sky-400', shadow: 'shadow-[4px_4px_0px_#38BDF8]' },
+    { id: 'antimatter', label: 'Antimatter & ALPHA-g', icon: Atom, color: 'text-cern-magenta', shadow: 'shadow-[4px_4px_0px_#FF0055]' },
+    { id: 'awake', label: 'AWAKE Plasma', icon: Flame, color: 'text-cern-cyan', shadow: 'shadow-[4px_4px_0px_#00E5FF]' },
+    { id: 'alice', label: 'ALICE QGP & Flow', icon: Activity, color: 'text-amber-400', shadow: 'shadow-[4px_4px_0px_#FFE600]' },
+    { id: 'lhcb', label: 'LHCb Rare Decays', icon: Sparkles, color: 'text-purple-400', shadow: 'shadow-[4px_4px_0px_#C084FC]' },
+    { id: 'crab', label: 'HL-LHC Crab Cavity', icon: Layers, color: 'text-emerald-400', shadow: 'shadow-[4px_4px_0px_#00FF66]' },
+    { id: 'fcc', label: 'FCC 91km Collider', icon: Compass, color: 'text-cern-cyan', shadow: 'shadow-[4px_4px_0px_#00E5FF]' },
+    { id: 'trigger', label: 'Trigger & DAQ', icon: Gauge, color: 'text-amber-400', shadow: 'shadow-[4px_4px_0px_#FFE600]' },
+    { id: 'discovery', label: '5-Sigma Discovery', icon: Radio, color: 'text-pink-400', shadow: 'shadow-[4px_4px_0px_#FF0055]' },
+  ];
+
+  const handleTabChange = (tabId: string) => {
+    setActiveTab(tabId);
+    if (typeof window !== 'undefined') {
+      const url = new URL(window.location.href);
+      url.searchParams.set('module', tabId);
+      window.history.replaceState(null, '', url.toString());
+    }
+  };
 
   return (
     <div className="w-full max-w-7xl mx-auto px-4 lg:px-8 py-8 space-y-8">
@@ -34,61 +73,38 @@ function SimulationsContent() {
         </p>
       </div>
 
-      {/* Simulator Mode Tabs */}
-      <div className="flex items-center gap-3 pb-3 overflow-x-auto scrollbar-none text-xs font-mono">
-        <button
-          onClick={() => setActiveTab('lhc')}
-          className={`flex items-center gap-2 px-4 py-2.5 border-2 border-black font-mono font-bold uppercase transition-all cursor-pointer ${
-            activeTab === 'lhc'
-              ? 'bg-cern-blue text-white shadow-[4px_4px_0px_#00E5FF] -translate-x-0.5 -translate-y-0.5'
-              : 'bg-canvas-surface text-text-secondary hover:text-white shadow-[3px_3px_0px_#000] hover:bg-canvas-raised'
-          }`}
-        >
-          <Zap className="w-4 h-4 text-cern-cyan" />
-          <span>LHC Beam Dynamics &amp; Luminosity</span>
-        </button>
-
-        <button
-          onClick={() => setActiveTab('optics')}
-          className={`flex items-center gap-2 px-4 py-2.5 border-2 border-black font-mono font-bold uppercase transition-all cursor-pointer ${
-            activeTab === 'optics'
-              ? 'bg-cern-blue text-white shadow-[4px_4px_0px_#00E5FF] -translate-x-0.5 -translate-y-0.5'
-              : 'bg-canvas-surface text-text-secondary hover:text-white shadow-[3px_3px_0px_#000] hover:bg-canvas-raised'
-          }`}
-        >
-          <Orbit className="w-4 h-4 text-sky-400" />
-          <span>Beam Optics &amp; FODO Lattice</span>
-        </button>
-
-        <button
-          onClick={() => setActiveTab('trigger')}
-          className={`flex items-center gap-2 px-4 py-2.5 border-2 border-black font-mono font-bold uppercase transition-all cursor-pointer ${
-            activeTab === 'trigger'
-              ? 'bg-cern-blue text-white shadow-[4px_4px_0px_#FFE600] -translate-x-0.5 -translate-y-0.5'
-              : 'bg-canvas-surface text-text-secondary hover:text-white shadow-[3px_3px_0px_#000] hover:bg-canvas-raised'
-          }`}
-        >
-          <Gauge className="w-4 h-4 text-amber-400" />
-          <span>Trigger &amp; DAQ Pipeline Lab</span>
-        </button>
-
-        <button
-          onClick={() => setActiveTab('discovery')}
-          className={`flex items-center gap-2 px-4 py-2.5 border-2 border-black font-mono font-bold uppercase transition-all cursor-pointer ${
-            activeTab === 'discovery'
-              ? 'bg-cern-blue text-white shadow-[4px_4px_0px_#FF0055] -translate-x-0.5 -translate-y-0.5'
-              : 'bg-canvas-surface text-text-secondary hover:text-white shadow-[3px_3px_0px_#000] hover:bg-canvas-raised'
-          }`}
-        >
-          <Sparkles className="w-4 h-4 text-pink-400" />
-          <span>5-Sigma Discovery Exercise</span>
-        </button>
+      {/* Simulator Mode Tabs Grid */}
+      <div className="flex items-center gap-2 pb-2 overflow-x-auto scrollbar-none text-xs font-mono">
+        {tabs.map((tab) => {
+          const Icon = tab.icon;
+          const isActive = activeTab === tab.id;
+          return (
+            <button
+              key={tab.id}
+              onClick={() => handleTabChange(tab.id)}
+              className={`flex items-center gap-1.5 px-3.5 py-2.5 border-2 border-black font-mono font-bold uppercase transition-all whitespace-nowrap cursor-pointer ${
+                isActive
+                  ? `bg-cern-blue text-white ${tab.shadow} -translate-x-0.5 -translate-y-0.5`
+                  : 'bg-canvas-surface text-text-secondary hover:text-white shadow-[3px_3px_0px_#000] hover:bg-canvas-raised'
+              }`}
+            >
+              <Icon className={`w-4 h-4 ${tab.color}`} />
+              <span>{tab.label}</span>
+            </button>
+          );
+        })}
       </div>
 
       {/* Tab Viewport */}
       <div>
         {activeTab === 'lhc' && <LhcSimulator />}
         {activeTab === 'optics' && <BeamOpticsSandbox />}
+        {activeTab === 'antimatter' && <AntimatterSimulator />}
+        {activeTab === 'awake' && <AwakeSimulator />}
+        {activeTab === 'alice' && <AliceFlowSimulator />}
+        {activeTab === 'lhcb' && <LhcbDecaySimulator />}
+        {activeTab === 'crab' && <CrabCavitySimulator />}
+        {activeTab === 'fcc' && <FccSimulator />}
         {activeTab === 'trigger' && <TriggerLab />}
         {activeTab === 'discovery' && <DiscoveryExercise />}
       </div>

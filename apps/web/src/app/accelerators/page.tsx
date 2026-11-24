@@ -85,13 +85,49 @@ export default function AcceleratorsPage() {
             </div>
 
             <div className="flex items-center gap-2">
+              {selectedAccelerator.id === 'ad-elena' && (
+                <Link
+                  href="/simulations?module=antimatter"
+                  className="px-3.5 py-2 bg-cern-magenta hover:bg-pink-600 border-2 border-black shadow-[3px_3px_0px_#000] text-white text-xs font-mono font-bold flex items-center gap-1.5 transition-all"
+                >
+                  <span>ALPHA-g Simulator</span>
+                  <ArrowRight className="w-3.5 h-3.5" />
+                </Link>
+              )}
+              {selectedAccelerator.id === 'hl-lhc' && (
+                <Link
+                  href="/simulations?module=crab"
+                  className="px-3.5 py-2 bg-emerald-500 hover:bg-emerald-600 border-2 border-black shadow-[3px_3px_0px_#000] text-black text-xs font-mono font-bold flex items-center gap-1.5 transition-all"
+                >
+                  <span>Crab Cavity Simulator</span>
+                  <ArrowRight className="w-3.5 h-3.5" />
+                </Link>
+              )}
+              {selectedAccelerator.id === 'sps' && (
+                <Link
+                  href="/simulations?module=awake"
+                  className="px-3.5 py-2 bg-cern-cyan hover:bg-cyan-400 border-2 border-black shadow-[3px_3px_0px_#000] text-black text-xs font-mono font-bold flex items-center gap-1.5 transition-all"
+                >
+                  <span>AWAKE Wakefield Sim</span>
+                  <ArrowRight className="w-3.5 h-3.5" />
+                </Link>
+              )}
+              {selectedAccelerator.id === 'lhc' && (
+                <Link
+                  href="/simulations?module=lhc"
+                  className="px-3.5 py-2 bg-cern-blue hover:bg-cern-accent border-2 border-black shadow-[3px_3px_0px_#000] text-white text-xs font-mono font-bold flex items-center gap-1.5 transition-all"
+                >
+                  <span>Full LHC Sim</span>
+                  <ArrowRight className="w-3.5 h-3.5 text-cern-cyan" />
+                </Link>
+              )}
               <a
                 href={selectedAccelerator.sourceUrl}
                 target="_blank"
                 rel="noreferrer"
-                className="px-3.5 py-2 bg-cern-blue hover:bg-cern-accent border-2 border-black shadow-[3px_3px_0px_#000] active:translate-x-[1px] active:translate-y-[1px] active:shadow-none text-white text-xs font-mono font-bold flex items-center gap-1.5 transition-all"
+                className="px-3.5 py-2 bg-canvas-sub hover:bg-canvas-raised border-2 border-black shadow-[3px_3px_0px_#000] active:translate-x-[1px] active:translate-y-[1px] active:shadow-none text-white text-xs font-mono font-bold flex items-center gap-1.5 transition-all"
               >
-                <span>CERN Design Report</span>
+                <span>CERN Report</span>
                 <ExternalLink className="w-3.5 h-3.5 text-cern-cyan" />
               </a>
             </div>
@@ -217,6 +253,59 @@ export default function AcceleratorsPage() {
               </div>
             );
           })}
+        </div>
+      </section>
+
+      {/* Advanced Future Accelerators Showcase */}
+      <section className="p-6 bg-canvas-sub border-3 border-black shadow-[6px_6px_0px_#000] space-y-4">
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 border-b-2 border-black pb-3">
+          <div>
+            <span className="text-[10px] font-mono font-bold text-cern-cyan uppercase tracking-wider block">
+              /// NEXT GENERATION COLLIDERS &amp; ADVANCED R&amp;D ///
+            </span>
+            <h2 className="text-xl font-display font-extrabold text-white mt-1">
+              Future Circular Collider (FCC) &amp; Crab Cavities
+            </h2>
+          </div>
+          <span className="text-xs font-mono px-2.5 py-1 bg-black border-2 border-black text-emerald-400 font-bold shadow-[2px_2px_0px_#000]">
+            Interactive Labs Available
+          </span>
+        </div>
+
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4 pt-2">
+          <div className="p-4 bg-canvas-surface border-2 border-black shadow-[3px_3px_0px_#000] space-y-3 flex flex-col justify-between">
+            <div className="space-y-1.5">
+              <span className="text-xs font-mono font-bold text-cern-cyan uppercase">90.7 km Tunnel Infrastructure</span>
+              <h3 className="text-base font-display font-extrabold text-white">Future Circular Collider (FCC-ee &amp; FCC-hh)</h3>
+              <p className="text-xs text-text-secondary leading-relaxed font-sans">
+                Explore the 90.7 km ring model, the 50 MW synchrotron radiation wall-plug limit, and compare precision electroweak Higgs factories against a 100 TeV hadron collider with 16 T dipoles.
+              </p>
+            </div>
+            <Link
+              href="/simulations?module=fcc"
+              className="inline-flex items-center justify-between px-3.5 py-2 bg-cern-blue hover:bg-cern-accent border-2 border-black shadow-[2px_2px_0px_#000] text-white text-xs font-mono font-bold transition-all"
+            >
+              <span>Launch FCC 91 km Simulator</span>
+              <ArrowRight className="w-4 h-4 text-cern-cyan" />
+            </Link>
+          </div>
+
+          <div className="p-4 bg-canvas-surface border-2 border-black shadow-[3px_3px_0px_#000] space-y-3 flex flex-col justify-between">
+            <div className="space-y-1.5">
+              <span className="text-xs font-mono font-bold text-emerald-400 uppercase">Superconducting RF Crabbing</span>
+              <h3 className="text-base font-display font-extrabold text-white">HL-LHC Crab Cavity &amp; Bunch Rotation</h3>
+              <p className="text-xs text-text-secondary leading-relaxed font-sans">
+                Simulate 400.79 MHz transverse deflecting RF cavities compensating the 500 &mu;rad crossing angle to boost HL-LHC peak luminosity by +170%.
+              </p>
+            </div>
+            <Link
+              href="/simulations?module=crab"
+              className="inline-flex items-center justify-between px-3.5 py-2 bg-emerald-500 hover:bg-emerald-600 border-2 border-black shadow-[2px_2px_0px_#000] text-black text-xs font-mono font-bold transition-all"
+            >
+              <span>Launch Crab Cavity Simulator</span>
+              <ArrowRight className="w-4 h-4 text-black" />
+            </Link>
+          </div>
         </div>
       </section>
     </div>

@@ -131,6 +131,38 @@ export default function ExperimentsPage() {
                   <span>Open Twin</span>
                   <ArrowRight className="w-3.5 h-3.5" />
                 </Link>
+              ) : exp.id === 'antimatter-factory' ? (
+                <Link
+                  href="/simulations?module=antimatter"
+                  className="flex items-center gap-1.5 px-2.5 py-1 bg-cern-magenta hover:bg-pink-600 border-2 border-black shadow-[2px_2px_0px_#000] text-white font-bold transition-all text-xs"
+                >
+                  <span>ALPHA-g Sim</span>
+                  <ArrowRight className="w-3.5 h-3.5" />
+                </Link>
+              ) : exp.id === 'awake' ? (
+                <Link
+                  href="/simulations?module=awake"
+                  className="flex items-center gap-1.5 px-2.5 py-1 bg-cern-blue hover:bg-cern-accent border-2 border-black shadow-[2px_2px_0px_#000] text-white font-bold transition-all text-xs"
+                >
+                  <span>Wakefield Sim</span>
+                  <ArrowRight className="w-3.5 h-3.5" />
+                </Link>
+              ) : exp.id === 'alice' ? (
+                <Link
+                  href="/simulations?module=alice"
+                  className="flex items-center gap-1.5 px-2.5 py-1 bg-amber-500 hover:bg-amber-600 border-2 border-black shadow-[2px_2px_0px_#000] text-black font-bold transition-all text-xs"
+                >
+                  <span>QGP Flow Sim</span>
+                  <ArrowRight className="w-3.5 h-3.5" />
+                </Link>
+              ) : exp.id === 'lhcb' ? (
+                <Link
+                  href="/simulations?module=lhcb"
+                  className="flex items-center gap-1.5 px-2.5 py-1 bg-purple-600 hover:bg-purple-700 border-2 border-black shadow-[2px_2px_0px_#000] text-white font-bold transition-all text-xs"
+                >
+                  <span>R_K Decay Sim</span>
+                  <ArrowRight className="w-3.5 h-3.5" />
+                </Link>
               ) : null}
             </div>
           </div>

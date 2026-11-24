@@ -304,7 +304,7 @@ export function BeamOpticsSandbox() {
                 {results.isStable ? 'Lattice Stable' : 'Lattice Unstable (Lost Beam)'}
               </div>
               <div className="text-[11px] opacity-90 font-mono">
-                |Tr(M)| = {Math.abs(results.trace).toFixed(3)} {results.isStable ? '< 2.0' : '&ge; 2.0'}
+                |Tr(M)| = {Math.abs(results.trace).toFixed(3)} {results.isStable ? '< 2.0' : '≥ 2.0'}
               </div>
             </div>
           </div>

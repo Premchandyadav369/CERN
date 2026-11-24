@@ -21,6 +21,8 @@ export const TopBar: React.FC = () => {
   const pathname = usePathname();
   const userLevel = useGlobalStore((s) => s.userLevel);
   const setUserLevel = useGlobalStore((s) => s.setUserLevel);
+  const eli5Mode = useGlobalStore((s) => s.eli5Mode);
+  const toggleEli5Mode = useGlobalStore((s) => s.toggleEli5Mode);
   const dataClassOverlay = useGlobalStore((s) => s.dataClassOverlay);
   const setDataClassOverlay = useGlobalStore((s) => s.setDataClassOverlay);
   const reduceMotion = useGlobalStore((s) => s.reduceMotion);
@@ -114,6 +116,25 @@ export const TopBar: React.FC = () => {
             ))}
           </div>
 
+          {/* High-Contrast Neobrutalist ELI5 Toggle Button */}
+          <button
+            onClick={toggleEli5Mode}
+            className={`flex items-center gap-1.5 px-2.5 py-1 text-xs font-mono font-bold border-2 border-black shadow-[2px_2px_0px_#000] active:translate-x-[1px] active:translate-y-[1px] active:shadow-none transition-all ${
+              eli5Mode
+                ? 'bg-amber-300 text-black shadow-[2px_2px_0px_#000]'
+                : 'bg-canvas-surface text-text-secondary hover:text-white hover:bg-canvas-raised'
+            }`}
+            title={eli5Mode ? "ELI5 (Explain Like I'm 5) mode active - click to disable" : "Enable ELI5 (Explain Like I'm 5) intuitive analogies"}
+          >
+            <span>👶</span>
+            <span>ELI5</span>
+            <span
+              className={`w-1.5 h-1.5 rounded-full ${
+                eli5Mode ? 'bg-black animate-pulse' : 'bg-text-muted'
+              }`}
+            />
+          </button>
+
           {/* Reduce Motion Accessibility Toggle */}
           <button
             onClick={() => setReduceMotion(!reduceMotion)}
@@ -146,6 +167,23 @@ export const TopBar: React.FC = () => {
 
       {/* Mobile Nav Sub-bar */}
       <div className="xl:hidden flex items-center overflow-x-auto gap-2 px-4 py-2 border-t-3 border-black bg-canvas-surface text-xs scrollbar-none">
+        <button
+          onClick={toggleEli5Mode}
+          className={`whitespace-nowrap flex items-center gap-1.5 px-2.5 py-1 border-2 border-black font-mono font-bold text-xs transition-all active:translate-x-[1px] active:translate-y-[1px] cursor-pointer ${
+            eli5Mode
+              ? 'bg-amber-300 text-black shadow-[2px_2px_0px_#000]'
+              : 'bg-canvas-sub text-text-secondary hover:text-white shadow-[2px_2px_0px_#000]'
+          }`}
+          title={eli5Mode ? "ELI5 mode active - click to disable" : "Enable ELI5 analogies"}
+        >
+          <span>👶</span>
+          <span>ELI5</span>
+          <span
+            className={`w-1.5 h-1.5 rounded-full ${
+              eli5Mode ? 'bg-black animate-pulse' : 'bg-text-muted'
+            }`}
+          />
+        </button>
         {navLinks.map((link) => {
           const isActive = pathname === link.href || (link.href !== '/' && pathname.startsWith(link.href));
           return (

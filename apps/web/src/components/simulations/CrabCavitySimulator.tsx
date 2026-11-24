@@ -2,6 +2,7 @@
 
 import React, { useState, useEffect, useRef, useMemo } from 'react';
 import { FidelityBadge } from '@/components/provenance/FidelityBadge';
+import { Eli5Card } from '@/components/ui/Eli5Card';
 import {
   RotateCcw,
   Sliders,
@@ -316,7 +317,20 @@ export function CrabCavitySimulator() {
   };
 
   return (
-    <div className="w-full bg-canvas-surface border-3 border-black shadow-[6px_6px_0px_0px_#000000] p-5 space-y-6">
+    <div className="w-full space-y-4">
+      <Eli5Card
+        title="The High-Speed Sideways Bowling Ball Kick"
+        analogy="Giving angled bowling balls a high-speed sideways kick so they collide dead-center and smash with maximum power."
+        keyPoints={[
+          "Beams must cross at an angle (500 microradians) to avoid unwanted parasitic collisions along the common beam vacuum chamber.",
+          "Elongated bunches (7.5 cm long) only graze each other at an angle. Crab cavities apply a time-dependent transverse RF electric kick that rotates bunches sideways so they collide with 100% head-on geometric overlap!"
+        ]}
+        whatToTry="Toggle Crab Cavity Voltage between 0.0 MV (uncrabbed, 35% overlap) and 3.4 MV (nominal HL-LHC, 100% overlap) to see the luminosity boost in real time!"
+        arxivId="2104.09848"
+        doi="10.1103/PhysRevAccelBeams.24.062001"
+        citationLabel="HL-LHC Collaboration: Crab Cavity Beam Tests (PRAB 2021)"
+      />
+      <div className="w-full bg-canvas-surface border-3 border-black shadow-[6px_6px_0px_0px_#000000] p-5 space-y-6">
       {/* Top Bar with Fidelity Badge */}
       <div className="flex flex-col md:flex-row md:items-center justify-between gap-3 border-b-2 border-black pb-4">
         <div>
@@ -612,6 +626,7 @@ export function CrabCavitySimulator() {
           </div>
         </div>
       </div>
+    </div>
     </div>
   );
 }

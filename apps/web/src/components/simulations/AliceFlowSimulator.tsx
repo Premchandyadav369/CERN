@@ -2,6 +2,7 @@
 
 import React, { useState, useEffect, useRef, useMemo } from 'react';
 import { FidelityBadge } from '@/components/provenance/FidelityBadge';
+import { Eli5Card } from '@/components/ui/Eli5Card';
 import {
   Activity,
   Sliders,
@@ -404,7 +405,20 @@ export function AliceFlowSimulator() {
   };
 
   return (
-    <div className="w-full bg-canvas-surface border-3 border-black shadow-[6px_6px_0px_0px_#000000] p-5 space-y-6">
+    <div className="w-full space-y-4">
+      <Eli5Card
+        title="Cosmic Primordial Soup & Squeezed Water Balloon"
+        analogy="Melting protons into the hottest, stickiest soup in the cosmos (100,000× hotter than the sun) and watching it squirt out like an almond-shaped water balloon."
+        keyPoints={[
+          "Colliding heavy lead ions off-center creates an almond-shaped overlap zone of deconfined quarks and gluons at temperatures above 2 trillion Kelvin.",
+          "Extreme pressure along the narrow axis squirts particles preferentially into the reaction plane, producing anisotropic elliptic flow (v2) characteristic of an almost zero-viscosity perfect fluid."
+        ]}
+        whatToTry="Set Impact Parameter to 7.0–8.0 fm and slide Shear Viscosity η/s down to the quantum lower bound (1/(4π)) to see violent elliptic flow expansion!"
+        arxivId="2307.03759"
+        doi="10.1007/JHEP10(2023)152"
+        citationLabel="ALICE Collaboration: Pb-Pb Harmonic Flow (JHEP 2023)"
+      />
+      <div className="w-full bg-canvas-surface border-3 border-black shadow-[6px_6px_0px_0px_#000000] p-5 space-y-6">
       {/* Top Bar with Fidelity Badge */}
       <div className="flex flex-col md:flex-row md:items-center justify-between gap-3 border-b-2 border-black pb-4">
         <div>
@@ -816,6 +830,7 @@ export function AliceFlowSimulator() {
           </div>
         </div>
       </div>
+    </div>
     </div>
   );
 }

@@ -3,6 +3,7 @@
 import React, { useState, useMemo } from 'react';
 import { FidelityBadge } from '@/components/provenance/FidelityBadge';
 import { Value } from '@/components/provenance/Value';
+import { Eli5Card } from '@/components/ui/Eli5Card';
 import { Download, RefreshCw, Zap, Info, AlertTriangle, CheckCircle } from 'lucide-react';
 
 export function BeamOpticsSandbox() {
@@ -151,7 +152,19 @@ export function BeamOpticsSandbox() {
   };
 
   return (
-    <div className="w-full bg-canvas-surface border-3 border-black shadow-[6px_6px_0px_0px_#000000] p-5 space-y-6">
+    <div className="w-full space-y-4">
+      <Eli5Card
+        title="Magnetic Tennis Paddles (FODO Cell)"
+        analogy="Two magnetic tennis paddles (one squashing sideways, one squashing vertically) preventing the beam from ever splashing against the vacuum pipe walls."
+        keyPoints={[
+          "Maxwell's equations dictate that magnetic quadrupoles focus in one transverse axis while defocusing in the perpendicular axis.",
+          "Alternating focusing and defocusing magnets separated by drift spaces creates a net restoring force in both planes (Strong Focusing principle)."
+        ]}
+        whatToTry="Click the 'Unstable / Resonant Blowup' preset or lower Focal Length below L/4 (26.7 m) to observe mathematical instability (|Tr(M)| >= 2) and beam loss!"
+        doi="10.5170/CERN-2004-003-V-1"
+        citationLabel="CERN LHC Design Report Vol. 1: Main Ring Optics & FODO Lattice"
+      />
+      <div className="w-full bg-canvas-surface border-3 border-black shadow-[6px_6px_0px_0px_#000000] p-5 space-y-6">
       {/* Top Bar with Fidelity Badge */}
       <div className="flex flex-col md:flex-row md:items-center justify-between gap-3 border-b-2 border-black pb-4">
         <div>
@@ -447,6 +460,7 @@ export function BeamOpticsSandbox() {
           </div>
         </div>
       </div>
+    </div>
     </div>
   );
 }

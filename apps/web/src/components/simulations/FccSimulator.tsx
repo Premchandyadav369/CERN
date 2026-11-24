@@ -2,6 +2,7 @@
 
 import React, { useState, useEffect, useRef, useMemo } from 'react';
 import { FidelityBadge } from '@/components/provenance/FidelityBadge';
+import { Eli5Card } from '@/components/ui/Eli5Card';
 import {
   RotateCcw,
   Sliders,
@@ -396,7 +397,20 @@ export function FccSimulator() {
   };
 
   return (
-    <div className="w-full bg-canvas-surface border-3 border-black shadow-[6px_6px_0px_0px_#000000] p-5 space-y-6">
+    <div className="w-full space-y-4">
+      <Eli5Card
+        title="The 91 km Super-Highway Ring"
+        analogy="Why building a highway ring larger than the entire city of Geneva prevents fast particles from wasting all their energy turning sharp corners."
+        keyPoints={[
+          "When ultra-fast charged particles bend around corners, they spit out intense synchrotron light, losing energy rapidly (proportional to γ⁴ / ρ).",
+          "A massive 90.7 km ring makes the curves gentle enough to keep synchrotron losses under the strict 50 MW/beam ceiling, paving the way for 100 TeV discovery physics."
+        ]}
+        whatToTry="Select 'FCC-ee Higgs (120 GeV)' and see synchrotron radiation hit 39 MW per beam, then switch to 'FCC-hh Protons' to see why heavy protons barely radiate at all!"
+        arxivId="1905.05078"
+        doi="10.1140/epjst/e2019-900087-0"
+        citationLabel="FCC Collaboration: CDR Vol. 3 Hadron Collider (EPJ ST 2019)"
+      />
+      <div className="w-full bg-canvas-surface border-3 border-black shadow-[6px_6px_0px_0px_#000000] p-5 space-y-6">
       {/* Top Bar with Fidelity Badge */}
       <div className="flex flex-col md:flex-row md:items-center justify-between gap-3 border-b-2 border-black pb-4">
         <div>
@@ -792,6 +806,7 @@ export function FccSimulator() {
           </div>
         </div>
       </div>
+    </div>
     </div>
   );
 }

@@ -2,9 +2,13 @@ import { create } from 'zustand';
 
 export type UserLevel = 'BEGINNER' | 'UNDERGRAD' | 'RESEARCHER';
 
-interface GlobalState {
+export interface GlobalState {
   userLevel: UserLevel;
   setUserLevel: (level: UserLevel) => void;
+  complexityLevel?: 'beginner' | 'undergrad' | 'researcher';
+  eli5Mode: boolean;
+  setEli5Mode: (active: boolean) => void;
+  toggleEli5Mode: () => void;
   reduceMotion: boolean;
   setReduceMotion: (reduce: boolean) => void;
   dataClassOverlay: boolean;
@@ -18,8 +22,17 @@ interface GlobalState {
 }
 
 export const useGlobalStore = create<GlobalState>((set) => ({
-  userLevel: 'UNDERGRAD',
-  setUserLevel: (level) => set({ userLevel: level }),
+  userLevel: 'BEGINNER',
+  complexityLevel: 'beginner',
+  setUserLevel: (level) =>
+    set(() => ({
+      userLevel: level,
+      complexityLevel: level.toLowerCase() as 'beginner' | 'undergrad' | 'researcher',
+      eli5Mode: level === 'BEGINNER',
+    })),
+  eli5Mode: true,
+  setEli5Mode: (active) => set({ eli5Mode: active }),
+  toggleEli5Mode: () => set((state) => ({ eli5Mode: !state.eli5Mode })),
   reduceMotion: false,
   setReduceMotion: (reduce) => set({ reduceMotion: reduce }),
   dataClassOverlay: false,
@@ -31,3 +44,5 @@ export const useGlobalStore = create<GlobalState>((set) => ({
   activeManifestId: null,
   setActiveManifestId: (id) => set({ activeManifestId: id, citationDrawerOpen: id !== null }),
 }));
+
+

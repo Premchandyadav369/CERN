@@ -12,6 +12,7 @@ import {
 } from '@cern-x/sim-core';
 import { Value } from '@/components/provenance/Value';
 import { FidelityBadge } from '@/components/provenance/FidelityBadge';
+import { Eli5Card } from '@/components/ui/Eli5Card';
 import { Play, Pause, RotateCcw, Sliders, Info, Zap, Activity, Download } from 'lucide-react';
 
 export const LhcSimulator: React.FC = () => {
@@ -99,7 +100,19 @@ export const LhcSimulator: React.FC = () => {
   };
 
   return (
-    <div className="w-full flex flex-col xl:flex-row gap-6 p-4 lg:p-6 bg-canvas-sub border-3 border-black shadow-[6px_6px_0px_0px_#000000]">
+    <div className="space-y-4">
+      <Eli5Card
+        title="The 27 km Subatomic Racetrack"
+        analogy="The 27 km subatomic racetrack where trains crash into each other to reveal the fundamental Lego blocks of the universe."
+        keyPoints={[
+          "Two counter-rotating proton beams circulate at 99.9999991% the speed of light, guided in ultra-high vacuum pipes.",
+          "Superconducting magnets (8.33 Tesla, cooled with superfluid helium to 1.9 K) curve the beam to steer 2,748 bunches into head-on collisions."
+        ]}
+        whatToTry="Move the Beam Energy slider from 450 GeV injection to 6,800 GeV and observe the Required Dipole B rise directly with magnetic rigidity."
+        doi="10.23730/CYRSP-2019-004.1"
+        citationLabel="CERN Yellow Reports: LHC Run 2 Luminosity & Beam Performance"
+      />
+      <div className="w-full flex flex-col xl:flex-row gap-6 p-4 lg:p-6 bg-canvas-sub border-3 border-black shadow-[6px_6px_0px_0px_#000000]">
       {/* LEFT: Parameter Control Deck */}
       <div className="w-full xl:w-80 flex flex-col justify-between bg-canvas-surface border-2 border-black shadow-[4px_4px_0px_#000] p-4 space-y-5">
         <div className="space-y-4">
@@ -431,6 +444,7 @@ export const LhcSimulator: React.FC = () => {
           <span>ENGINE: @cern-x/sim-core (Deterministic)</span>
         </div>
       </div>
+    </div>
     </div>
   );
 };

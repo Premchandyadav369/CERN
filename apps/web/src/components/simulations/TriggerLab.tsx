@@ -3,6 +3,7 @@
 import React, { useState } from 'react';
 import { Value } from '@/components/provenance/Value';
 import { FidelityBadge } from '@/components/provenance/FidelityBadge';
+import { Eli5Card } from '@/components/ui/Eli5Card';
 import { Sliders, Cpu, Activity, AlertTriangle, ShieldCheck, Gauge, Download } from 'lucide-react';
 
 export const TriggerLab: React.FC = () => {
@@ -89,7 +90,20 @@ export const TriggerLab: React.FC = () => {
   };
 
   return (
-    <div className="w-full flex flex-col xl:flex-row gap-6 p-4 lg:p-6 bg-canvas-sub border-3 border-black shadow-[6px_6px_0px_0px_#000000]">
+    <div className="w-full space-y-4">
+      <Eli5Card
+        title="The World's Most Ruthless High-Speed Camera"
+        analogy="A camera shooting 40 million frames every single second, instantly throwing away 99.99% of blurry photos and only saving the rarest masterpieces."
+        keyPoints={[
+          "Proton bunches collide 40 million times a second (every 25 nanoseconds), creating a catastrophic flood of raw data.",
+          "Custom FPGA electronics (Level 1) make decisions within 3.2 microseconds, tossing mundane noise and only forwarding genuine candidates to the computer cluster."
+        ]}
+        whatToTry="Dial the Single Muon p_T threshold down from 24 GeV to 10 GeV and watch the Level-1 trigger rate explode into dangerous deadtime saturation!"
+        arxivId="1609.02366"
+        doi="10.1088/1748-0221/12/01/P01020"
+        citationLabel="CMS Collaboration: The CMS Trigger System (JINST 2017)"
+      />
+      <div className="w-full flex flex-col xl:flex-row gap-6 p-4 lg:p-6 bg-canvas-sub border-3 border-black shadow-[6px_6px_0px_0px_#000000]">
       {/* LEFT: Trigger Threshold Controls */}
       <div className="w-full xl:w-80 flex flex-col justify-between bg-canvas-surface border-2 border-black shadow-[4px_4px_0px_#000] p-4 space-y-4">
         <div className="space-y-4">
@@ -369,6 +383,7 @@ export const TriggerLab: React.FC = () => {
           <span>Simulation Fidelity: Educational Toy Model</span>
         </div>
       </div>
+    </div>
     </div>
   );
 };

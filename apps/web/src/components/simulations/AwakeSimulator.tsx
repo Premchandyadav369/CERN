@@ -2,6 +2,7 @@
 
 import React, { useState, useEffect, useRef, useMemo } from 'react';
 import { FidelityBadge } from '@/components/provenance/FidelityBadge';
+import { Eli5Card } from '@/components/ui/Eli5Card';
 import {
   Zap,
   Sliders,
@@ -368,7 +369,20 @@ export function AwakeSimulator() {
   };
 
   return (
-    <div className="w-full bg-canvas-surface border-3 border-black shadow-[6px_6px_0px_0px_#000000] p-5 space-y-6">
+    <div className="w-full space-y-4">
+      <Eli5Card
+        title="Proton Monster Boat & Electron Surfer"
+        analogy="A monster boat creating giant waves in a rubidium lake, with a tiny electron surfboard riding the wave to gain gigavolts of speed in just 10 meters."
+        keyPoints={[
+          "Traditional metallic radiofrequency cavities spark if pushed beyond ~50 MV/m, demanding kilometers of tunnel to reach high energies.",
+          "AWAKE uses a 400 GeV proton bunch to plow through ionized rubidium plasma, creating a giant wakefield wave that accelerates electrons at >1 Gigavolt/meter!"
+        ]}
+        whatToTry="Adjust Injection Phase to ~270° (the sweet spot of the wakefield crest) to maximize energy gain and achieve multi-GeV acceleration!"
+        arxivId="2203.06587"
+        doi="10.23731/CYRM-2022-001"
+        citationLabel="AWAKE Run 2 Collaboration (CERN Yellow Reports 2022)"
+      />
+      <div className="w-full bg-canvas-surface border-3 border-black shadow-[6px_6px_0px_0px_#000000] p-5 space-y-6">
       {/* Top Bar with Fidelity Badge */}
       <div className="flex flex-col md:flex-row md:items-center justify-between gap-3 border-b-2 border-black pb-4">
         <div>
@@ -694,6 +708,7 @@ export function AwakeSimulator() {
           </div>
         </div>
       </div>
+    </div>
     </div>
   );
 }

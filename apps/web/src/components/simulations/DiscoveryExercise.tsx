@@ -4,6 +4,7 @@ import React, { useState, useMemo } from 'react';
 import { SeededRNG, asimovSignificance, simpleSignificance } from '@cern-x/sim-core';
 import { FidelityBadge } from '@/components/provenance/FidelityBadge';
 import { Value } from '@/components/provenance/Value';
+import { Eli5Card } from '@/components/ui/Eli5Card';
 import { Sliders, Sparkles, AlertCircle, Eye, RefreshCw, CheckCircle2, Download } from 'lucide-react';
 
 export const DiscoveryExercise: React.FC = () => {
@@ -105,7 +106,20 @@ export const DiscoveryExercise: React.FC = () => {
   };
 
   return (
-    <div className="w-full flex flex-col xl:flex-row gap-6 p-4 lg:p-6 bg-canvas-sub border-3 border-black shadow-[6px_6px_0px_0px_#000000]">
+    <div className="w-full space-y-4">
+      <Eli5Card
+        title="Spotting the Golden Pebble on a Sand Mountain"
+        analogy="Spotting a tiny real bump on top of a mountain of sand, with a 1-in-3.5-million certainty standard before shouting 'Discovery!'."
+        keyPoints={[
+          "Trillions of everyday particle interactions produce a smooth mountain of background noise. A new particle appears as a tiny bump atop this background.",
+          "Because statistical flukes occur randomly, physicists require 5-sigma certainty (99.99994% confidence) to ensure the bump isn't a statistical phantom."
+        ]}
+        whatToTry="Adjust Leading and Sub-leading Photon p_T cuts to suppress background noise until the significance meter turns GREEN and exceeds 5.0σ!"
+        arxivId="1807.05050"
+        doi="10.1016/j.physletb.2018.07.050"
+        citationLabel="ATLAS Collaboration: Higgs Diphoton & 4-Lepton Discovery (Phys. Lett. B 2018)"
+      />
+      <div className="w-full flex flex-col xl:flex-row gap-6 p-4 lg:p-6 bg-canvas-sub border-3 border-black shadow-[6px_6px_0px_0px_#000000]">
       {/* Banner: Simulated Exercise */}
       <div className="w-full xl:w-80 flex flex-col justify-between bg-canvas-surface border-2 border-black shadow-[4px_4px_0px_#000] p-4 space-y-4">
         <div className="space-y-4">
@@ -331,6 +345,7 @@ export const DiscoveryExercise: React.FC = () => {
           <span>Formula: Cowan et al. (EPJC 71 (2011) 1554)</span>
         </div>
       </div>
+    </div>
     </div>
   );
 };

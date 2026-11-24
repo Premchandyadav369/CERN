@@ -2,6 +2,7 @@
 
 import React, { useState, useEffect, useRef, useMemo } from 'react';
 import { FidelityBadge } from '@/components/provenance/FidelityBadge';
+import { Eli5Card } from '@/components/ui/Eli5Card';
 import {
   Sparkles,
   Sliders,
@@ -526,7 +527,20 @@ export function LhcbDecaySimulator() {
   };
 
   return (
-    <div className="w-full bg-canvas-surface border-3 border-black shadow-[6px_6px_0px_0px_#000000] p-5 space-y-6">
+    <div className="w-full space-y-4">
+      <Eli5Card
+        title="The Cosmic Twin Test & Ghost Particle Hunters"
+        analogy="Checking if nature treats electrons and muons as identical twins, or if mysterious ghost particles are secretly favoring one over the other."
+        keyPoints={[
+          "The Standard Model states that electrons and muons are identical twins in their fundamental electroweak gauge couplings (Lepton Flavour Universality).",
+          "By measuring the exact ratio R_K = BR(B -> K mu+ mu-) / BR(B -> K e+ e-), physicists search for hypothetical Leptoquarks or Z' bosons that break this symmetry."
+        ]}
+        whatToTry="Dial the Wilson Coefficient ΔC9 slider to -1.0 to see how a new physics vector current depresses R_K away from the Standard Model value of ~1.0!"
+        arxivId="2212.09152"
+        doi="10.1103/PhysRevLett.131.051803"
+        citationLabel="LHCb Collaboration: Lepton Universality in B Decays (PRL 2023)"
+      />
+      <div className="w-full bg-canvas-surface border-3 border-black shadow-[6px_6px_0px_0px_#000000] p-5 space-y-6">
       {/* Top Bar with Fidelity Badge */}
       <div className="flex flex-col md:flex-row md:items-center justify-between gap-3 border-b-2 border-black pb-4">
         <div>
@@ -1093,6 +1107,7 @@ export function LhcbDecaySimulator() {
           </div>
         </div>
       </div>
+    </div>
     </div>
   );
 }

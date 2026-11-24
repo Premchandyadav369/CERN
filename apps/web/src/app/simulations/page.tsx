@@ -12,6 +12,7 @@ import { AliceFlowSimulator } from '@/components/simulations/AliceFlowSimulator'
 import { LhcbDecaySimulator } from '@/components/simulations/LhcbDecaySimulator';
 import { CrabCavitySimulator } from '@/components/simulations/CrabCavitySimulator';
 import { FccSimulator } from '@/components/simulations/FccSimulator';
+import { ScienceLiteratureBridge } from '@/components/knowledge/ScienceLiteratureBridge';
 import {
   Zap,
   Gauge,
@@ -23,6 +24,7 @@ import {
   Layers,
   Compass,
   Radio,
+  BookOpen,
 } from 'lucide-react';
 
 function SimulationsContent() {
@@ -46,6 +48,7 @@ function SimulationsContent() {
     { id: 'fcc', label: 'FCC 91km Collider', icon: Compass, color: 'text-cern-cyan', shadow: 'shadow-[4px_4px_0px_#00E5FF]' },
     { id: 'trigger', label: 'Trigger & DAQ', icon: Gauge, color: 'text-amber-400', shadow: 'shadow-[4px_4px_0px_#FFE600]' },
     { id: 'discovery', label: '5-Sigma Discovery', icon: Radio, color: 'text-pink-400', shadow: 'shadow-[4px_4px_0px_#FF0055]' },
+    { id: 'literature', label: 'arXiv & Research Bridge', icon: BookOpen, color: 'text-emerald-400', shadow: 'shadow-[4px_4px_0px_#00FF66]' },
   ];
 
   const handleTabChange = (tabId: string) => {
@@ -61,8 +64,18 @@ function SimulationsContent() {
     <div className="w-full max-w-7xl mx-auto px-4 lg:px-8 py-8 space-y-8">
       {/* Header */}
       <div className="p-6 bg-canvas-sub border-3 border-black shadow-[6px_6px_0px_0px_#000000]">
-        <div className="inline-block px-2.5 py-1 bg-cern-cyan text-black font-mono font-bold text-xs border-2 border-black shadow-[2px_2px_0px_#000] uppercase tracking-wider mb-3">
-          /// QUANTITATIVE SIMULATION LABORATORY ///
+        <div className="flex flex-wrap items-center justify-between gap-2 mb-3">
+          <div className="inline-block px-2.5 py-1 bg-cern-cyan text-black font-mono font-bold text-xs border-2 border-black shadow-[2px_2px_0px_#000] uppercase tracking-wider">
+            /// QUANTITATIVE SIMULATION LABORATORY ///
+          </div>
+          <button
+            onClick={() => handleTabChange('literature')}
+            className="flex items-center gap-1.5 px-3 py-1 bg-emerald-400 hover:bg-emerald-300 text-black font-mono font-bold text-xs border-2 border-black shadow-[2px_2px_0px_#000] active:translate-x-0.5 active:translate-y-0.5 transition-all"
+            title="View peer-reviewed papers and arXiv preprints for all simulations"
+          >
+            <BookOpen className="w-3.5 h-3.5" />
+            <span>arXiv &amp; Peer-Reviewed Papers</span>
+          </button>
         </div>
         <h1 className="text-3xl lg:text-4xl font-display font-extrabold text-white tracking-tight">
           Interactive Physics &amp; Experiment Simulators
@@ -107,6 +120,7 @@ function SimulationsContent() {
         {activeTab === 'fcc' && <FccSimulator />}
         {activeTab === 'trigger' && <TriggerLab />}
         {activeTab === 'discovery' && <DiscoveryExercise />}
+        {activeTab === 'literature' && <ScienceLiteratureBridge />}
       </div>
     </div>
   );

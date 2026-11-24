@@ -2,6 +2,7 @@
 
 import React, { useState, useEffect, useRef, useMemo } from 'react';
 import { FidelityBadge } from '@/components/provenance/FidelityBadge';
+import { Eli5Card } from '@/components/ui/Eli5Card';
 import {
   Atom,
   RotateCcw,
@@ -432,7 +433,20 @@ export function AntimatterSimulator() {
   };
 
   return (
-    <div className="w-full bg-canvas-surface border-3 border-black shadow-[6px_6px_0px_0px_#000000] p-5 space-y-6">
+    <div className="w-full space-y-4">
+      <Eli5Card
+        title="Dropping Anti-Apples in Gravity"
+        analogy="Dropping anti-apples in gravity to see whether antimatter falls down or floats up like a helium balloon."
+        keyPoints={[
+          "For decades, science fiction hypothesized that antimatter might fall upwards like an anti-gravity balloon.",
+          "In 2023, CERN's ALPHA-g experiment released antihydrogen atoms in a vertical magnetic trap, proving antimatter falls downward at ~1.0g just like normal matter."
+        ]}
+        whatToTry="Toggle between 'ALPHA-g 2023 (0.75g)' and 'Hypothetical Antigravity (-1.0g)' and hit 'RAMP TRAP DOWN' to watch where the annihilation flashes hit the detector!"
+        arxivId="2309.16782"
+        doi="10.1038/s41586-023-06527-1"
+        citationLabel="ALPHA-g Collaboration (Nature 621, 2023)"
+      />
+      <div className="w-full bg-canvas-surface border-3 border-black shadow-[6px_6px_0px_0px_#000000] p-5 space-y-6">
       {/* Top Bar with Fidelity Badge */}
       <div className="flex flex-col md:flex-row md:items-center justify-between gap-3 border-b-2 border-black pb-4">
         <div>
@@ -905,6 +919,7 @@ export function AntimatterSimulator() {
           </div>
         </div>
       )}
+    </div>
     </div>
   );
 }

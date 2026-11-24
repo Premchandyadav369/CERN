@@ -16,8 +16,8 @@ const DynamicLightTunnel = dynamic(
             'radial-gradient(circle at center, rgba(0, 229, 255, 0.08) 0%, rgba(0, 51, 160, 0.15) 40%, rgba(6, 10, 18, 0.95) 80%, #060a12 100%)',
         }}
       >
-        <div className="flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-canvas-surface/80 border border-cern-cyan/30 text-cern-cyan text-xs font-mono shadow-lg backdrop-blur-sm">
-          <span className="w-2 h-2 rounded-full bg-cern-cyan animate-pulse" />
+        <div className="flex items-center gap-2.5 px-4 py-2 border-3 border-black bg-black text-cern-cyan text-xs font-mono font-bold shadow-[4px_4px_0px_#00E5FF] uppercase tracking-wider">
+          <span className="w-2.5 h-2.5 bg-cern-cyan animate-pulse border border-black shadow-[1px_1px_0px_#000]" />
           <span>INITIALIZING BEAMLINE OPTICS...</span>
         </div>
       </div>

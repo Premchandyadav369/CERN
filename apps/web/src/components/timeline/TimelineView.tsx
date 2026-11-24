@@ -23,10 +23,10 @@ export const TimelineView: React.FC = () => {
           <button
             key={cat}
             onClick={() => setFilterCategory(cat)}
-            className={`px-3 py-1.5 rounded border transition-colors ${
+            className={`px-3.5 py-1.5 border-2 border-black font-bold uppercase transition-all active:translate-x-[1px] active:translate-y-[1px] ${
               filterCategory === cat
-                ? 'bg-cern-blue border-cern-accent text-white font-bold'
-                : 'bg-canvas-surface border-canvas-border text-text-secondary hover:text-text-primary'
+                ? 'bg-cern-blue border-black text-white shadow-[3px_3px_0px_#00E5FF] -translate-x-0.5 -translate-y-0.5'
+                : 'bg-canvas-surface border-black text-text-secondary hover:text-white shadow-[2px_2px_0px_#000]'
             }`}
           >
             {cat}
@@ -35,27 +35,29 @@ export const TimelineView: React.FC = () => {
       </div>
 
       {/* Chronological Vertical Timeline */}
-      <div className="relative pl-6 border-l border-canvas-border space-y-8">
+      <div className="relative pl-6 border-l-3 border-black space-y-8 ml-2">
         {filteredItems.map((item) => (
           <div key={item.year + item.title} className="relative group">
             {/* Timeline bullet */}
-            <div className="absolute -left-[31px] top-1 w-3.5 h-3.5 rounded-full bg-canvas-surface border-2 border-cern-cyan group-hover:bg-cern-cyan transition-colors" />
+            <div className="absolute -left-[33px] top-2 w-4 h-4 bg-cern-cyan border-2 border-black shadow-[2px_2px_0px_#000] group-hover:scale-110 transition-transform" />
 
-            <div className="p-4 bg-canvas-surface border border-canvas-border rounded-panel space-y-2 hover:border-canvas-borderStrong transition-colors">
-              <div className="flex items-center justify-between gap-2">
-                <span className="font-mono text-sm font-bold text-cern-cyan">{item.year}</span>
-                <span className="px-2 py-0.5 rounded text-[10px] font-mono font-semibold bg-canvas-sub border border-canvas-border text-text-muted">
+            <div className="p-5 bg-canvas-surface border-2 border-black shadow-[4px_4px_0px_#000] hover:shadow-[5px_5px_0px_#00E5FF] hover:-translate-x-0.5 hover:-translate-y-0.5 transition-all space-y-2.5">
+              <div className="flex items-center justify-between gap-2 pb-2 border-b-2 border-black">
+                <span className="font-mono text-xs font-bold px-2 py-0.5 bg-cern-cyan text-black border-2 border-black shadow-[2px_2px_0px_#000]">
+                  {item.year}
+                </span>
+                <span className="px-2 py-0.5 text-[10px] font-mono font-bold uppercase bg-cern-blue text-white border-2 border-black shadow-[1px_1px_0px_#000]">
                   {item.category}
                 </span>
               </div>
 
-              <h3 className="text-base font-display font-bold text-text-primary">{item.title}</h3>
+              <h3 className="text-base font-display font-extrabold text-white">{item.title}</h3>
 
-              <p className="text-xs text-text-secondary leading-relaxed">{item.description}</p>
+              <p className="text-xs text-text-secondary leading-relaxed font-sans">{item.description}</p>
 
-              <div className="pt-2 border-t border-canvas-border flex items-center justify-between text-[11px] font-mono text-text-muted">
+              <div className="pt-2 border-t-2 border-black flex items-center justify-between text-[11px] font-mono font-bold text-text-muted">
                 <span>Source: {item.source}</span>
-                <span className="text-cern-accent">{item.tier}</span>
+                <span className="text-cern-cyan px-2 py-0.5 bg-black border-2 border-black shadow-[2px_2px_0px_#00E5FF]">{item.tier}</span>
               </div>
             </div>
           </div>

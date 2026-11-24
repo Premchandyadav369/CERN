@@ -41,31 +41,31 @@ export const TopBar: React.FC = () => {
   ];
 
   return (
-    <header className="sticky top-0 z-40 w-full border-b border-canvas-border bg-canvas/95 backdrop-blur-md">
+    <header className="sticky top-0 z-40 w-full border-b-3 border-black bg-canvas/95 backdrop-blur-md shadow-[0_4px_0_0_#000]">
       <div className="flex items-center justify-between px-4 lg:px-6 h-14">
         {/* Brand & Wordmark */}
         <div className="flex items-center gap-6">
           <Link href="/" className="flex items-center gap-2 group">
-            <span className="font-mono font-bold text-lg tracking-wider text-text-primary px-2 py-0.5 border border-cern-blue/60 bg-cern-blue/20 rounded">
+            <span className="font-mono font-bold text-base tracking-wider text-white px-2.5 py-1 border-2 border-black bg-cern-blue shadow-[3px_3px_0px_#00E5FF] group-hover:translate-x-[-1px] group-hover:translate-y-[-1px] group-hover:shadow-[4px_4px_0px_#00E5FF] active:translate-x-[1px] active:translate-y-[1px] active:shadow-none transition-all">
               CERN-X
             </span>
-            <span className="hidden sm:inline-block text-xs font-mono text-text-muted">
+            <span className="hidden sm:inline-block text-[11px] font-mono font-bold tracking-widest text-cern-cyan bg-canvas-surface px-2 py-0.5 border-2 border-black shadow-[2px_2px_0px_#000]">
               DIGITAL UNIVERSE
             </span>
           </Link>
 
           {/* Navigation Links */}
-          <nav className="hidden xl:flex items-center gap-1 text-xs font-medium">
+          <nav className="hidden xl:flex items-center gap-1.5 text-xs font-mono font-bold">
             {navLinks.map((link) => {
               const isActive = pathname === link.href || (link.href !== '/' && pathname.startsWith(link.href));
               return (
                 <Link
                   key={link.href}
                   href={link.href}
-                  className={`px-2.5 py-1.5 rounded transition-all ${
+                  className={`px-2.5 py-1 rounded-none border-2 transition-all active:translate-x-[1px] active:translate-y-[1px] ${
                     isActive
-                      ? 'bg-cern-blue text-white font-semibold shadow-sm shadow-cern-blue/30'
-                      : 'text-text-secondary hover:text-text-primary hover:bg-canvas-raised'
+                      ? 'bg-cern-blue border-black text-white shadow-[3px_3px_0px_#000]'
+                      : 'border-transparent text-text-secondary hover:text-white hover:border-black hover:bg-canvas-raised hover:shadow-[3px_3px_0px_#000]'
                   }`}
                 >
                   {link.label}
@@ -78,34 +78,34 @@ export const TopBar: React.FC = () => {
         {/* Right Utility Bar */}
         <div className="flex items-center gap-2.5">
           {/* Live Accelerator Status Beacon */}
-          <div className="hidden lg:flex items-center gap-1.5 px-2.5 py-1 rounded bg-canvas-surface border border-emerald-500/30 text-[11px] font-mono text-emerald-400">
-            <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse" />
-            <span className="font-semibold tracking-wider">LHC: BEAM 1 &amp; 2 (6.8 TeV)</span>
+          <div className="hidden lg:flex items-center gap-1.5 px-2.5 py-1 bg-canvas-surface border-2 border-black shadow-[3px_3px_0px_#000] text-[11px] font-mono text-emerald-400 font-bold">
+            <span className="w-2 h-2 bg-emerald-400 border border-black shadow-[1px_1px_0px_#000] animate-pulse" />
+            <span className="tracking-wider">LHC: BEAM 1 &amp; 2 (6.8 TeV)</span>
           </div>
 
           {/* Command Palette Trigger */}
           <button
             onClick={() => setCommandPaletteOpen(true)}
-            className="flex items-center gap-2 px-2.5 py-1 text-xs font-mono bg-canvas-surface hover:bg-canvas-raised border border-canvas-border rounded text-text-secondary hover:text-text-primary transition-colors"
+            className="flex items-center gap-2 px-2.5 py-1 text-xs font-mono font-bold bg-canvas-surface hover:bg-canvas-raised border-2 border-black shadow-[3px_3px_0px_#000] hover:shadow-[3px_3px_0px_#00E5FF] active:translate-x-[1px] active:translate-y-[1px] active:shadow-none text-text-secondary hover:text-white transition-all"
             title="Search pages, particles, datasets (Ctrl+K)"
           >
-            <Search className="w-3.5 h-3.5 text-text-muted" />
+            <Search className="w-3.5 h-3.5 text-cern-cyan" />
             <span className="hidden md:inline">Search...</span>
-            <kbd className="hidden md:inline-block px-1 bg-canvas-sub border border-canvas-border rounded text-[10px] text-text-muted">
+            <kbd className="hidden md:inline-block px-1 bg-black border-2 border-black text-[10px] text-cern-cyan font-bold shadow-[2px_2px_0px_#00E5FF]">
               ⌘K
             </kbd>
           </button>
 
           {/* Level Switcher (Beginner / Undergrad / Researcher) */}
-          <div className="hidden md:flex items-center p-0.5 bg-canvas-surface border border-canvas-border rounded text-[11px] font-mono">
+          <div className="hidden md:flex items-center p-0.5 bg-canvas-surface border-2 border-black shadow-[3px_3px_0px_#000] text-[11px] font-mono">
             {(['BEGINNER', 'UNDERGRAD', 'RESEARCHER'] as UserLevel[]).map((level) => (
               <button
                 key={level}
                 onClick={() => setUserLevel(level)}
-                className={`px-2 py-0.5 rounded transition-all ${
+                className={`px-2 py-0.5 font-bold transition-all ${
                   userLevel === level
-                    ? 'bg-cern-accent text-white font-bold'
-                    : 'text-text-muted hover:text-text-secondary'
+                    ? 'bg-cern-accent text-white border-2 border-black shadow-[1px_1px_0px_#000]'
+                    : 'border-2 border-transparent text-text-muted hover:text-white'
                 }`}
                 title={`Explanatory depth level: ${level}`}
               >
@@ -117,24 +117,24 @@ export const TopBar: React.FC = () => {
           {/* Reduce Motion Accessibility Toggle */}
           <button
             onClick={() => setReduceMotion(!reduceMotion)}
-            className={`flex items-center gap-1.5 px-2 py-1 text-xs font-mono rounded border transition-colors ${
+            className={`flex items-center gap-1.5 px-2.5 py-1 text-xs font-mono font-bold border-2 border-black shadow-[3px_3px_0px_#000] active:translate-x-[1px] active:translate-y-[1px] active:shadow-none transition-all ${
               reduceMotion
-                ? 'bg-amber-950/60 border-amber-500 text-amber-300'
-                : 'bg-canvas-surface border-canvas-border text-text-muted hover:text-text-primary'
+                ? 'bg-amber-400 text-black shadow-[3px_3px_0px_#000]'
+                : 'bg-canvas-surface text-text-muted hover:text-white hover:bg-canvas-raised'
             }`}
             title={reduceMotion ? 'Reduced motion active (click to restore animation)' : 'Toggle reduced motion'}
           >
-            <span className={`w-1.5 h-1.5 rounded-full ${reduceMotion ? 'bg-amber-400' : 'bg-text-muted'}`} />
+            <span className={`w-1.5 h-1.5 ${reduceMotion ? 'bg-black' : 'bg-text-muted'}`} />
             <span className="hidden xl:inline text-[11px]">MOTION</span>
           </button>
 
           {/* Data Class Overlay Toggle */}
           <button
             onClick={() => setDataClassOverlay(!dataClassOverlay)}
-            className={`flex items-center gap-1.5 px-2 py-1 text-xs font-mono rounded border transition-colors ${
+            className={`flex items-center gap-1.5 px-2.5 py-1 text-xs font-mono font-bold border-2 border-black shadow-[3px_3px_0px_#000] active:translate-x-[1px] active:translate-y-[1px] active:shadow-none transition-all ${
               dataClassOverlay
-                ? 'bg-emerald-950/60 border-emerald-500 text-emerald-300 shadow-sm shadow-emerald-950'
-                : 'bg-canvas-surface border-canvas-border text-text-muted hover:text-text-primary'
+                ? 'bg-emerald-400 text-black shadow-[3px_3px_0px_#000]'
+                : 'bg-canvas-surface text-text-muted hover:text-white hover:bg-canvas-raised'
             }`}
             title="Toggle provenance color overlay: REAL (Green), PUBLISHED (Blue), COMPUTED (Amber)"
           >
@@ -145,17 +145,17 @@ export const TopBar: React.FC = () => {
       </div>
 
       {/* Mobile Nav Sub-bar */}
-      <div className="xl:hidden flex items-center overflow-x-auto gap-1.5 px-4 py-2 border-t border-canvas-border bg-canvas-surface/90 backdrop-blur-md text-xs scrollbar-none">
+      <div className="xl:hidden flex items-center overflow-x-auto gap-2 px-4 py-2 border-t-3 border-black bg-canvas-surface text-xs scrollbar-none">
         {navLinks.map((link) => {
           const isActive = pathname === link.href || (link.href !== '/' && pathname.startsWith(link.href));
           return (
             <Link
               key={link.href}
               href={link.href}
-              className={`whitespace-nowrap px-2.5 py-1 rounded text-xs font-mono transition-colors ${
+              className={`whitespace-nowrap px-2.5 py-1 border-2 text-xs font-mono font-bold transition-all ${
                 isActive
-                  ? 'bg-cern-blue text-white font-semibold'
-                  : 'text-text-secondary hover:text-text-primary hover:bg-canvas-raised'
+                  ? 'bg-cern-blue border-black text-white shadow-[3px_3px_0px_#000]'
+                  : 'border-transparent text-text-secondary hover:text-white hover:border-black hover:shadow-[2px_2px_0px_#000]'
               }`}
             >
               {link.label}

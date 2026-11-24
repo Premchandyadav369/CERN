@@ -63,19 +63,19 @@ export default function OpenDataPage() {
   return (
     <div className="w-full max-w-7xl mx-auto px-4 lg:px-8 py-8 space-y-10">
       {/* Header */}
-      <div>
-        <div className="flex items-center gap-2 mb-1">
-          <span className="text-xs font-mono uppercase text-emerald-400 font-bold tracking-wider">
-            OPEN SCIENCE &amp; PUBLIC DATASETS
+      <div className="p-6 bg-canvas-sub border-3 border-black shadow-[6px_6px_0px_0px_#000000]">
+        <div className="flex items-center gap-2 mb-3">
+          <span className="text-xs font-mono uppercase text-black font-bold tracking-wider px-2.5 py-1 bg-cern-cyan border-2 border-black shadow-[2px_2px_0px_#000]">
+            /// OPEN SCIENCE &amp; PUBLIC DATASETS ///
           </span>
-          <span className="text-[10px] font-mono px-2 py-0.5 rounded bg-emerald-950/60 text-emerald-400 border border-emerald-500/30">
+          <span className="text-[10px] font-mono px-2 py-1 bg-emerald-400 text-black font-bold border-2 border-black shadow-[2px_2px_0px_#000]">
             CC0-1.0 &amp; CC-BY-4.0
           </span>
         </div>
-        <h1 className="text-3xl font-display font-bold text-text-primary">
+        <h1 className="text-3xl lg:text-4xl font-display font-extrabold text-white tracking-tight">
           CERN Open Data Bridge &amp; Analysis Lab
         </h1>
-        <p className="text-sm text-text-secondary mt-1 max-w-3xl leading-relaxed">
+        <p className="text-sm text-text-secondary mt-2 max-w-3xl leading-relaxed font-sans">
           CERN Open Data provides access to petabytes of collision datasets and simulated samples from
           the LHC experiments for research, education, and algorithmic benchmarking. Every sample in
           this portal is grounded in verifiable DOIs.
@@ -84,22 +84,22 @@ export default function OpenDataPage() {
 
       {/* Published HEPData Overlay Section */}
       <section className="space-y-3">
-        <div className="flex items-center justify-between">
-          <h2 className="text-lg font-display font-bold text-text-primary flex items-center gap-2">
-            <Layers className="w-4 h-4 text-cern-cyan" /> HEPData Published Collaboration Measurements
+        <div className="flex items-center justify-between pb-2 border-b-2 border-black">
+          <h2 className="text-lg font-display font-bold text-white flex items-center gap-2">
+            <Layers className="w-4 h-4 text-cern-cyan" /> /// HEPData Published Collaboration Measurements ///
           </h2>
         </div>
         <HepdataOverlay />
       </section>
 
       {/* Dataset Selection Tabs */}
-      <section className="space-y-4 pt-4 border-t border-canvas-border">
+      <section className="space-y-4 pt-4 border-t-3 border-black">
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
           <div>
-            <h2 className="text-lg font-display font-bold text-text-primary">
-              Client-Side Event Filter &amp; Cutflow
+            <h2 className="text-xl font-display font-extrabold text-white">
+              /// Client-Side Event Filter &amp; Cutflow ///
             </h2>
-            <p className="text-xs text-text-muted">
+            <p className="text-xs text-text-muted font-mono mt-0.5">
               Select kinematic criteria to filter open data events directly in your browser.
             </p>
           </div>
@@ -107,20 +107,20 @@ export default function OpenDataPage() {
           <div className="flex items-center gap-2 text-xs font-mono">
             <button
               onClick={() => setActiveTab('atlas')}
-              className={`px-3 py-1.5 rounded-panel border transition-all ${
+              className={`px-3.5 py-2 border-2 border-black font-mono font-bold uppercase transition-all ${
                 activeTab === 'atlas'
-                  ? 'bg-cern-blue border-cern-accent text-white font-bold'
-                  : 'bg-canvas-surface border-canvas-border text-text-secondary hover:text-text-primary'
+                  ? 'bg-cern-blue border-black text-white shadow-[4px_4px_0px_#00E5FF] -translate-x-0.5 -translate-y-0.5'
+                  : 'bg-canvas-surface border-black text-text-secondary hover:text-white shadow-[2px_2px_0px_#000]'
               }`}
             >
               ATLAS 13 TeV (4L &amp; Diphoton)
             </button>
             <button
               onClick={() => setActiveTab('cms')}
-              className={`px-3 py-1.5 rounded-panel border transition-all ${
+              className={`px-3.5 py-2 border-2 border-black font-mono font-bold uppercase transition-all ${
                 activeTab === 'cms'
-                  ? 'bg-cern-blue border-cern-accent text-white font-bold'
-                  : 'bg-canvas-surface border-canvas-border text-text-secondary hover:text-text-primary'
+                  ? 'bg-cern-blue border-black text-white shadow-[4px_4px_0px_#4C7DFF] -translate-x-0.5 -translate-y-0.5'
+                  : 'bg-canvas-surface border-black text-text-secondary hover:text-white shadow-[2px_2px_0px_#000]'
               }`}
             >
               CMS 8 TeV (Dimuon &amp; Dijet)
@@ -129,22 +129,22 @@ export default function OpenDataPage() {
         </div>
 
         {/* Interactive Analysis Sandbox */}
-        <div className="w-full flex flex-col xl:flex-row gap-6 p-5 bg-canvas-sub border border-canvas-border rounded-panel">
+        <div className="w-full flex flex-col xl:flex-row gap-6 p-5 bg-canvas-sub border-3 border-black shadow-[6px_6px_0px_#000]">
           {/* Left Filter Deck */}
-          <div className="w-full xl:w-80 bg-canvas-surface p-4 rounded-panel border border-canvas-border space-y-4">
-            <div className="flex items-center justify-between border-b border-canvas-border pb-2">
-              <h3 className="text-xs font-mono uppercase font-bold text-text-primary flex items-center gap-1.5">
-                <Filter className="w-3.5 h-3.5 text-cern-cyan" /> Kinematic Cuts
+          <div className="w-full xl:w-80 bg-canvas-surface p-4 border-2 border-black shadow-[4px_4px_0px_#000] space-y-4">
+            <div className="flex items-center justify-between border-b-2 border-black bg-canvas-sub -mx-4 -mt-4 p-3 mb-2">
+              <h3 className="text-xs font-mono uppercase font-bold text-white flex items-center gap-1.5 tracking-wider">
+                <Filter className="w-3.5 h-3.5 text-cern-cyan" /> /// Kinematic Cuts ///
               </h3>
-              <span className="text-[10px] font-mono text-emerald-400 bg-emerald-950/60 px-1.5 py-0.5 rounded border border-emerald-500/30">
+              <span className="text-[10px] font-mono text-black font-bold bg-emerald-400 px-2 py-0.5 border-2 border-black shadow-[1px_1px_0px_#000]">
                 Active
               </span>
             </div>
 
             {/* Min pT Slider */}
-            <div>
+            <div className="p-3 bg-canvas-sub border-2 border-black shadow-[2px_2px_0px_#000] space-y-1">
               <div className="flex justify-between text-xs font-mono mb-1">
-                <span className="text-text-muted">Min Object p_T:</span>
+                <span className="text-text-muted font-bold">Min Object p_T:</span>
                 <span className="text-cern-cyan font-bold">{filterPt} GeV/c</span>
               </div>
               <input
@@ -154,14 +154,14 @@ export default function OpenDataPage() {
                 step={2}
                 value={filterPt}
                 onChange={(e) => setFilterPt(Number(e.target.value))}
-                className="w-full accent-cern-cyan cursor-pointer"
+                className="w-full cursor-pointer"
               />
             </div>
 
             {/* Max |eta| Slider */}
-            <div>
+            <div className="p-3 bg-canvas-sub border-2 border-black shadow-[2px_2px_0px_#000] space-y-1">
               <div className="flex justify-between text-xs font-mono mb-1">
-                <span className="text-text-muted">Max Pseudorapidity |&eta;|:</span>
+                <span className="text-text-muted font-bold">Max Pseudorapidity |&eta;|:</span>
                 <span className="text-cern-cyan font-bold">{maxEta.toFixed(1)}</span>
               </div>
               <input
@@ -171,14 +171,14 @@ export default function OpenDataPage() {
                 step={0.1}
                 value={maxEta}
                 onChange={(e) => setMaxEta(Number(e.target.value))}
-                className="w-full accent-cern-cyan cursor-pointer"
+                className="w-full cursor-pointer"
               />
             </div>
 
             {/* Mass Window Slider */}
-            <div>
+            <div className="p-3 bg-canvas-sub border-2 border-black shadow-[2px_2px_0px_#000] space-y-1">
               <div className="flex justify-between text-xs font-mono mb-1">
-                <span className="text-text-muted">Mass Window:</span>
+                <span className="text-text-muted font-bold">Mass Window:</span>
                 <span className="text-cern-cyan font-bold">
                   {massMin} - {massMax} GeV
                 </span>
@@ -191,7 +191,7 @@ export default function OpenDataPage() {
                   step={5}
                   value={massMin}
                   onChange={(e) => setMassMin(Number(e.target.value))}
-                  className="w-1/2 accent-cern-cyan cursor-pointer"
+                  className="w-1/2 cursor-pointer"
                 />
                 <input
                   type="range"
@@ -200,25 +200,25 @@ export default function OpenDataPage() {
                   step={5}
                   value={massMax}
                   onChange={(e) => setMassMax(Number(e.target.value))}
-                  className="w-1/2 accent-cern-cyan cursor-pointer"
+                  className="w-1/2 cursor-pointer"
                 />
               </div>
             </div>
 
             {/* Cutflow Stats Card */}
-            <div className="p-3 bg-canvas-sub rounded border border-canvas-border text-xs font-mono space-y-1.5">
+            <div className="p-3 bg-canvas-sub border-2 border-black shadow-[3px_3px_0px_#000] text-xs font-mono space-y-1.5">
               <div className="flex justify-between">
-                <span className="text-text-muted">Dataset DOI:</span>
-                <span className="text-cern-accent truncate max-w-[140px]">{currentDataset.doi}</span>
+                <span className="text-text-muted font-bold">Dataset DOI:</span>
+                <span className="text-cern-cyan font-bold truncate max-w-[140px]">{currentDataset.doi}</span>
               </div>
               <div className="flex justify-between">
-                <span className="text-text-muted">Filter Efficiency:</span>
+                <span className="text-text-muted font-bold">Filter Efficiency:</span>
                 <span className="text-emerald-400 font-bold">
                   {((filteredEvents.length / currentDataset.events.length) * 100).toFixed(1)}%
                 </span>
               </div>
               <div className="flex justify-between">
-                <span className="text-text-muted">Passed Events:</span>
+                <span className="text-text-muted font-bold">Passed Events:</span>
                 <span className="text-emerald-400 font-bold">
                   {filteredEvents.length} / {currentDataset.events.length}
                 </span>
@@ -229,16 +229,16 @@ export default function OpenDataPage() {
             <div className="grid grid-cols-2 gap-2 pt-1">
               <button
                 onClick={exportFilteredJson}
-                className="py-1.5 px-2 rounded bg-canvas-sub hover:bg-canvas-raised border border-canvas-border text-xs font-mono text-text-primary flex items-center justify-center gap-1 transition-colors"
+                className="py-1.5 px-2 bg-canvas-sub hover:bg-black border-2 border-black shadow-[2px_2px_0px_#000] active:translate-x-[1px] active:translate-y-[1px] text-xs font-mono font-bold text-white flex items-center justify-center gap-1 transition-all cursor-pointer"
               >
-                <Download className="w-3 h-3" />
+                <Download className="w-3 h-3 text-cern-cyan" />
                 <span>JSON</span>
               </button>
               <button
                 onClick={exportFilteredCsv}
-                className="py-1.5 px-2 rounded bg-canvas-sub hover:bg-canvas-raised border border-canvas-border text-xs font-mono text-text-primary flex items-center justify-center gap-1 transition-colors"
+                className="py-1.5 px-2 bg-canvas-sub hover:bg-black border-2 border-black shadow-[2px_2px_0px_#000] active:translate-x-[1px] active:translate-y-[1px] text-xs font-mono font-bold text-white flex items-center justify-center gap-1 transition-all cursor-pointer"
               >
-                <Download className="w-3 h-3" />
+                <Download className="w-3 h-3 text-cern-cyan" />
                 <span>CSV</span>
               </button>
             </div>
@@ -247,52 +247,52 @@ export default function OpenDataPage() {
               href={`https://doi.org/${currentDataset.doi}`}
               target="_blank"
               rel="noreferrer"
-              className="w-full py-2 px-3 rounded bg-canvas-sub hover:bg-canvas-raised border border-canvas-border text-xs font-mono text-cern-accent flex items-center justify-center gap-1.5 transition-colors"
+              className="w-full py-2 px-3 bg-cern-blue hover:bg-cern-accent border-2 border-black shadow-[3px_3px_0px_#00E5FF] text-white text-xs font-mono font-bold flex items-center justify-center gap-1.5 transition-all active:translate-x-[1px] active:translate-y-[1px]"
             >
               <span>Verify on CERN Portal</span>
-              <ExternalLink className="w-3.5 h-3.5" />
+              <ExternalLink className="w-3.5 h-3.5 text-cern-cyan" />
             </a>
           </div>
 
           {/* Right Event Inspector Table */}
-          <div className="flex-1 bg-canvas-surface p-4 rounded-panel border border-canvas-border overflow-x-auto">
-            <div className="flex items-center justify-between mb-3">
-              <h3 className="text-xs font-mono uppercase font-bold text-text-primary">
-                Filtered Collision Events ({currentDataset.datasetId})
+          <div className="flex-1 bg-canvas-surface p-4 border-2 border-black shadow-[4px_4px_0px_#000] overflow-x-auto">
+            <div className="flex items-center justify-between pb-2 mb-3 border-b-2 border-black">
+              <h3 className="text-xs font-mono uppercase font-bold text-white tracking-wider">
+                /// Filtered Collision Events ({currentDataset.datasetId}) ///
               </h3>
-              <span className="text-xs font-mono text-text-muted">
-                Showing {filteredEvents.length} matching events
+              <span className="text-xs font-mono text-cern-cyan font-bold px-2 py-0.5 bg-black border-2 border-black shadow-[2px_2px_0px_#00E5FF]">
+                {filteredEvents.length} events matching
               </span>
             </div>
 
             <table className="w-full text-xs font-mono text-left">
               <thead>
-                <tr className="border-b border-canvas-border text-text-muted">
-                  <th className="pb-2">Event ID</th>
-                  <th className="pb-2">Run Number</th>
-                  <th className="pb-2">Physics Process</th>
-                  <th className="pb-2">Objects</th>
-                  <th className="pb-2">Reconstructed Mass</th>
+                <tr className="border-b-2 border-black text-white font-bold bg-canvas-sub">
+                  <th className="p-2">Event ID</th>
+                  <th className="p-2">Run Number</th>
+                  <th className="p-2">Physics Process</th>
+                  <th className="p-2">Objects</th>
+                  <th className="p-2">Reconstructed Mass</th>
                 </tr>
               </thead>
-              <tbody className="divide-y divide-canvas-border/50">
+              <tbody className="divide-y-2 divide-black">
                 {filteredEvents.length > 0 ? (
                   filteredEvents.map((evt) => (
                     <tr key={evt.id} className="hover:bg-canvas-sub transition-colors">
-                      <td className="py-2.5 font-bold text-text-primary">{evt.id}</td>
-                      <td className="py-2.5 text-text-secondary">{evt.runNumber}</td>
-                      <td className="py-2.5 text-cern-cyan">{evt.process}</td>
-                      <td className="py-2.5 text-text-secondary">
+                      <td className="p-2.5 font-bold text-white">{evt.id}</td>
+                      <td className="p-2.5 text-text-secondary">{evt.runNumber}</td>
+                      <td className="p-2.5 text-cern-cyan font-bold">{evt.process}</td>
+                      <td className="p-2.5 text-text-secondary">
                         {evt.physicsObjects.map((o) => o.type).join(', ')}
                       </td>
-                      <td className="py-2.5 text-emerald-400 font-bold">
+                      <td className="p-2.5 text-emerald-400 font-bold">
                         {evt.reconstructedMassGev} GeV
                       </td>
                     </tr>
                   ))
                 ) : (
                   <tr>
-                    <td colSpan={5} className="py-8 text-center text-text-muted">
+                    <td colSpan={5} className="py-8 text-center text-text-muted font-mono font-bold">
                       No events survived the kinematic cuts. Try broadening the p_T or mass window.
                     </td>
                   </tr>

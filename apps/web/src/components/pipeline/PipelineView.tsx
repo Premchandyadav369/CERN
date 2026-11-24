@@ -124,24 +124,24 @@ export const PipelineView: React.FC = () => {
   const activeStage = STAGES.find((s) => s.id === activeStageId) || STAGES[0];
 
   return (
-    <div className="w-full flex flex-col gap-6 p-4 lg:p-6 bg-canvas-sub border border-canvas-border rounded-panel">
+    <div className="w-full flex flex-col gap-6 p-4 lg:p-6 bg-canvas-sub border-3 border-black shadow-[6px_6px_0px_0px_#000000]">
       {/* Header */}
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between pb-4 border-b border-canvas-border gap-2">
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between pb-3 border-b-2 border-black gap-2">
         <div>
           <span className="text-xs font-mono uppercase text-cern-cyan tracking-wider font-bold">
-            END-TO-END SCIENTIFIC WORKFLOW
+            /// END-TO-END SCIENTIFIC WORKFLOW ///
           </span>
-          <h2 className="text-xl font-display font-bold text-text-primary mt-0.5">
+          <h2 className="text-xl font-display font-extrabold text-white mt-0.5">
             From Proton Source to Scientific Discovery
           </h2>
         </div>
-        <span className="text-xs font-mono text-text-muted">
+        <span className="text-xs font-mono text-text-muted font-bold">
           Click any phase to inspect details &amp; open simulation
         </span>
       </div>
 
       {/* Horizontal Interactive Pipeline Ribbon */}
-      <div className="flex items-center gap-2 overflow-x-auto pb-2 scrollbar-none">
+      <div className="flex items-center gap-2.5 overflow-x-auto pb-3 pt-1 scrollbar-none">
         {STAGES.map((stg, idx) => {
           const isSelected = stg.id === activeStageId;
 
@@ -149,27 +149,29 @@ export const PipelineView: React.FC = () => {
             <React.Fragment key={stg.id}>
               <button
                 onClick={() => setActiveStageId(stg.id)}
-                className={`shrink-0 text-left p-3 rounded-panel border transition-all ${
+                className={`shrink-0 text-left p-3.5 border-2 transition-all active:translate-x-[1px] active:translate-y-[1px] ${
                   isSelected
-                    ? 'bg-canvas-raised border-cern-cyan ring-1 ring-cern-cyan shadow-lg shadow-cern-cyan/10'
-                    : 'bg-canvas-surface border-canvas-border hover:bg-canvas-raised hover:border-canvas-borderStrong text-text-secondary'
+                    ? 'bg-cern-blue border-black text-white shadow-[4px_4px_0px_#00E5FF]'
+                    : 'bg-canvas-surface border-black text-text-secondary hover:text-white shadow-[2px_2px_0px_#000]'
                 }`}
-                style={{ minWidth: '150px' }}
+                style={{ minWidth: '155px' }}
               >
-                <div className="flex items-center justify-between text-[10px] font-mono mb-1">
-                  <span className="text-cern-cyan font-bold">{stg.number}</span>
-                  <span className="text-text-muted">{stg.metricLabel}</span>
+                <div className="flex items-center justify-between text-[11px] font-mono mb-1">
+                  <span className={`font-bold ${isSelected ? 'text-cern-cyan' : 'text-cern-accent'}`}>
+                    {stg.number}
+                  </span>
+                  <span className="text-[10px] text-text-muted uppercase font-bold">{stg.metricLabel}</span>
                 </div>
-                <div className="font-mono text-xs font-bold text-text-primary truncate">
+                <div className="font-mono text-xs font-bold text-white truncate uppercase">
                   {stg.title}
                 </div>
-                <div className="text-[11px] font-mono text-emerald-400 font-semibold mt-1">
+                <div className="text-xs font-mono font-bold mt-1 text-emerald-400">
                   {stg.metric}
                 </div>
               </button>
 
               {idx < STAGES.length - 1 && (
-                <ArrowRight className="w-4 h-4 shrink-0 text-canvas-borderStrong" />
+                <ArrowRight className="w-4 h-4 shrink-0 text-zinc-600 font-bold" />
               )}
             </React.Fragment>
           );
@@ -177,23 +179,23 @@ export const PipelineView: React.FC = () => {
       </div>
 
       {/* Detail Inspection Card */}
-      <div className="p-5 bg-canvas-surface border border-canvas-border rounded-panel flex flex-col md:flex-row justify-between gap-6">
+      <div className="p-5 bg-canvas-surface border-2 border-black shadow-[4px_4px_0px_#000] flex flex-col md:flex-row justify-between gap-6">
         <div className="space-y-3 flex-1">
           <div className="flex items-center gap-3">
-            <span className="text-xs font-mono font-bold px-2 py-0.5 rounded bg-cern-blue/30 text-cern-accent border border-cern-blue/60">
+            <span className="text-xs font-mono font-bold px-2.5 py-0.5 bg-cern-blue text-white border-2 border-black shadow-[2px_2px_0px_#000] uppercase">
               STAGE {activeStage.number}
             </span>
-            <h3 className="text-lg font-display font-bold text-text-primary">
+            <h3 className="text-lg font-display font-extrabold text-white">
               {activeStage.title}: {activeStage.subtitle}
             </h3>
           </div>
 
-          <p className="text-sm text-text-secondary leading-relaxed">
+          <p className="text-xs text-text-secondary leading-relaxed font-sans max-w-3xl">
             {activeStage.description}
           </p>
 
           {activeStage.equation && (
-            <div className="p-2.5 bg-canvas-sub border border-canvas-border rounded font-mono text-xs text-amber-300 w-fit">
+            <div className="p-2.5 bg-black border-2 border-black shadow-[2px_2px_0px_#000] font-mono text-xs text-amber-300 w-fit font-bold">
               {activeStage.equation}
             </div>
           )}
@@ -202,7 +204,7 @@ export const PipelineView: React.FC = () => {
         <div className="flex flex-col justify-end">
           <Link
             href={activeStage.route}
-            className="flex items-center gap-2 py-2.5 px-4 bg-cern-blue hover:bg-cern-accent text-white font-mono text-xs font-semibold rounded transition-colors"
+            className="flex items-center gap-2 py-2.5 px-4 bg-cern-blue hover:bg-cern-accent text-white font-mono text-xs font-bold uppercase border-2 border-black shadow-[3px_3px_0px_#00E5FF] hover:shadow-[4px_4px_0px_#00E5FF] active:translate-x-[1px] active:translate-y-[1px] active:shadow-none transition-all"
           >
             <span>Open {activeStage.title} Module</span>
             <ArrowRight className="w-4 h-4" />

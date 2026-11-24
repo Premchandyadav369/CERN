@@ -3,7 +3,7 @@
 import React, { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import { useGlobalStore } from '@/lib/store';
-import { Search, X, Activity, Atom, Cpu, Layers, BookOpen, ChevronRight } from 'lucide-react';
+import { Search, X, ChevronRight } from 'lucide-react';
 
 interface SearchItem {
   id: string;
@@ -64,76 +64,97 @@ export const CommandPalette: React.FC = () => {
     router.push(item.path);
   };
 
+  const handleInputKeyDown = (e: React.KeyboardEvent) => {
+    if (e.key === 'ArrowDown') {
+      e.preventDefault();
+      setSelectedIndex((prev) => (filteredItems.length > 0 ? (prev + 1) % filteredItems.length : 0));
+    } else if (e.key === 'ArrowUp') {
+      e.preventDefault();
+      setSelectedIndex((prev) => (filteredItems.length > 0 ? (prev - 1 + filteredItems.length) % filteredItems.length : 0));
+    } else if (e.key === 'Enter') {
+      e.preventDefault();
+      if (filteredItems[selectedIndex]) {
+        handleSelect(filteredItems[selectedIndex]);
+      }
+    }
+  };
+
   if (!isOpen) return null;
 
   return (
     <div
-      className="fixed inset-0 z-50 flex items-start justify-center pt-20 bg-black/70 backdrop-blur-sm animate-in fade-in duration-150 p-4"
+      className="fixed inset-0 z-50 flex items-start justify-center pt-20 bg-black/80 backdrop-blur-sm animate-in fade-in duration-100 p-4"
       onClick={() => setIsOpen(false)}
     >
       <div
-        className="w-full max-w-xl bg-canvas-surface border border-canvas-borderStrong rounded-panel shadow-2xl overflow-hidden font-sans"
+        className="w-full max-w-xl bg-canvas-surface border-3 border-black rounded-none shadow-[8px_8px_0px_#000] overflow-hidden font-sans"
         onClick={(e) => e.stopPropagation()}
       >
         {/* Search Input Bar */}
-        <div className="flex items-center gap-3 px-4 py-3 border-b border-canvas-border bg-canvas-sub">
-          <Search className="w-5 h-5 text-text-muted" />
+        <div className="flex items-center gap-3 px-4 py-3 border-b-3 border-black bg-cern-blue text-white">
+          <Search className="w-5 h-5 text-cern-cyan shrink-0" />
           <input
             autoFocus
             type="text"
             placeholder="Search accelerators, experiments, particles, simulations..."
             value={query}
+            onKeyDown={handleInputKeyDown}
             onChange={(e) => {
               setQuery(e.target.value);
               setSelectedIndex(0);
             }}
-            className="w-full bg-transparent text-text-primary text-sm focus:outline-none placeholder:text-text-muted font-mono"
+            className="w-full bg-transparent text-white text-sm font-mono placeholder:text-blue-200 focus:outline-none"
           />
           <button
             onClick={() => setIsOpen(false)}
-            className="p-1 rounded text-text-muted hover:text-text-primary"
+            className="p-1 border-2 border-black bg-black text-white hover:bg-zinc-800 transition-colors shadow-[2px_2px_0px_#00E5FF]"
           >
             <X className="w-4 h-4" />
           </button>
         </div>
 
         {/* Results List */}
-        <div className="max-h-80 overflow-y-auto p-2 divide-y divide-canvas-border/50">
+        <div className="max-h-80 overflow-y-auto p-2 space-y-1.5 bg-canvas-sub">
           {filteredItems.length > 0 ? (
-            filteredItems.map((item, idx) => (
-              <div
-                key={item.id}
-                onClick={() => handleSelect(item)}
-                onMouseEnter={() => setSelectedIndex(idx)}
-                className={`flex items-center justify-between p-2.5 rounded cursor-pointer transition-colors ${
-                  idx === selectedIndex ? 'bg-canvas-raised text-text-primary' : 'text-text-secondary'
-                }`}
-              >
-                <div>
-                  <div className="flex items-center gap-2 mb-0.5">
-                    <span className="font-semibold text-xs text-text-primary">{item.title}</span>
-                    <span className="px-1.5 py-0.5 rounded text-[10px] font-mono bg-canvas-sub border border-canvas-border text-text-muted">
-                      {item.category}
-                    </span>
+            filteredItems.map((item, idx) => {
+              const isSelected = idx === selectedIndex;
+              return (
+                <div
+                  key={item.id}
+                  onClick={() => handleSelect(item)}
+                  onMouseEnter={() => setSelectedIndex(idx)}
+                  className={`flex items-center justify-between p-3 border-2 border-black transition-all cursor-pointer ${
+                    isSelected
+                      ? 'bg-canvas-raised shadow-[4px_4px_0px_#00E5FF] -translate-x-0.5 -translate-y-0.5'
+                      : 'bg-canvas-surface shadow-[2px_2px_0px_#000] text-text-secondary hover:text-white hover:shadow-[3px_3px_0px_#000]'
+                  }`}
+                >
+                  <div>
+                    <div className="flex items-center gap-2 mb-1">
+                      <span className="font-mono font-bold text-xs text-white">{item.title}</span>
+                      <span className="px-2 py-0.5 text-[10px] font-mono font-bold uppercase border-2 border-black bg-cern-blue text-white shadow-[2px_2px_0px_#000]">
+                        {item.category}
+                      </span>
+                    </div>
+                    <p className="text-xs text-text-secondary leading-relaxed line-clamp-1 font-sans">
+                      {item.description}
+                    </p>
                   </div>
-                  <p className="text-[11px] text-text-muted leading-relaxed line-clamp-1">
-                    {item.description}
-                  </p>
+                  <ChevronRight className="w-4 h-4 text-cern-cyan shrink-0 ml-2" />
                 </div>
-                <ChevronRight className="w-4 h-4 text-text-muted opacity-60" />
-              </div>
-            ))
+              );
+            })
           ) : (
-            <div className="p-6 text-center text-xs text-text-muted">
-              No matching CERN entities found.
+            <div className="p-8 text-center text-xs font-mono text-text-muted border-2 border-dashed border-black m-2 bg-canvas-surface shadow-[3px_3px_0px_#000]">
+              NO MATCHING CERN ENTITIES FOUND IN CATALOGUE.
             </div>
           )}
         </div>
 
         {/* Footer shortcuts */}
-        <div className="px-4 py-2 border-t border-canvas-border bg-canvas-sub flex items-center justify-between text-[11px] font-mono text-text-muted">
-          <span>Navigation: ↑ / ↓ to select, Enter to open</span>
-          <span>ESC to close</span>
+        <div className="px-4 py-2.5 border-t-3 border-black bg-black flex items-center justify-between text-xs font-mono text-text-muted">
+          <span>↑ / ↓ TO NAVIGATE · ENTER TO LAUNCH</span>
+          <span className="text-cern-cyan font-bold">ESC TO CLOSE</span>
         </div>
       </div>
     </div>

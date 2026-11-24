@@ -17,14 +17,14 @@ export default function AcceleratorsPage() {
   return (
     <div className="w-full max-w-7xl mx-auto px-4 lg:px-8 py-8 space-y-10">
       {/* Page Header */}
-      <div>
-        <span className="text-xs font-mono uppercase text-cern-cyan font-bold tracking-wider">
-          ACCELERATOR COMPLEX EXPLORER
+      <div className="p-6 bg-canvas-sub border-3 border-black shadow-[6px_6px_0px_0px_#000000]">
+        <span className="inline-block px-2.5 py-1 bg-cern-cyan text-black font-mono font-bold text-xs border-2 border-black shadow-[2px_2px_0px_#000] uppercase tracking-wider mb-3">
+          /// ACCELERATOR COMPLEX EXPLORER ///
         </span>
-        <h1 className="text-3xl font-display font-bold text-text-primary mt-1">
+        <h1 className="text-3xl lg:text-4xl font-display font-extrabold text-white tracking-tight">
           CERN Accelerator Complex &amp; Beam Dynamics
         </h1>
-        <p className="text-sm text-text-secondary mt-1 max-w-3xl leading-relaxed">
+        <p className="text-sm text-text-secondary mt-2 max-w-3xl leading-relaxed font-sans">
           CERN operates a progressive succession of particle accelerators. Each machine boosts the
           energy of particle beams before injecting them into the next, higher-energy stage or
           delivering them to specialized fixed-target experimental areas.
@@ -33,9 +33,9 @@ export default function AcceleratorsPage() {
 
       {/* LHC Simulator Section */}
       <section className="space-y-3">
-        <div className="flex items-center justify-between">
-          <h2 className="text-lg font-display font-bold text-text-primary flex items-center gap-2">
-            <Zap className="w-4 h-4 text-cern-cyan" /> Interactive Beam Physics &amp; LHC Simulator
+        <div className="flex items-center justify-between pb-2 border-b-2 border-black">
+          <h2 className="text-lg font-display font-bold text-white flex items-center gap-2">
+            <Zap className="w-5 h-5 text-cern-cyan" /> /// Interactive Beam Physics &amp; LHC Simulator ///
           </h2>
         </div>
         <LhcSimulator />
@@ -43,43 +43,43 @@ export default function AcceleratorsPage() {
 
       {/* Beam Optics & FODO Lattice Section */}
       <section className="space-y-3">
-        <div className="flex items-center justify-between">
-          <h2 className="text-lg font-display font-bold text-text-primary flex items-center gap-2">
-            <Orbit className="w-4 h-4 text-sky-400" /> Beam Optics &amp; Alternating Gradient Focusing
+        <div className="flex items-center justify-between pb-2 border-b-2 border-black">
+          <h2 className="text-lg font-display font-bold text-white flex items-center gap-2">
+            <Orbit className="w-5 h-5 text-sky-400" /> /// Beam Optics &amp; Alternating Gradient Focusing ///
           </h2>
         </div>
         <BeamOpticsSandbox />
       </section>
 
       {/* Accelerators Grid Directory & Inspector */}
-      <section className="space-y-6 pt-4 border-t border-canvas-border">
+      <section className="space-y-6 pt-6 border-t-3 border-black">
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2">
           <div>
-            <h2 className="text-lg font-display font-bold text-text-primary">
-              Catalogue of CERN Accelerators
+            <h2 className="text-xl font-display font-extrabold text-white">
+              /// Catalogue of CERN Accelerators ///
             </h2>
-            <p className="text-xs text-text-muted">
+            <p className="text-xs text-text-muted font-mono mt-0.5">
               Select any machine below to inspect operational parameters, RF frequency, and bending dipole field.
             </p>
           </div>
-          <span className="text-xs font-mono text-cern-cyan">
+          <span className="text-xs font-mono px-2.5 py-1 bg-canvas-sub border-2 border-black shadow-[2px_2px_0px_#000] text-cern-cyan font-bold">
             Active: <strong className="text-white">{selectedAccelerator.name}</strong>
           </span>
         </div>
 
         {/* Selected Accelerator Telemetry HUD */}
-        <div className="p-6 rounded-2xl bg-canvas-surface/90 border border-cern-cyan/40 shadow-xl shadow-cyan-950/20 space-y-4">
-          <div className="flex flex-wrap items-center justify-between gap-3 border-b border-canvas-border pb-3">
-            <div className="space-y-0.5">
+        <div className="p-6 bg-canvas-surface border-3 border-black shadow-[6px_6px_0px_#00E5FF] space-y-4">
+          <div className="flex flex-wrap items-center justify-between gap-3 border-b-2 border-black pb-3">
+            <div className="space-y-1">
               <div className="flex items-center gap-2">
-                <span className="text-xs font-mono font-bold text-cern-cyan uppercase">
+                <span className="text-xs font-mono font-bold text-cern-cyan uppercase px-2 py-0.5 bg-black border-2 border-black shadow-[2px_2px_0px_#000]">
                   {selectedAccelerator.type}
                 </span>
-                <span className="text-[10px] font-mono px-2 py-0.5 rounded bg-emerald-950/60 text-emerald-400 border border-emerald-500/30">
+                <span className="text-[10px] font-mono px-2 py-0.5 bg-emerald-400 text-black font-bold border-2 border-black shadow-[2px_2px_0px_#000]">
                   {selectedAccelerator.status}
                 </span>
               </div>
-              <h3 className="text-xl font-display font-bold text-white">
+              <h3 className="text-2xl font-display font-extrabold text-white">
                 {selectedAccelerator.name}
               </h3>
             </div>
@@ -89,29 +89,29 @@ export default function AcceleratorsPage() {
                 href={selectedAccelerator.sourceUrl}
                 target="_blank"
                 rel="noreferrer"
-                className="px-3 py-1.5 rounded-lg bg-cern-blue/30 hover:bg-cern-blue/50 border border-cern-accent/40 text-cern-cyan text-xs font-mono flex items-center gap-1.5 transition-colors"
+                className="px-3.5 py-2 bg-cern-blue hover:bg-cern-accent border-2 border-black shadow-[3px_3px_0px_#000] active:translate-x-[1px] active:translate-y-[1px] active:shadow-none text-white text-xs font-mono font-bold flex items-center gap-1.5 transition-all"
               >
                 <span>CERN Design Report</span>
-                <ExternalLink className="w-3.5 h-3.5" />
+                <ExternalLink className="w-3.5 h-3.5 text-cern-cyan" />
               </a>
             </div>
           </div>
 
-          <p className="text-xs text-text-secondary leading-relaxed max-w-3xl">
+          <p className="text-xs text-text-secondary leading-relaxed max-w-3xl font-sans">
             {selectedAccelerator.purpose}
           </p>
 
           {/* Machine Telemetry Grid */}
           <div className="grid grid-cols-2 sm:grid-cols-4 lg:grid-cols-5 gap-3 font-mono text-xs">
-            <div className="p-3 rounded-lg bg-canvas-sub border border-canvas-border">
-              <span className="text-[10px] text-text-muted block">Max Beam Energy</span>
+            <div className="p-3 bg-canvas-sub border-2 border-black shadow-[3px_3px_0px_#000]">
+              <span className="text-[10px] text-text-muted font-bold block">Max Beam Energy</span>
               <span className="text-sm font-bold text-cern-cyan block mt-0.5 truncate">
                 {selectedAccelerator.energy}
               </span>
             </div>
 
-            <div className="p-3 rounded-lg bg-canvas-sub border border-canvas-border">
-              <span className="text-[10px] text-text-muted block">Circumference / Length</span>
+            <div className="p-3 bg-canvas-sub border-2 border-black shadow-[3px_3px_0px_#000]">
+              <span className="text-[10px] text-text-muted font-bold block">Circumference / Length</span>
               <span className="text-sm font-bold text-white block mt-0.5">
                 {selectedAccelerator.circumferenceMeters
                   ? `${selectedAccelerator.circumferenceMeters.toLocaleString()} m`
@@ -119,8 +119,8 @@ export default function AcceleratorsPage() {
               </span>
             </div>
 
-            <div className="p-3 rounded-lg bg-canvas-sub border border-canvas-border">
-              <span className="text-[10px] text-text-muted block">Bending Dipole Field</span>
+            <div className="p-3 bg-canvas-sub border-2 border-black shadow-[3px_3px_0px_#000]">
+              <span className="text-[10px] text-text-muted font-bold block">Bending Dipole Field</span>
               <span className="text-sm font-bold text-amber-300 block mt-0.5">
                 {selectedAccelerator.bendingFieldTesla
                   ? `${selectedAccelerator.bendingFieldTesla} Tesla`
@@ -128,8 +128,8 @@ export default function AcceleratorsPage() {
               </span>
             </div>
 
-            <div className="p-3 rounded-lg bg-canvas-sub border border-canvas-border">
-              <span className="text-[10px] text-text-muted block">RF Cavity Frequency</span>
+            <div className="p-3 bg-canvas-sub border-2 border-black shadow-[3px_3px_0px_#000]">
+              <span className="text-[10px] text-text-muted font-bold block">RF Cavity Frequency</span>
               <span className="text-sm font-bold text-emerald-400 block mt-0.5">
                 {selectedAccelerator.rfFrequencyMhz
                   ? `${selectedAccelerator.rfFrequencyMhz} MHz`
@@ -137,8 +137,8 @@ export default function AcceleratorsPage() {
               </span>
             </div>
 
-            <div className="col-span-2 sm:col-span-4 lg:col-span-1 p-3 rounded-lg bg-canvas-sub border border-canvas-border">
-              <span className="text-[10px] text-text-muted block">Injection Source</span>
+            <div className="col-span-2 sm:col-span-4 lg:col-span-1 p-3 bg-canvas-sub border-2 border-black shadow-[3px_3px_0px_#000]">
+              <span className="text-[10px] text-text-muted font-bold block">Injection Source</span>
               <span className="text-xs font-bold text-sky-300 block mt-0.5 truncate">
                 {selectedAccelerator.injectionSource || 'Primary Source'}
               </span>
@@ -147,12 +147,12 @@ export default function AcceleratorsPage() {
 
           {/* Experiments Served Ribbon */}
           {selectedAccelerator.experimentsServed && selectedAccelerator.experimentsServed.length > 0 && (
-            <div className="pt-2 border-t border-canvas-border flex flex-wrap items-center gap-1.5 text-xs font-mono">
-              <span className="text-text-muted mr-1">Experiments / Targets Served:</span>
+            <div className="pt-3 border-t-2 border-black flex flex-wrap items-center gap-2 text-xs font-mono">
+              <span className="text-text-muted font-bold mr-1">Experiments / Targets Served:</span>
               {selectedAccelerator.experimentsServed.map((exp: string) => (
                 <span
                   key={exp}
-                  className="px-2 py-0.5 rounded bg-canvas-raised border border-canvas-border text-text-primary text-[11px]"
+                  className="px-2.5 py-1 bg-canvas-sub border-2 border-black shadow-[2px_2px_0px_#000] text-text-primary text-[11px] font-bold"
                 >
                   {exp}
                 </span>
@@ -169,50 +169,50 @@ export default function AcceleratorsPage() {
               <div
                 key={acc.id}
                 onClick={() => setSelectedAcceleratorId(acc.id)}
-                className={`p-4 rounded-panel border transition-all cursor-pointer flex flex-col justify-between ${
+                className={`p-4 border-2 border-black transition-all cursor-pointer flex flex-col justify-between ${
                   isSelected
-                    ? 'bg-canvas-raised border-cern-cyan ring-1 ring-cern-cyan'
-                    : 'bg-canvas-surface border-canvas-border hover:bg-canvas-raised'
+                    ? 'bg-canvas-sub border-black shadow-[5px_5px_0px_#00E5FF] -translate-x-0.5 -translate-y-0.5'
+                    : 'bg-canvas-surface shadow-[4px_4px_0px_#000] hover:bg-canvas-sub hover:shadow-[5px_5px_0px_#000] hover:-translate-x-0.5 hover:-translate-y-0.5'
                 }`}
               >
                 <div className="space-y-2">
-                  <div className="flex items-center justify-between">
+                  <div className="flex items-center justify-between pb-2 border-b-2 border-black">
                     <span className="text-xs font-mono font-bold text-cern-cyan">{acc.type}</span>
-                    <span className="text-[10px] font-mono px-1.5 py-0.5 rounded bg-emerald-950/60 text-emerald-400 border border-emerald-500/30">
+                    <span className="text-[10px] font-mono px-2 py-0.5 bg-emerald-400 text-black font-bold border-2 border-black shadow-[1px_1px_0px_#000]">
                       {acc.status}
                     </span>
                   </div>
 
-                  <h3 className="text-base font-display font-bold text-text-primary">{acc.name}</h3>
+                  <h3 className="text-base font-display font-extrabold text-white">{acc.name}</h3>
 
-                  <p className="text-xs text-text-secondary leading-relaxed line-clamp-3">
+                  <p className="text-xs text-text-secondary leading-relaxed line-clamp-3 font-sans">
                     {acc.purpose}
                   </p>
 
-                  <div className="pt-2 border-t border-canvas-border space-y-1 text-xs font-mono">
+                  <div className="pt-2 border-t-2 border-black space-y-1 text-xs font-mono">
                     <div className="flex justify-between">
-                      <span className="text-text-muted">Max Energy:</span>
-                      <span className="text-text-primary font-semibold">{acc.energy}</span>
+                      <span className="text-text-muted font-bold">Max Energy:</span>
+                      <span className="text-text-primary font-bold">{acc.energy}</span>
                     </div>
                     <div className="flex justify-between">
-                      <span className="text-text-muted">Particles:</span>
-                      <span className="text-text-secondary">{acc.particles}</span>
+                      <span className="text-text-muted font-bold">Particles:</span>
+                      <span className="text-text-secondary font-bold">{acc.particles}</span>
                     </div>
                   </div>
                 </div>
 
-                <div className="pt-3 mt-3 border-t border-canvas-border flex items-center justify-between text-[11px] font-mono">
+                <div className="pt-3 mt-3 border-t-2 border-black flex items-center justify-between text-[11px] font-mono">
                   <a
                     href={acc.sourceUrl}
                     target="_blank"
                     rel="noreferrer"
                     onClick={(e) => e.stopPropagation()}
-                    className="text-cern-accent hover:underline flex items-center gap-1"
+                    className="text-cern-cyan hover:underline flex items-center gap-1 font-bold"
                   >
                     <span>CERN Source</span>
                     <ExternalLink className="w-3 h-3" />
                   </a>
-                  <span className="text-text-muted">{acc.sourceTier}</span>
+                  <span className="text-text-muted font-bold px-1.5 py-0.5 bg-black border border-black shadow-[1px_1px_0px_#000]">{acc.sourceTier}</span>
                 </div>
               </div>
             );

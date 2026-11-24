@@ -151,17 +151,17 @@ export function BeamOpticsSandbox() {
   };
 
   return (
-    <div className="w-full bg-canvas-surface border border-canvas-border rounded-panel p-5 space-y-6">
+    <div className="w-full bg-canvas-surface border-3 border-black shadow-[6px_6px_0px_0px_#000000] p-5 space-y-6">
       {/* Top Bar with Fidelity Badge */}
-      <div className="flex flex-col md:flex-row md:items-center justify-between gap-3 border-b border-canvas-border pb-4">
+      <div className="flex flex-col md:flex-row md:items-center justify-between gap-3 border-b-2 border-black pb-4">
         <div>
           <div className="flex items-center gap-2">
-            <h3 className="text-base font-display font-bold text-text-primary">
-              Beam Optics Sandbox: FODO Lattice &amp; Courant-Snyder Envelope
+            <h3 className="text-base font-display font-extrabold text-white">
+              /// Beam Optics Sandbox: FODO Lattice &amp; Courant-Snyder Envelope ///
             </h3>
             <FidelityBadge type="ANALYTIC" formula="Courant-Snyder transfer matrix" />
           </div>
-          <p className="text-xs text-text-secondary mt-1">
+          <p className="text-xs text-text-secondary mt-1 font-sans">
             Exact 2&times;2 transfer matrix calculations solving Hill&apos;s equation for alternating
             gradient focusing quadrupoles and field-free drifts.
           </p>
@@ -170,16 +170,16 @@ export function BeamOpticsSandbox() {
         <div className="flex items-center gap-2">
           <button
             onClick={exportJson}
-            className="flex items-center gap-1.5 px-3 py-1.5 rounded bg-canvas-sub hover:bg-canvas-raised border border-canvas-border text-xs font-mono text-text-secondary hover:text-text-primary transition-colors"
+            className="flex items-center gap-1.5 px-3 py-1.5 bg-canvas-sub hover:bg-black border-2 border-black shadow-[2px_2px_0px_#000] text-xs font-mono font-bold text-white transition-all active:translate-x-[1px] active:translate-y-[1px]"
           >
-            <Download className="w-3.5 h-3.5" />
+            <Download className="w-3.5 h-3.5 text-cern-cyan" />
             <span>JSON</span>
           </button>
           <button
             onClick={exportCsv}
-            className="flex items-center gap-1.5 px-3 py-1.5 rounded bg-canvas-sub hover:bg-canvas-raised border border-canvas-border text-xs font-mono text-text-secondary hover:text-text-primary transition-colors"
+            className="flex items-center gap-1.5 px-3 py-1.5 bg-canvas-sub hover:bg-black border-2 border-black shadow-[2px_2px_0px_#000] text-xs font-mono font-bold text-white transition-all active:translate-x-[1px] active:translate-y-[1px]"
           >
-            <Download className="w-3.5 h-3.5" />
+            <Download className="w-3.5 h-3.5 text-cern-cyan" />
             <span>CSV</span>
           </button>
         </div>
@@ -187,28 +187,30 @@ export function BeamOpticsSandbox() {
 
       {/* Preset Selector */}
       <div className="flex flex-wrap items-center gap-2 text-xs font-mono">
-        <span className="text-text-muted">Presets:</span>
+        <span className="text-white font-bold uppercase mr-1 px-2.5 py-1 bg-black border-2 border-black shadow-[2px_2px_0px_#000]">
+          Presets:
+        </span>
         <button
           onClick={() => applyPreset('lhc')}
-          className="px-2.5 py-1 rounded bg-canvas-sub hover:bg-canvas-raised border border-canvas-border text-cern-cyan font-bold transition-colors"
+          className="px-3.5 py-1.5 bg-cern-blue text-white border-2 border-black shadow-[3px_3px_0px_#00E5FF] font-bold active:translate-x-[1px] active:translate-y-[1px] transition-all"
         >
           LHC Main Arc (90&deg; FODO)
         </button>
         <button
           onClick={() => applyPreset('sps')}
-          className="px-2.5 py-1 rounded bg-canvas-sub hover:bg-canvas-raised border border-canvas-border text-text-secondary hover:text-text-primary transition-colors"
+          className="px-3.5 py-1.5 bg-canvas-sub text-text-secondary hover:text-white border-2 border-black shadow-[3px_3px_0px_#000] font-bold active:translate-x-[1px] active:translate-y-[1px] transition-all"
         >
           SPS Arc Cell
         </button>
         <button
           onClick={() => applyPreset('highbeta')}
-          className="px-2.5 py-1 rounded bg-canvas-sub hover:bg-canvas-raised border border-canvas-border text-text-secondary hover:text-text-primary transition-colors"
+          className="px-3.5 py-1.5 bg-canvas-sub text-text-secondary hover:text-white border-2 border-black shadow-[3px_3px_0px_#FFE600] font-bold active:translate-x-[1px] active:translate-y-[1px] transition-all"
         >
           High-Beta Insertion
         </button>
         <button
           onClick={() => applyPreset('unstable')}
-          className="px-2.5 py-1 rounded bg-canvas-sub hover:bg-canvas-raised border border-canvas-border text-red-400 hover:text-red-300 transition-colors"
+          className="px-3.5 py-1.5 bg-red-950 text-red-300 hover:text-red-200 border-2 border-black shadow-[3px_3px_0px_#FF0055] font-bold active:translate-x-[1px] active:translate-y-[1px] transition-all"
         >
           Overfocused (Unstable)
         </button>
@@ -217,11 +219,11 @@ export function BeamOpticsSandbox() {
       {/* Main Grid: Controls + Visualizer */}
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
         {/* Left Sliders Deck (4 cols) */}
-        <div className="lg:col-span-4 bg-canvas-sub p-4 rounded border border-canvas-border space-y-4 text-xs font-mono">
-          <div>
-            <div className="flex justify-between mb-1">
-              <span className="text-text-muted">Cell Length (L):</span>
-              <span className="text-text-primary font-bold">{cellLength.toFixed(1)} m</span>
+        <div className="lg:col-span-4 bg-canvas-sub p-4 border-3 border-black shadow-[5px_5px_0px_#000] space-y-4 text-xs font-mono">
+          <div className="p-3 bg-canvas-surface border-2 border-black shadow-[2px_2px_0px_#000] space-y-1">
+            <div className="flex justify-between">
+              <span className="text-text-muted font-bold">Cell Length (L):</span>
+              <span className="text-white font-bold">{cellLength.toFixed(1)} m</span>
             </div>
             <input
               type="range"
@@ -230,14 +232,14 @@ export function BeamOpticsSandbox() {
               step={0.5}
               value={cellLength}
               onChange={(e) => setCellLength(Number(e.target.value))}
-              className="w-full accent-cern-cyan cursor-pointer"
+              className="w-full cursor-pointer"
             />
           </div>
 
-          <div>
-            <div className="flex justify-between mb-1">
-              <span className="text-text-muted">Quadrupole Focal (f):</span>
-              <span className="text-text-primary font-bold">{focalLength.toFixed(1)} m</span>
+          <div className="p-3 bg-canvas-surface border-2 border-black shadow-[2px_2px_0px_#000] space-y-1">
+            <div className="flex justify-between">
+              <span className="text-text-muted font-bold">Quadrupole Focal (f):</span>
+              <span className="text-white font-bold">{focalLength.toFixed(1)} m</span>
             </div>
             <input
               type="range"
@@ -246,14 +248,14 @@ export function BeamOpticsSandbox() {
               step={0.5}
               value={focalLength}
               onChange={(e) => setFocalLength(Number(e.target.value))}
-              className="w-full accent-cern-cyan cursor-pointer"
+              className="w-full cursor-pointer"
             />
           </div>
 
-          <div>
-            <div className="flex justify-between mb-1">
-              <span className="text-text-muted">Beam Energy:</span>
-              <span className="text-text-primary font-bold">
+          <div className="p-3 bg-canvas-surface border-2 border-black shadow-[2px_2px_0px_#000] space-y-1">
+            <div className="flex justify-between">
+              <span className="text-text-muted font-bold">Beam Energy:</span>
+              <span className="text-cern-cyan font-bold">
                 {beamEnergyGev >= 1000 ? `${(beamEnergyGev / 1000).toFixed(1)} TeV` : `${beamEnergyGev} GeV`}
               </span>
             </div>
@@ -264,14 +266,14 @@ export function BeamOpticsSandbox() {
               step={50}
               value={beamEnergyGev}
               onChange={(e) => setBeamEnergyGev(Number(e.target.value))}
-              className="w-full accent-cern-cyan cursor-pointer"
+              className="w-full cursor-pointer"
             />
           </div>
 
-          <div>
-            <div className="flex justify-between mb-1">
-              <span className="text-text-muted">Norm. Emittance (&epsilon;_n):</span>
-              <span className="text-text-primary font-bold">{emittanceNormUm.toFixed(2)} &mu;m&middot;rad</span>
+          <div className="p-3 bg-canvas-surface border-2 border-black shadow-[2px_2px_0px_#000] space-y-1">
+            <div className="flex justify-between">
+              <span className="text-text-muted font-bold">Norm. Emittance (&epsilon;_n):</span>
+              <span className="text-white font-bold">{emittanceNormUm.toFixed(2)} &mu;m&middot;rad</span>
             </div>
             <input
               type="range"
@@ -280,28 +282,28 @@ export function BeamOpticsSandbox() {
               step={0.1}
               value={emittanceNormUm}
               onChange={(e) => setEmittanceNormUm(Number(e.target.value))}
-              className="w-full accent-cern-cyan cursor-pointer"
+              className="w-full cursor-pointer"
             />
           </div>
 
           {/* Stability Indicator */}
           <div
-            className={`p-3 rounded border flex items-center gap-2.5 ${
+            className={`p-3 border-2 border-black shadow-[3px_3px_0px_#000] flex items-center gap-2.5 ${
               results.isStable
-                ? 'bg-emerald-950/40 border-emerald-500/40 text-emerald-400'
-                : 'bg-red-950/40 border-red-500/40 text-red-400'
+                ? 'bg-emerald-400 text-black font-bold'
+                : 'bg-red-500 text-white font-bold'
             }`}
           >
             {results.isStable ? (
-              <CheckCircle className="w-4 h-4 shrink-0" />
+              <CheckCircle className="w-5 h-5 shrink-0" />
             ) : (
-              <AlertTriangle className="w-4 h-4 shrink-0" />
+              <AlertTriangle className="w-5 h-5 shrink-0" />
             )}
             <div>
-              <div className="font-bold">
+              <div className="text-xs uppercase tracking-wider">
                 {results.isStable ? 'Lattice Stable' : 'Lattice Unstable (Lost Beam)'}
               </div>
-              <div className="text-[11px] opacity-80">
+              <div className="text-[11px] opacity-90 font-mono">
                 |Tr(M)| = {Math.abs(results.trace).toFixed(3)} {results.isStable ? '< 2.0' : '&ge; 2.0'}
               </div>
             </div>
@@ -312,8 +314,8 @@ export function BeamOpticsSandbox() {
         <div className="lg:col-span-8 space-y-4">
           {/* Key Metrics Row */}
           <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 text-xs font-mono">
-            <div className="bg-canvas-sub p-3 rounded border border-canvas-border">
-              <span className="text-text-muted block text-[11px]">Phase Advance (&mu;)</span>
+            <div className="bg-canvas-sub p-3 border-2 border-black shadow-[3px_3px_0px_#000]">
+              <span className="text-text-muted block text-[10px] uppercase font-bold">Phase Advance (&mu;)</span>
               <span className="text-base font-bold text-cern-cyan">
                 {results.isStable ? `${results.muDeg.toFixed(1)}°` : '—'}
               </span>
@@ -322,25 +324,25 @@ export function BeamOpticsSandbox() {
               </span>
             </div>
 
-            <div className="bg-canvas-sub p-3 rounded border border-canvas-border">
-              <span className="text-text-muted block text-[11px]">&beta;_max (Mid-QF)</span>
-              <span className="text-base font-bold text-text-primary">
+            <div className="bg-canvas-sub p-3 border-2 border-black shadow-[3px_3px_0px_#000]">
+              <span className="text-text-muted block text-[10px] uppercase font-bold">&beta;_max (Mid-QF)</span>
+              <span className="text-base font-bold text-white">
                 {results.isStable ? `${results.betaMax.toFixed(1)} m` : '—'}
               </span>
-              <span className="text-[10px] text-emerald-400 block mt-0.5">LHC nominal: 177 m</span>
+              <span className="text-[10px] text-emerald-400 block mt-0.5 font-bold">LHC nominal: 177 m</span>
             </div>
 
-            <div className="bg-canvas-sub p-3 rounded border border-canvas-border">
-              <span className="text-text-muted block text-[11px]">&beta;_min (Mid-QD)</span>
-              <span className="text-base font-bold text-text-primary">
+            <div className="bg-canvas-sub p-3 border-2 border-black shadow-[3px_3px_0px_#000]">
+              <span className="text-text-muted block text-[10px] uppercase font-bold">&beta;_min (Mid-QD)</span>
+              <span className="text-base font-bold text-white">
                 {results.isStable ? `${results.betaMin.toFixed(1)} m` : '—'}
               </span>
-              <span className="text-[10px] text-emerald-400 block mt-0.5">LHC nominal: 33 m</span>
+              <span className="text-[10px] text-emerald-400 block mt-0.5 font-bold">LHC nominal: 33 m</span>
             </div>
 
-            <div className="bg-canvas-sub p-3 rounded border border-canvas-border">
-              <span className="text-text-muted block text-[11px]">RMS Beam Size (&sigma;_max)</span>
-              <span className="text-base font-bold text-amber-400">
+            <div className="bg-canvas-sub p-3 border-2 border-black shadow-[3px_3px_0px_#000]">
+              <span className="text-text-muted block text-[10px] uppercase font-bold">RMS Size (&sigma;_max)</span>
+              <span className="text-base font-bold text-amber-300">
                 {results.isStable ? `${results.sigmaMaxUm.toFixed(0)} &mu;m` : '—'}
               </span>
               <span className="text-[10px] text-text-muted block mt-0.5">
@@ -350,18 +352,18 @@ export function BeamOpticsSandbox() {
           </div>
 
           {/* SVG FODO Lattice & Envelope Visualization */}
-          <div className="bg-canvas-sub p-4 rounded border border-canvas-border">
-            <div className="flex items-center justify-between mb-2">
-              <span className="text-xs font-mono uppercase font-bold text-text-primary">
-                Beam Envelope &sigma;(s) Across 1 FODO Cell
+          <div className="bg-canvas-sub p-4 border-2 border-black shadow-[4px_4px_0px_#000]">
+            <div className="flex items-center justify-between mb-3 border-b-2 border-black pb-2">
+              <span className="text-xs font-mono uppercase font-bold text-white">
+                /// Beam Envelope &sigma;(s) Across 1 FODO Cell ///
               </span>
-              <span className="text-[11px] font-mono text-text-muted">
-                QF (Focusing) &rarr; Drift &rarr; QD (Defocusing) &rarr; Drift &rarr; QF
+              <span className="text-[11px] font-mono text-cern-cyan font-bold">
+                QF &rarr; Drift &rarr; QD &rarr; Drift &rarr; QF
               </span>
             </div>
 
             {results.isStable ? (
-              <div className="relative w-full h-48 bg-canvas-base rounded border border-canvas-border flex items-center justify-center overflow-hidden">
+              <div className="relative w-full h-48 bg-black border-2 border-black flex items-center justify-center overflow-hidden">
                 <svg className="w-full h-full" viewBox="0 0 600 180" preserveAspectRatio="none">
                   {/* Grid Lines */}
                   <line x1="0" y1="90" x2="600" y2="90" stroke="#334155" strokeDasharray="4,4" strokeWidth="1" />
@@ -371,16 +373,16 @@ export function BeamOpticsSandbox() {
 
                   {/* Quadrupole Blocks */}
                   {/* QF half at start */}
-                  <rect x="0" y="20" width="30" height="140" fill="#0284c7" fillOpacity="0.25" stroke="#38bdf8" strokeWidth="1.5" />
-                  <text x="15" y="15" fill="#38bdf8" fontSize="10" textAnchor="middle" fontFamily="monospace">1/2 QF</text>
+                  <rect x="0" y="20" width="30" height="140" fill="#0284c7" fillOpacity="0.4" stroke="#38bdf8" strokeWidth="2" />
+                  <text x="15" y="15" fill="#38bdf8" fontSize="10" textAnchor="middle" fontFamily="monospace" fontWeight="bold">1/2 QF</text>
 
                   {/* QD at center */}
-                  <rect x="285" y="20" width="30" height="140" fill="#ef4444" fillOpacity="0.25" stroke="#f87171" strokeWidth="1.5" />
-                  <text x="300" y="15" fill="#f87171" fontSize="10" textAnchor="middle" fontFamily="monospace">QD</text>
+                  <rect x="285" y="20" width="30" height="140" fill="#ef4444" fillOpacity="0.4" stroke="#f87171" strokeWidth="2" />
+                  <text x="300" y="15" fill="#f87171" fontSize="10" textAnchor="middle" fontFamily="monospace" fontWeight="bold">QD</text>
 
                   {/* QF half at end */}
-                  <rect x="570" y="20" width="30" height="140" fill="#0284c7" fillOpacity="0.25" stroke="#38bdf8" strokeWidth="1.5" />
-                  <text x="585" y="15" fill="#38bdf8" fontSize="10" textAnchor="middle" fontFamily="monospace">1/2 QF</text>
+                  <rect x="570" y="20" width="30" height="140" fill="#0284c7" fillOpacity="0.4" stroke="#38bdf8" strokeWidth="2" />
+                  <text x="585" y="15" fill="#38bdf8" fontSize="10" textAnchor="middle" fontFamily="monospace" fontWeight="bold">1/2 QF</text>
 
                   {/* Beam Envelope Path (Top and Bottom mirrored) */}
                   {(() => {
@@ -389,7 +391,6 @@ export function BeamOpticsSandbox() {
                     let botPath = 'M ';
                     results.curvePoints.forEach((p, idx) => {
                       const x = (p.s / cellLength) * 600;
-                      // scale envelope height to max ~60px
                       const h = (p.sigma / maxSig) * 55;
                       const yTop = 90 - h;
                       const yBot = 90 + h;
@@ -402,7 +403,6 @@ export function BeamOpticsSandbox() {
                       }
                     });
 
-                    // Closed polygon for shaded beam profile
                     let polygonPath = topPath;
                     for (let i = results.curvePoints.length - 1; i >= 0; i--) {
                       const p = results.curvePoints[i];
@@ -414,32 +414,32 @@ export function BeamOpticsSandbox() {
 
                     return (
                       <>
-                        <path d={polygonPath} fill="#06b6d4" fillOpacity="0.18" />
-                        <path d={topPath} fill="none" stroke="#22d3ee" strokeWidth="2" />
-                        <path d={botPath} fill="none" stroke="#22d3ee" strokeWidth="2" />
+                        <path d={polygonPath} fill="#06b6d4" fillOpacity="0.25" />
+                        <path d={topPath} fill="none" stroke="#00e5ff" strokeWidth="2.5" />
+                        <path d={botPath} fill="none" stroke="#00e5ff" strokeWidth="2.5" />
                       </>
                     );
                   })()}
                 </svg>
 
                 {/* Legend Overlay */}
-                <div className="absolute bottom-2 left-3 flex items-center gap-4 text-[10px] font-mono bg-canvas-base/80 px-2 py-1 rounded border border-canvas-border">
-                  <span className="flex items-center gap-1.5 text-cern-cyan">
+                <div className="absolute bottom-2 left-3 flex items-center gap-4 text-[10px] font-mono bg-black/90 px-2.5 py-1 border-2 border-black shadow-[2px_2px_0px_#000]">
+                  <span className="flex items-center gap-1.5 text-cern-cyan font-bold">
                     <span className="w-2.5 h-0.5 bg-cern-cyan inline-block"></span> Beam Envelope &plusmn;&sigma;(s)
                   </span>
-                  <span className="flex items-center gap-1.5 text-sky-400">
-                    <span className="w-2 h-2 bg-sky-500/40 border border-sky-400 inline-block"></span> Focusing (QF)
+                  <span className="flex items-center gap-1.5 text-sky-400 font-bold">
+                    <span className="w-2 h-2 bg-sky-500/60 border border-sky-400 inline-block"></span> Focusing (QF)
                   </span>
-                  <span className="flex items-center gap-1.5 text-red-400">
-                    <span className="w-2 h-2 bg-red-500/40 border border-red-400 inline-block"></span> Defocusing (QD)
+                  <span className="flex items-center gap-1.5 text-red-400 font-bold">
+                    <span className="w-2 h-2 bg-red-500/60 border border-red-400 inline-block"></span> Defocusing (QD)
                   </span>
                 </div>
               </div>
             ) : (
-              <div className="h-48 bg-canvas-base rounded border border-red-500/30 flex flex-col items-center justify-center text-red-400 text-xs font-mono space-y-1">
-                <AlertTriangle className="w-6 h-6 text-red-400" />
-                <span className="font-bold">UNSTABLE LATTICE GEOMETRY</span>
-                <span className="text-[11px] text-text-muted">
+              <div className="h-48 bg-red-600 text-white border-3 border-black flex flex-col items-center justify-center text-xs font-mono space-y-1 p-4 shadow-[4px_4px_0px_#000]">
+                <AlertTriangle className="w-7 h-7 text-white" />
+                <span className="font-extrabold text-sm uppercase">UNSTABLE LATTICE GEOMETRY</span>
+                <span className="text-[11px] text-zinc-100 text-center max-w-md font-bold">
                   Focal length f &le; L/4 causes unbounded exponential envelope growth (beam hits beam pipe).
                 </span>
               </div>

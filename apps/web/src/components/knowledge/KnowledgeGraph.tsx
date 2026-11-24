@@ -49,32 +49,32 @@ export const KnowledgeGraph: React.FC = () => {
   const getNodeColor = (type: GraphNode['type']) => {
     switch (type) {
       case 'ACCELERATOR':
-        return '#3DD6FF';
+        return '#00E5FF';
       case 'EXPERIMENT':
         return '#4C7DFF';
       case 'PARTICLE':
         return '#FFB020';
       case 'DETECTOR':
-        return '#2ECC8F';
+        return '#00FF66';
       case 'COMPUTING':
-        return '#E04FD0';
+        return '#FF0055';
     }
   };
 
   return (
-    <div className="w-full flex flex-col xl:flex-row gap-6 p-4 lg:p-6 bg-canvas-sub border border-canvas-border rounded-panel">
+    <div className="w-full flex flex-col xl:flex-row gap-6 p-4 lg:p-6 bg-canvas-sub border-3 border-black shadow-[6px_6px_0px_#000]">
       {/* Visual Force-Directed Canvas */}
-      <div className="flex-1 flex flex-col justify-between bg-canvas rounded-panel border border-canvas-border p-4 relative min-h-[460px]">
+      <div className="flex-1 flex flex-col justify-between bg-canvas border-2 border-black shadow-[3px_3px_0px_#000] p-4 relative min-h-[460px]">
         {/* Header */}
-        <div className="flex items-center justify-between pb-3 border-b border-canvas-border">
+        <div className="flex items-center justify-between pb-3 border-b-2 border-black bg-canvas-sub -mx-4 -mt-4 p-3.5 mb-2">
           <div className="flex items-center gap-2">
             <GitBranch className="w-4 h-4 text-cern-cyan" />
-            <h3 className="font-mono text-xs uppercase tracking-wider text-text-primary font-bold">
-              CERN SCIENTIFIC KNOWLEDGE &amp; EVIDENCE GRAPH
+            <h3 className="font-mono text-xs uppercase tracking-wider text-white font-bold">
+              /// CERN SCIENTIFIC KNOWLEDGE &amp; EVIDENCE GRAPH ///
             </h3>
           </div>
-          <span className="text-[11px] font-mono text-text-muted">
-            Click nodes or edge arrows to inspect evidence
+          <span className="text-[11px] font-mono text-cern-cyan font-bold px-2 py-0.5 bg-black border-2 border-black shadow-[2px_2px_0px_#00E5FF]">
+            CLICK NODES OR ARROWS
           </span>
         </div>
 
@@ -100,7 +100,7 @@ export const KnowledgeGraph: React.FC = () => {
                 refY="3"
                 orient="auto"
               >
-                <polygon points="0 0, 8 3, 0 6" fill="#3DD6FF" />
+                <polygon points="0 0, 8 3, 0 6" fill="#00E5FF" />
               </marker>
             </defs>
 
@@ -124,27 +124,28 @@ export const KnowledgeGraph: React.FC = () => {
                     y1={src.y}
                     x2={tgt.x}
                     y2={tgt.y}
-                    stroke={isSelected ? '#3DD6FF' : '#2A3B5C'}
-                    strokeWidth={isSelected ? '2.5' : '1.5'}
+                    stroke={isSelected ? '#00E5FF' : '#2A3B5C'}
+                    strokeWidth={isSelected ? '3' : '2'}
                     markerEnd={isSelected ? 'url(#arrowhead-active)' : 'url(#arrowhead)'}
-                    className="transition-colors group-hover:stroke-cern-accent"
+                    className="transition-colors group-hover:stroke-cern-cyan"
                   />
                   {/* Relation Label Pill */}
                   <rect
-                    x={midX - 28}
-                    y={midY - 8}
-                    width="56"
-                    height="16"
-                    rx="3"
-                    fill="#0D1422"
-                    stroke={isSelected ? '#3DD6FF' : '#1C273C'}
+                    x={midX - 30}
+                    y={midY - 9}
+                    width="60"
+                    height="18"
+                    fill="#000000"
+                    stroke={isSelected ? '#00E5FF' : '#000000'}
+                    strokeWidth="1.5"
                   />
                   <text
                     x={midX}
                     y={midY + 3}
-                    fill={isSelected ? '#3DD6FF' : '#9FB0CC'}
+                    fill={isSelected ? '#00E5FF' : '#C8D7F0'}
                     fontSize="9"
                     fontFamily="JetBrains Mono"
+                    fontWeight="bold"
                     textAnchor="middle"
                   >
                     {edge.relation}
@@ -167,16 +168,16 @@ export const KnowledgeGraph: React.FC = () => {
                   <circle
                     cx={node.x}
                     cy={node.y}
-                    r={isSelected ? '22' : '18'}
+                    r={isSelected ? '24' : '20'}
                     fill="#0D1422"
-                    stroke={color}
-                    strokeWidth={isSelected ? '3' : '2'}
+                    stroke={isSelected ? '#FFFFFF' : color}
+                    strokeWidth={isSelected ? '4' : '2.5'}
                     className="transition-all group-hover:stroke-white"
                   />
                   <text
                     x={node.x}
                     y={node.y + 4}
-                    fill="#E8EEF9"
+                    fill="#FFFFFF"
                     fontSize="10"
                     fontFamily="JetBrains Mono"
                     fontWeight="bold"
@@ -191,51 +192,51 @@ export const KnowledgeGraph: React.FC = () => {
         </div>
 
         {/* Legend */}
-        <div className="pt-2 border-t border-canvas-border flex flex-wrap gap-3 text-[11px] font-mono text-text-muted">
-          <span className="flex items-center gap-1.5">
-            <span className="w-2.5 h-2.5 rounded-full bg-cyan-400" /> Accelerators
+        <div className="pt-3 border-t-2 border-black flex flex-wrap gap-3 text-[11px] font-mono text-white font-bold">
+          <span className="flex items-center gap-1.5 px-2 py-0.5 bg-canvas-sub border border-black shadow-[1px_1px_0px_#000]">
+            <span className="w-2.5 h-2.5 bg-[#00E5FF] border border-black" /> Accelerators
           </span>
-          <span className="flex items-center gap-1.5">
-            <span className="w-2.5 h-2.5 rounded-full bg-blue-500" /> Experiments
+          <span className="flex items-center gap-1.5 px-2 py-0.5 bg-canvas-sub border border-black shadow-[1px_1px_0px_#000]">
+            <span className="w-2.5 h-2.5 bg-[#4C7DFF] border border-black" /> Experiments
           </span>
-          <span className="flex items-center gap-1.5">
-            <span className="w-2.5 h-2.5 rounded-full bg-amber-400" /> Particles
+          <span className="flex items-center gap-1.5 px-2 py-0.5 bg-canvas-sub border border-black shadow-[1px_1px_0px_#000]">
+            <span className="w-2.5 h-2.5 bg-[#FFB020] border border-black" /> Particles
           </span>
-          <span className="flex items-center gap-1.5">
-            <span className="w-2.5 h-2.5 rounded-full bg-emerald-400" /> Detectors
+          <span className="flex items-center gap-1.5 px-2 py-0.5 bg-canvas-sub border border-black shadow-[1px_1px_0px_#000]">
+            <span className="w-2.5 h-2.5 bg-[#00FF66] border border-black" /> Detectors
           </span>
-          <span className="flex items-center gap-1.5">
-            <span className="w-2.5 h-2.5 rounded-full bg-purple-400" /> Computing
+          <span className="flex items-center gap-1.5 px-2 py-0.5 bg-canvas-sub border border-black shadow-[1px_1px_0px_#000]">
+            <span className="w-2.5 h-2.5 bg-[#FF0055] border border-black" /> Computing
           </span>
         </div>
       </div>
 
       {/* RIGHT: Selected Node & Edge Evidence Drawer */}
-      <div className="w-full xl:w-80 flex flex-col justify-between bg-canvas-surface border border-canvas-border rounded-panel p-4 space-y-4">
+      <div className="w-full xl:w-80 flex flex-col justify-between bg-canvas-surface border-3 border-black shadow-[5px_5px_0px_#000] p-4 space-y-4">
         <div className="space-y-4">
-          <div className="pb-2 border-b border-canvas-border">
-            <h3 className="text-xs font-mono font-bold text-text-primary uppercase flex items-center gap-1.5">
-              <Info className="w-3.5 h-3.5 text-cern-cyan" /> Evidence Inspector
+          <div className="pb-2 border-b-2 border-black bg-canvas-sub -mx-4 -mt-4 p-3">
+            <h3 className="text-xs font-mono font-bold text-white uppercase flex items-center gap-1.5 tracking-wider">
+              <Info className="w-4 h-4 text-cern-cyan" /> /// Evidence Inspector ///
             </h3>
           </div>
 
           {selectedEdge ? (
             <div className="space-y-3 text-xs leading-relaxed">
               <div>
-                <span className="text-[10px] font-mono text-text-muted uppercase block">
+                <span className="text-[10px] font-mono text-text-muted uppercase block font-bold">
                   Relationship Edge
                 </span>
-                <div className="font-mono font-bold text-text-primary text-sm mt-0.5">
+                <div className="font-mono font-bold text-cern-cyan text-sm mt-0.5 px-2 py-1 bg-black border-2 border-black shadow-[2px_2px_0px_#000]">
                   {selectedEdge.source.toUpperCase()} ──[{selectedEdge.relation}]──&gt;{' '}
                   {selectedEdge.target.toUpperCase()}
                 </div>
               </div>
 
               <div>
-                <span className="text-[10px] font-mono text-text-muted uppercase block mb-1">
+                <span className="text-[10px] font-mono text-text-muted uppercase block mb-1 font-bold">
                   Authoritative Evidence Citation
                 </span>
-                <div className="p-3 bg-canvas-sub border border-canvas-border rounded text-text-secondary">
+                <div className="p-3 bg-canvas-sub border-2 border-black shadow-[3px_3px_0px_#000] text-text-secondary font-sans">
                   {selectedEdge.evidence}
                 </div>
               </div>
@@ -244,31 +245,31 @@ export const KnowledgeGraph: React.FC = () => {
                 href={selectedEdge.sourceUrl}
                 target="_blank"
                 rel="noreferrer"
-                className="flex items-center justify-between p-2 bg-canvas-sub hover:bg-canvas-raised border border-canvas-border rounded text-[11px] font-mono text-cern-accent"
+                className="flex items-center justify-between p-2.5 bg-cern-blue hover:bg-cern-accent border-2 border-black shadow-[3px_3px_0px_#00E5FF] text-white text-xs font-mono font-bold transition-all active:translate-x-[1px] active:translate-y-[1px]"
               >
                 <span>Verify Source Documentation</span>
-                <ExternalLink className="w-3.5 h-3.5" />
+                <ExternalLink className="w-4 h-4 text-cern-cyan" />
               </a>
             </div>
           ) : selectedNode ? (
             <div className="space-y-3 text-xs leading-relaxed">
               <div>
-                <div className="flex items-center gap-2 mb-1">
+                <div className="flex items-center gap-2 mb-1.5">
                   <span
-                    className="px-1.5 py-0.5 rounded text-[10px] font-mono font-bold"
-                    style={{ backgroundColor: `${getNodeColor(selectedNode.type)}20`, color: getNodeColor(selectedNode.type) }}
+                    className="px-2 py-0.5 text-[10px] font-mono font-bold border-2 border-black shadow-[2px_2px_0px_#000] uppercase"
+                    style={{ backgroundColor: getNodeColor(selectedNode.type), color: '#000000' }}
                   >
                     {selectedNode.type}
                   </span>
                 </div>
-                <h4 className="text-base font-display font-bold text-text-primary">
+                <h4 className="text-base font-display font-extrabold text-white">
                   {selectedNode.name}
                 </h4>
               </div>
 
-              <p className="text-text-secondary">{selectedNode.description}</p>
+              <p className="text-text-secondary font-sans">{selectedNode.description}</p>
 
-              <div className="p-3 bg-canvas-sub border border-canvas-border rounded text-[11px] font-mono text-text-muted">
+              <div className="p-3 bg-canvas-sub border-2 border-black shadow-[3px_3px_0px_#000] text-[11px] font-mono text-text-muted font-bold">
                 Tip: Click any relationship arrow connecting to this entity to view verifiable
                 scientific evidence.
               </div>
@@ -276,8 +277,8 @@ export const KnowledgeGraph: React.FC = () => {
           ) : null}
         </div>
 
-        <div className="pt-3 border-t border-canvas-border text-[11px] font-mono text-text-muted">
-          <span>Graph Integrity: Sourced Claims Only</span>
+        <div className="pt-3 border-t-2 border-black text-[11px] font-mono text-text-muted font-bold">
+          <span>/// Graph Integrity: Sourced Claims Only ///</span>
         </div>
       </div>
     </div>

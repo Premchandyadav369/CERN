@@ -37,20 +37,20 @@ export function HepdataOverlay() {
   };
 
   return (
-    <div className="w-full bg-canvas-surface border border-canvas-border rounded-panel p-5 space-y-6">
+    <div className="w-full bg-canvas-surface border-3 border-black shadow-[6px_6px_0px_0px_#000000] p-5 space-y-6">
       {/* Header */}
-      <div className="flex flex-col md:flex-row md:items-center justify-between gap-3 border-b border-canvas-border pb-4">
+      <div className="flex flex-col md:flex-row md:items-center justify-between gap-3 border-b-2 border-black pb-4">
         <div>
           <div className="flex items-center gap-2">
-            <h3 className="text-base font-display font-bold text-text-primary">
-              HEPData Comparator: Published Collaboration Overlay
+            <h3 className="text-base font-display font-extrabold text-white">
+              /// HEPData Comparator: Published Collaboration Overlay ///
             </h3>
-            <span className="inline-flex items-center gap-1.5 px-2.5 py-0.5 text-xs font-mono font-medium rounded-full border bg-emerald-950/60 text-emerald-300 border-emerald-500/40">
-              <span className="w-1.5 h-1.5 rounded-full bg-emerald-400" />
+            <span className="inline-flex items-center gap-1.5 px-2.5 py-0.5 text-xs font-mono font-bold border-2 border-black shadow-[2px_2px_0px_#000] bg-emerald-400 text-black uppercase">
+              <span className="w-1.5 h-1.5 bg-black" />
               PUBLISHED RECORD (HEPDATA)
             </span>
           </div>
-          <p className="text-xs text-text-secondary mt-1">
+          <p className="text-xs text-text-secondary mt-1 font-sans">
             Compare simulation models and educational toy spectra against gold-standard peer-reviewed
             experimental measurements archived on HEPData.
           </p>
@@ -58,21 +58,21 @@ export function HepdataOverlay() {
 
         <button
           onClick={downloadCsv}
-          className="flex items-center gap-1.5 px-3 py-1.5 rounded bg-canvas-sub hover:bg-canvas-raised border border-canvas-border text-xs font-mono text-text-secondary hover:text-text-primary transition-colors self-start md:self-auto"
+          className="flex items-center gap-1.5 px-3 py-1.5 bg-canvas-sub hover:bg-black border-2 border-black shadow-[2px_2px_0px_#000] text-xs font-mono font-bold text-white transition-all active:translate-x-[1px] active:translate-y-[1px] self-start md:self-auto"
         >
-          <Download className="w-3.5 h-3.5" />
+          <Download className="w-3.5 h-3.5 text-cern-cyan" />
           <span>Export Points (CSV)</span>
         </button>
       </div>
 
       {/* Dataset Selector Tabs */}
-      <div className="flex items-center gap-2 text-xs font-mono">
+      <div className="flex flex-wrap items-center gap-2 text-xs font-mono">
         <button
           onClick={() => setSelectedDataset('atlas_h_yy')}
-          className={`flex items-center gap-1.5 px-3 py-2 rounded border transition-all ${
+          className={`flex items-center gap-1.5 px-3.5 py-2 border-2 border-black font-bold uppercase transition-all active:translate-x-[1px] active:translate-y-[1px] ${
             selectedDataset === 'atlas_h_yy'
-              ? 'bg-cern-blue border-cern-accent text-white font-bold'
-              : 'bg-canvas-sub border-canvas-border text-text-secondary hover:text-text-primary'
+              ? 'bg-cern-blue border-black text-white shadow-[3px_3px_0px_#00E5FF] -translate-x-0.5 -translate-y-0.5'
+              : 'bg-canvas-sub border-black text-text-secondary hover:text-white shadow-[2px_2px_0px_#000]'
           }`}
         >
           <Sparkles className="w-3.5 h-3.5 text-pink-400" />
@@ -81,10 +81,10 @@ export function HepdataOverlay() {
 
         <button
           onClick={() => setSelectedDataset('alice_raa')}
-          className={`flex items-center gap-1.5 px-3 py-2 rounded border transition-all ${
+          className={`flex items-center gap-1.5 px-3.5 py-2 border-2 border-black font-bold uppercase transition-all active:translate-x-[1px] active:translate-y-[1px] ${
             selectedDataset === 'alice_raa'
-              ? 'bg-cern-blue border-cern-accent text-white font-bold'
-              : 'bg-canvas-sub border-canvas-border text-text-secondary hover:text-text-primary'
+              ? 'bg-cern-blue border-black text-white shadow-[3px_3px_0px_#FFE600] -translate-x-0.5 -translate-y-0.5'
+              : 'bg-canvas-sub border-black text-text-secondary hover:text-white shadow-[2px_2px_0px_#000]'
           }`}
         >
           <Activity className="w-3.5 h-3.5 text-amber-400" />
@@ -95,15 +95,15 @@ export function HepdataOverlay() {
       {/* Main Display Box */}
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
         {/* Plot Visualization Deck (8 cols) */}
-        <div className="lg:col-span-8 bg-canvas-base p-4 rounded border border-canvas-border space-y-4">
-          <div className="flex items-center justify-between text-xs font-mono">
-            <span className="font-bold text-text-primary">{dataset.title}</span>
-            <span className="text-text-muted">{dataset.citation}</span>
+        <div className="lg:col-span-8 bg-canvas p-4 border-2 border-black shadow-[4px_4px_0px_#000] space-y-4">
+          <div className="flex items-center justify-between text-xs font-mono pb-2 border-b-2 border-black">
+            <span className="font-bold text-white uppercase">{dataset.title}</span>
+            <span className="text-text-muted font-bold">{dataset.citation}</span>
           </div>
 
           {/* SVG Plot */}
           {selectedDataset === 'atlas_h_yy' ? (
-            <div className="relative w-full h-64 bg-canvas-sub/40 rounded border border-canvas-border flex items-center justify-center p-3">
+            <div className="relative w-full h-64 bg-canvas-sub p-3 border-2 border-black shadow-[2px_2px_0px_#000] flex items-center justify-center">
               <svg className="w-full h-full" viewBox="0 0 500 220">
                 {/* Axes */}
                 <line x1="50" y1="180" x2="480" y2="180" stroke="#475569" strokeWidth="1.5" />
@@ -159,27 +159,27 @@ export function HepdataOverlay() {
               </svg>
 
               {/* Legend */}
-              <div className="absolute top-4 right-4 bg-canvas-surface/90 border border-canvas-border p-2 rounded text-[10px] font-mono space-y-1">
+              <div className="absolute top-4 right-4 bg-canvas-surface border-2 border-black p-2.5 shadow-[3px_3px_0px_#000] text-[10px] font-mono font-bold space-y-1">
                 <div className="flex items-center gap-1.5 text-text-primary">
-                  <span className="w-2 h-2 rounded-full bg-white inline-block"></span>
+                  <span className="w-2.5 h-2.5 bg-white border border-black inline-block"></span>
                   <span>ATLAS Data (36.1 fb&minus;1)</span>
                 </div>
                 <div className="flex items-center gap-1.5 text-sky-400">
-                  <span className="w-3 h-0.5 bg-sky-400 inline-block"></span>
+                  <span className="w-3.5 h-1 bg-sky-400 border border-black inline-block"></span>
                   <span>Signal + Bkg Fit</span>
                 </div>
                 <div className="flex items-center gap-1.5 text-red-400">
-                  <span className="w-3 h-0.5 bg-red-400 border-b border-dashed inline-block"></span>
+                  <span className="w-3.5 h-1 bg-red-400 border border-black inline-block"></span>
                   <span>Background Only</span>
                 </div>
               </div>
             </div>
           ) : (
-            <div className="relative w-full h-64 bg-canvas-sub/40 rounded border border-canvas-border flex items-center justify-center p-3">
+            <div className="relative w-full h-64 bg-canvas-sub p-3 border-2 border-black shadow-[2px_2px_0px_#000] flex items-center justify-center">
               <svg className="w-full h-full" viewBox="0 0 500 220">
                 {/* Axes */}
-                <line x1="50" y1="180" x2="480" y2="180" stroke="#475569" strokeWidth="1.5" />
-                <line x1="50" y1="20" x2="50" y2="180" stroke="#475569" strokeWidth="1.5" />
+                <line x1="50" y1="180" x2="480" y2="180" stroke="#000" strokeWidth="2" />
+                <line x1="50" y1="20" x2="50" y2="180" stroke="#000" strokeWidth="2" />
 
                 {/* Baseline R_AA = 1.0 (No Quenching) */}
                 <line x1="50" y1="40" x2="480" y2="40" stroke="#64748b" strokeDasharray="3,3" strokeWidth="1.5" />
@@ -238,30 +238,30 @@ export function HepdataOverlay() {
         </div>
 
         {/* Metadata & Physics Context Deck (4 cols) */}
-        <div className="lg:col-span-4 bg-canvas-sub p-4 rounded border border-canvas-border space-y-4 text-xs font-mono">
+        <div className="lg:col-span-4 bg-canvas-sub p-4 border-2 border-black shadow-[4px_4px_0px_#000] space-y-4 text-xs font-mono">
           <div>
-            <span className="text-text-muted uppercase text-[10px] block">Collaboration &amp; Paper</span>
-            <span className="text-text-primary font-bold block mt-0.5">{dataset.title}</span>
-            <span className="text-cern-cyan block mt-0.5">{dataset.citation}</span>
+            <span className="text-text-muted uppercase text-[10px] block font-bold">/// Collaboration &amp; Paper ///</span>
+            <span className="text-white font-bold block mt-0.5">{dataset.title}</span>
+            <span className="text-cern-cyan block mt-0.5 font-bold">{dataset.citation}</span>
           </div>
 
-          <div className="space-y-1.5 pt-2 border-t border-canvas-border">
+          <div className="space-y-1.5 pt-2 border-t-2 border-black">
             <div className="flex justify-between">
-              <span className="text-text-muted">HEPData Record:</span>
-              <span className="text-text-primary font-bold">{dataset.hepdata_id}</span>
+              <span className="text-text-muted font-bold">HEPData Record:</span>
+              <span className="text-white font-bold">{dataset.hepdata_id}</span>
             </div>
             <div className="flex justify-between">
-              <span className="text-text-muted">License:</span>
-              <span className="text-emerald-400">CC-BY-4.0</span>
+              <span className="text-text-muted font-bold">License:</span>
+              <span className="text-emerald-400 font-bold">CC-BY-4.0</span>
             </div>
             <div className="flex justify-between">
-              <span className="text-text-muted">Fidelity:</span>
-              <span className="text-text-primary font-semibold">Published Collider Data</span>
+              <span className="text-text-muted font-bold">Fidelity:</span>
+              <span className="text-white font-bold">Published Collider Data</span>
             </div>
           </div>
 
-          <div className="p-3 bg-canvas-base rounded border border-canvas-border text-[11px] leading-relaxed text-text-secondary space-y-1.5">
-            <span className="font-bold text-text-primary block">Physical Interpretation:</span>
+          <div className="p-3 bg-canvas-surface border-2 border-black shadow-[2px_2px_0px_#000] text-[11px] leading-relaxed text-text-secondary space-y-1.5 font-sans">
+            <span className="font-mono font-bold text-white block uppercase">/// Physical Interpretation ///</span>
             {selectedDataset === 'atlas_h_yy' ? (
               <p>
                 The clear resonance peak at 125.09 GeV sits atop a steeply falling non-resonant
@@ -280,10 +280,10 @@ export function HepdataOverlay() {
             href={`https://doi.org/${dataset.doi}`}
             target="_blank"
             rel="noreferrer"
-            className="w-full py-2 px-3 rounded bg-canvas-base hover:bg-canvas-raised border border-canvas-border text-xs font-mono text-cern-accent flex items-center justify-center gap-1.5 transition-colors"
+            className="w-full py-2.5 px-3 bg-cern-blue hover:bg-cern-accent border-2 border-black shadow-[3px_3px_0px_#00E5FF] text-xs font-mono font-bold text-white flex items-center justify-center gap-1.5 transition-all active:translate-x-[1px] active:translate-y-[1px]"
           >
             <span>View Paper on DOI / InSPIRE</span>
-            <ExternalLink className="w-3.5 h-3.5" />
+            <ExternalLink className="w-3.5 h-3.5 text-cern-cyan" />
           </a>
         </div>
       </div>

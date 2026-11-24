@@ -11,15 +11,15 @@ export const FidelityBadge: React.FC<FidelityBadgeProps> = ({ type, formula, cla
   const getBadgeStyle = () => {
     switch (type) {
       case 'ANALYTIC':
-        return 'bg-blue-950/60 text-blue-300 border-blue-500/40 hover:border-blue-400';
+        return 'bg-cern-blue text-white border-2 border-black shadow-[2px_2px_0px_#000] hover:shadow-[3px_3px_0px_#00E5FF]';
       case 'MONTE CARLO':
-        return 'bg-purple-950/60 text-purple-300 border-purple-500/40 hover:border-purple-400';
+        return 'bg-cern-magenta text-white border-2 border-black shadow-[2px_2px_0px_#000] hover:shadow-[3px_3px_0px_#FF0055]';
       case 'TOY':
-        return 'bg-amber-950/60 text-amber-300 border-amber-500/40 hover:border-amber-400';
+        return 'bg-cern-yellow text-black border-2 border-black shadow-[2px_2px_0px_#000] hover:shadow-[3px_3px_0px_#FFE600]';
       case 'ILLUSTRATIVE':
-        return 'bg-zinc-900/80 text-zinc-400 border-zinc-600/40 hover:border-zinc-400';
+        return 'bg-zinc-800 text-zinc-100 border-2 border-black shadow-[2px_2px_0px_#000] hover:shadow-[3px_3px_0px_#00FF66]';
       default:
-        return 'bg-zinc-800 text-zinc-300 border-zinc-700';
+        return 'bg-zinc-800 text-zinc-200 border-2 border-black shadow-[2px_2px_0px_#000]';
     }
   };
 
@@ -41,9 +41,9 @@ export const FidelityBadge: React.FC<FidelityBadgeProps> = ({ type, formula, cla
   return (
     <span
       title={getExplanation()}
-      className={`inline-flex items-center gap-1.5 px-2 py-0.5 text-xs font-mono font-medium rounded-full border transition-colors cursor-help ${getBadgeStyle()} ${className}`}
+      className={`inline-flex items-center gap-1.5 px-2.5 py-0.5 text-[11px] font-mono font-bold uppercase tracking-wider rounded-none cursor-help transition-all active:translate-x-[1px] active:translate-y-[1px] ${getBadgeStyle()} ${className}`}
     >
-      <span className="w-1.5 h-1.5 rounded-full bg-current opacity-80" />
+      <span className="w-1.5 h-1.5 rounded-none bg-current opacity-90 border border-black/40" />
       {type}
     </span>
   );

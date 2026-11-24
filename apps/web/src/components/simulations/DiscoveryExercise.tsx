@@ -105,22 +105,22 @@ export const DiscoveryExercise: React.FC = () => {
   };
 
   return (
-    <div className="w-full flex flex-col xl:flex-row gap-6 p-4 lg:p-6 bg-canvas-sub border border-canvas-border rounded-panel">
+    <div className="w-full flex flex-col xl:flex-row gap-6 p-4 lg:p-6 bg-canvas-sub border-3 border-black shadow-[6px_6px_0px_0px_#000000]">
       {/* Banner: Simulated Exercise */}
-      <div className="w-full xl:w-80 flex flex-col justify-between bg-canvas-surface border border-canvas-border rounded-panel p-4 space-y-4">
+      <div className="w-full xl:w-80 flex flex-col justify-between bg-canvas-surface border-2 border-black shadow-[4px_4px_0px_#000] p-4 space-y-4">
         <div className="space-y-4">
-          <div className="flex items-center justify-between pb-2 border-b border-canvas-border">
-            <h3 className="text-xs font-mono font-bold text-text-primary uppercase flex items-center gap-1.5">
-              <Sliders className="w-3.5 h-3.5 text-cern-cyan" /> Event Selection Cuts
+          <div className="flex items-center justify-between pb-2 border-b-2 border-black bg-canvas-sub -mx-4 -mt-4 p-3 mb-2">
+            <h3 className="text-xs font-mono font-bold text-white uppercase flex items-center gap-1.5 tracking-wider">
+              <Sliders className="w-4 h-4 text-cern-cyan" /> /// Selection Cuts ///
             </h3>
             <FidelityBadge type="MONTE CARLO" />
           </div>
 
           {/* Cut Sliders */}
-          <div>
+          <div className="p-3 bg-canvas-sub border-2 border-black shadow-[2px_2px_0px_#000] space-y-1">
             <div className="flex justify-between text-xs font-mono mb-1">
-              <span className="text-text-muted">Leading Photon p_T1:</span>
-              <span className="text-cern-cyan font-bold">{minPt1Gev} GeV/c</span>
+              <span className="text-text-muted font-bold">Leading Photon p_T1:</span>
+              <span className="text-cern-cyan font-bold bg-black px-1.5 py-0.5 border-2 border-black shadow-[1px_1px_0px_#00E5FF]">{minPt1Gev} GeV/c</span>
             </div>
             <input
               type="range"
@@ -129,17 +129,17 @@ export const DiscoveryExercise: React.FC = () => {
               step={1}
               value={minPt1Gev}
               onChange={(e) => setMinPt1Gev(Number(e.target.value))}
-              className="w-full accent-cern-cyan cursor-pointer"
+              className="w-full h-2 bg-slate-900 border-2 border-black appearance-none cursor-pointer accent-cern-cyan"
             />
             <span className="text-[10px] text-text-muted block font-mono">
               Cuts reject soft jets faking photons.
             </span>
           </div>
 
-          <div>
+          <div className="p-3 bg-canvas-sub border-2 border-black shadow-[2px_2px_0px_#000] space-y-1">
             <div className="flex justify-between text-xs font-mono mb-1">
-              <span className="text-text-muted">Sub-leading Photon p_T2:</span>
-              <span className="text-text-primary font-bold">{minPt2Gev} GeV/c</span>
+              <span className="text-text-muted font-bold">Sub-leading Photon p_T2:</span>
+              <span className="text-text-primary font-bold bg-black px-1.5 py-0.5 border-2 border-black shadow-[1px_1px_0px_#FFFFFF]">{minPt2Gev} GeV/c</span>
             </div>
             <input
               type="range"
@@ -148,7 +148,7 @@ export const DiscoveryExercise: React.FC = () => {
               step={1}
               value={minPt2Gev}
               onChange={(e) => setMinPt2Gev(Number(e.target.value))}
-              className="w-full accent-cern-blue cursor-pointer"
+              className="w-full h-2 bg-slate-900 border-2 border-black appearance-none cursor-pointer accent-cern-blue"
             />
           </div>
 
@@ -159,17 +159,17 @@ export const DiscoveryExercise: React.FC = () => {
                 setSeed((prev) => prev + 1);
                 setRevealed(false);
               }}
-              className="w-full py-2 px-3 rounded border border-canvas-border bg-canvas-sub hover:bg-canvas-raised text-xs font-mono text-text-secondary flex items-center justify-center gap-2 transition-colors"
+              className="w-full py-2.5 px-3 border-2 border-black bg-canvas-sub hover:bg-canvas-raised active:translate-x-[1px] active:translate-y-[1px] shadow-[3px_3px_0px_#000] active:shadow-none text-xs font-mono font-bold text-text-primary flex items-center justify-center gap-2 transition-all cursor-pointer"
             >
               <RefreshCw className="w-3.5 h-3.5 text-cern-accent" /> Generate New Seeded Run
             </button>
-            <span className="text-[10px] text-text-muted block mt-1 font-mono text-center">
+            <span className="text-[10px] text-text-muted block mt-1.5 font-mono text-center">
               Seed: #{seed} (Deterministic PRNG)
             </span>
           </div>
 
           {/* Statistical Readouts */}
-          <div className="p-3 bg-canvas-sub border border-canvas-border rounded space-y-2 text-xs font-mono">
+          <div className="p-3 bg-canvas-sub border-2 border-black shadow-[3px_3px_0px_#000] space-y-2 text-xs font-mono">
             <div className="flex justify-between">
               <span className="text-text-muted">Fitted Signal (s):</span>
               <span className="text-cern-cyan font-bold">{signalCount} events</span>
@@ -178,11 +178,15 @@ export const DiscoveryExercise: React.FC = () => {
               <span className="text-text-muted">Estimated Bg (b):</span>
               <span className="text-text-secondary">{backgroundCount} events</span>
             </div>
-            <div className="flex justify-between pt-1 border-t border-canvas-border">
-              <span className="text-text-muted">Asimov Significance Z:</span>
+            <div className="flex justify-between pt-1 border-t-2 border-black">
+              <span className="text-text-muted font-bold">Asimov Significance Z:</span>
               <span
-                className={`font-bold ${
-                  significance >= 5.0 ? 'text-emerald-400' : significance >= 3.0 ? 'text-amber-400' : 'text-text-primary'
+                className={`font-bold px-1.5 py-0.5 border-2 border-black ${
+                  significance >= 5.0
+                    ? 'bg-emerald-400 text-black shadow-[1px_1px_0px_#000]'
+                    : significance >= 3.0
+                    ? 'bg-amber-400 text-black shadow-[1px_1px_0px_#000]'
+                    : 'bg-black text-white'
                 }`}
               >
                 {significance.toFixed(2)} σ
@@ -192,10 +196,10 @@ export const DiscoveryExercise: React.FC = () => {
         </div>
 
         {/* Action: Reveal Truth & Export */}
-        <div className="pt-3 border-t border-canvas-border space-y-2">
+        <div className="pt-3 border-t-2 border-black space-y-2">
           <button
             onClick={() => setRevealed(!revealed)}
-            className="w-full py-2 px-3 rounded bg-cern-blue hover:bg-cern-accent text-white font-mono font-bold text-xs transition-colors flex items-center justify-center gap-1.5"
+            className="w-full py-2.5 px-3 bg-cern-blue hover:bg-cern-accent active:translate-x-[1px] active:translate-y-[1px] border-2 border-black shadow-[3px_3px_0px_#00E5FF] active:shadow-none text-white font-mono font-bold text-xs transition-all flex items-center justify-center gap-1.5 cursor-pointer"
           >
             <Eye className="w-3.5 h-3.5" />
             {revealed ? 'Hide Benchmark Truth' : 'Reveal Truth & Look-Elsewhere'}
@@ -204,16 +208,16 @@ export const DiscoveryExercise: React.FC = () => {
           <div className="grid grid-cols-2 gap-2">
             <button
               onClick={exportJson}
-              className="py-1 px-2 rounded bg-canvas-sub hover:bg-canvas-raised border border-canvas-border text-xs font-mono text-text-secondary flex items-center justify-center gap-1 transition-colors"
+              className="py-1.5 px-2 bg-canvas-sub hover:bg-canvas-raised active:translate-x-[1px] active:translate-y-[1px] border-2 border-black shadow-[2px_2px_0px_#000] active:shadow-none text-xs font-mono font-bold text-text-primary flex items-center justify-center gap-1 transition-all cursor-pointer"
             >
-              <Download className="w-3 h-3" />
+              <Download className="w-3 h-3 text-cern-cyan" />
               <span>JSON</span>
             </button>
             <button
               onClick={exportCsv}
-              className="py-1 px-2 rounded bg-canvas-sub hover:bg-canvas-raised border border-canvas-border text-xs font-mono text-text-secondary flex items-center justify-center gap-1 transition-colors"
+              className="py-1.5 px-2 bg-canvas-sub hover:bg-canvas-raised active:translate-x-[1px] active:translate-y-[1px] border-2 border-black shadow-[2px_2px_0px_#000] active:shadow-none text-xs font-mono font-bold text-text-primary flex items-center justify-center gap-1 transition-all cursor-pointer"
             >
-              <Download className="w-3 h-3" />
+              <Download className="w-3 h-3 text-cern-amber" />
               <span>CSV</span>
             </button>
           </div>
@@ -221,19 +225,21 @@ export const DiscoveryExercise: React.FC = () => {
       </div>
 
       {/* CENTER: Invariant Mass Spectrum Histogram */}
-      <div className="flex-1 flex flex-col justify-between bg-canvas rounded-panel border border-canvas-border p-4 relative min-h-[460px] space-y-4">
+      <div className="flex-1 flex flex-col justify-between bg-canvas border-2 border-black shadow-[4px_4px_0px_#000] p-4 relative min-h-[460px] space-y-4">
         {/* Prominent Mandatory Ribbon */}
-        <div className="p-2.5 bg-amber-950/40 border border-amber-500/50 rounded flex items-center justify-between text-xs font-mono text-amber-300">
-          <span className="flex items-center gap-1.5 font-bold">
-            <AlertCircle className="w-4 h-4 text-amber-400" />
+        <div className="p-3 bg-amber-400 text-black border-2 border-black shadow-[3px_3px_0px_#000] flex items-center justify-between text-xs font-mono font-bold">
+          <span className="flex items-center gap-2 tracking-wider">
+            <AlertCircle className="w-4 h-4 text-black" />
             EDUCATIONAL EXERCISE ONLY — NOT A REAL NEW DISCOVERY
           </span>
-          <span>Mode: Resonance Reconstruction</span>
+          <span className="bg-black text-amber-300 px-2 py-0.5 border border-black text-[10px]">
+            Mode: Resonance Reconstruction
+          </span>
         </div>
 
         {/* Invariant Mass Distribution Histogram Graphic */}
         <div className="flex-1 flex flex-col justify-end">
-          <div className="h-64 flex items-end gap-1 px-2 border-b border-l border-canvas-border">
+          <div className="h-64 flex items-end gap-1 px-2 border-b-2 border-l-2 border-black bg-black/20">
             {bins.map((count, idx) => {
               const heightPercent = (count / maxBin) * 100;
               const massGev = 100 + idx;
@@ -245,15 +251,15 @@ export const DiscoveryExercise: React.FC = () => {
                   className="flex-1 flex flex-col items-center group relative cursor-pointer"
                 >
                   {/* Tooltip on hover */}
-                  <div className="absolute bottom-full mb-1 hidden group-hover:block p-1 bg-canvas-raised border border-canvas-border rounded text-[10px] font-mono z-30 pointer-events-none whitespace-nowrap">
+                  <div className="absolute bottom-full mb-1 hidden group-hover:block p-1.5 bg-black border-2 border-cern-cyan text-white text-[10px] font-mono z-30 pointer-events-none whitespace-nowrap shadow-[2px_2px_0px_#000]">
                     {massGev} GeV: {count} events
                   </div>
 
                   <div
-                    className={`w-full rounded-t transition-all ${
+                    className={`w-full transition-all border border-black ${
                       isHiggsWindow
-                        ? 'bg-cern-cyan group-hover:bg-cyan-300'
-                        : 'bg-canvas-surface border-t border-canvas-border group-hover:bg-slate-700'
+                        ? 'bg-cern-cyan group-hover:bg-cyan-300 shadow-[2px_2px_0px_#000]'
+                        : 'bg-canvas-surface group-hover:bg-slate-700'
                     }`}
                     style={{ height: `${Math.max(4, heightPercent)}%` }}
                   />
@@ -263,10 +269,10 @@ export const DiscoveryExercise: React.FC = () => {
           </div>
 
           {/* X-Axis labels */}
-          <div className="flex justify-between px-2 pt-1 text-[11px] font-mono text-text-muted">
+          <div className="flex justify-between px-2 pt-2 text-[11px] font-mono text-text-muted border-t border-black/40">
             <span>100 GeV</span>
             <span>110 GeV</span>
-            <span className="text-cern-cyan font-bold">125 GeV (Peak)</span>
+            <span className="text-cern-cyan font-bold bg-cern-cyan/10 px-1 border border-cern-cyan/30">125 GeV (Peak)</span>
             <span>140 GeV</span>
             <span>150 GeV</span>
           </div>
@@ -274,9 +280,9 @@ export const DiscoveryExercise: React.FC = () => {
 
         {/* Revealed Truth Explanation Drawer */}
         {revealed && (
-          <div className="p-4 bg-canvas-surface border border-emerald-500/40 rounded space-y-2 text-xs leading-relaxed animate-in fade-in duration-150">
-            <div className="flex items-center gap-2 text-emerald-400 font-mono font-bold">
-              <CheckCircle2 className="w-4 h-4" /> Truth Revealed: Injected Standard Model Higgs
+          <div className="p-4 bg-canvas-sub border-2 border-black shadow-[4px_4px_0px_#00FF66] space-y-2 text-xs leading-relaxed animate-in fade-in duration-150">
+            <div className="flex items-center gap-2 text-emerald-400 font-mono font-bold uppercase tracking-wider">
+              <CheckCircle2 className="w-4 h-4" /> /// Truth Revealed: Injected Standard Model Higgs ///
             </div>
             <p className="text-text-secondary">
               A synthetic resonance was injected at exactly <strong>125.0 GeV</strong> with a width
@@ -290,18 +296,18 @@ export const DiscoveryExercise: React.FC = () => {
           </div>
         )}
 
-        <div className="pt-2 border-t border-canvas-border flex items-center justify-between text-[11px] font-mono text-text-muted">
+        <div className="pt-2 border-t-2 border-black flex items-center justify-between text-[11px] font-mono text-text-muted">
           <span>Observable: M_γγ = √(2·p_T1·p_T2·(cosh(Δη) - cos(Δφ)))</span>
           <Value manifestId="higgs-boson-mass-pdg" value={125.25} unit="GeV" digits={2} />
         </div>
       </div>
 
       {/* RIGHT: Methodology Drawer */}
-      <div className="w-full xl:w-80 flex flex-col justify-between bg-canvas-surface border border-canvas-border rounded-panel p-4 space-y-4">
+      <div className="w-full xl:w-80 flex flex-col justify-between bg-canvas-surface border-2 border-black shadow-[4px_4px_0px_#000] p-4 space-y-4">
         <div className="space-y-3 text-xs leading-relaxed">
-          <div className="pb-2 border-b border-canvas-border">
-            <h3 className="text-xs font-mono font-bold text-text-primary uppercase">
-              The 5-Sigma Discovery Standard
+          <div className="pb-2 border-b-2 border-black bg-canvas-sub -mx-4 -mt-4 p-3 mb-2">
+            <h3 className="text-xs font-mono font-bold text-white uppercase tracking-wider">
+              /// 5-Sigma Discovery Standard ///
             </h3>
           </div>
 
@@ -315,13 +321,13 @@ export const DiscoveryExercise: React.FC = () => {
             A <strong>3-sigma (3σ)</strong> result is only termed &quot;evidence for a process&quot;.
           </p>
 
-          <div className="p-3 bg-canvas-sub border border-canvas-border rounded font-mono text-[11px] space-y-1">
-            <div className="text-text-muted">Asimov Formula:</div>
-            <div className="text-amber-300">Z = √[2((s+b)ln(1+s/b) - s)]</div>
+          <div className="p-3 bg-canvas-sub border-2 border-black shadow-[2px_2px_0px_#000] font-mono text-[11px] space-y-1">
+            <div className="text-text-muted font-bold">Asimov Formula:</div>
+            <div className="text-amber-300 font-bold">Z = √[2((s+b)ln(1+s/b) - s)]</div>
           </div>
         </div>
 
-        <div className="pt-3 border-t border-canvas-border text-[11px] font-mono text-text-muted">
+        <div className="pt-3 border-t-2 border-black text-[11px] font-mono text-text-muted">
           <span>Formula: Cowan et al. (EPJC 71 (2011) 1554)</span>
         </div>
       </div>

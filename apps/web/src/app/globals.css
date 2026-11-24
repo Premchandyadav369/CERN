@@ -11,19 +11,22 @@
   --primary-cern: #0033a0;
   --primary-accent: #4c7dff;
 
-  --beam-cyan: #3dd6ff;
-  --ion-magenta: #e04fd0;
+  --beam-cyan: #00e5ff;
+  --ion-magenta: #ff0055;
+  --neon-yellow: #ffe600;
   --antimatter-amber: #ffb020;
-  --success: #2ecc8f;
+  --neon-lime: #00ff66;
+  --success: #00ff66;
   --error: #ff5c5c;
 
-  --text-primary: #e8eef9;
-  --text-secondary: #9fb0cc;
+  --text-primary: #ffffff;
+  --text-secondary: #a3b8d8;
   --text-muted: #6b7c99;
   --text-mono: #c8d7f0;
 
-  --border-subtle: rgba(255, 255, 255, 0.08);
-  --border-strong: rgba(255, 255, 255, 0.16);
+  --border-subtle: #000000;
+  --border-strong: #000000;
+  --border-brutal: #000000;
 }
 
 body {
@@ -35,20 +38,23 @@ body {
   -moz-osx-font-smoothing: grayscale;
 }
 
-/* Custom scrollbars */
+/* Neobrutalist Scrollbars */
 ::-webkit-scrollbar {
-  width: 6px;
-  height: 6px;
+  width: 8px;
+  height: 8px;
 }
 ::-webkit-scrollbar-track {
-  background: #0a0f1a;
+  background: #060a12;
+  border-left: 2px solid #000000;
 }
 ::-webkit-scrollbar-thumb {
-  background: #1c273c;
-  border-radius: 3px;
+  background: #1e293b;
+  border: 2px solid #000000;
+  box-shadow: 1px 1px 0px #00e5ff;
 }
 ::-webkit-scrollbar-thumb:hover {
-  background: #2a3b5c;
+  background: #00e5ff;
+  border-color: #000000;
 }
 
 /* Tabular numerals for code & numbers */
@@ -56,57 +62,212 @@ body {
   font-variant-numeric: tabular-nums;
 }
 
-/* CERN Control Room Aesthetics */
-.glow-cyan {
-  text-shadow: 0 0 16px rgba(61, 214, 255, 0.5);
+/* ========================================================
+   NEOBRUTALIST SCIENTIFIC FOUNDATION & UTILITIES
+   ======================================================== */
+
+/* Neobrutalist Range Sliders */
+input[type="range"] {
+  -webkit-appearance: none;
+  appearance: none;
+  height: 10px;
+  background: #0a0f1a;
+  border: 2px solid #000000;
+  box-shadow: 2px 2px 0px 0px rgba(0, 0, 0, 1);
+  outline: none;
+  border-radius: 0px;
 }
 
-.glow-accent {
-  text-shadow: 0 0 16px rgba(76, 125, 255, 0.5);
+input[type="range"]::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 18px;
+  height: 22px;
+  background: #00e5ff;
+  border: 2px solid #000000;
+  box-shadow: 2px 2px 0px 0px #000000;
+  cursor: pointer;
+  transition: transform 0.1s ease, background-color 0.1s ease;
 }
 
-.glow-emerald {
-  text-shadow: 0 0 16px rgba(46, 204, 143, 0.5);
+input[type="range"]::-webkit-slider-thumb:hover {
+  background: #ffffff;
+  transform: scale(1.08);
 }
 
-.glow-amber {
-  text-shadow: 0 0 16px rgba(245, 158, 11, 0.5);
+input[type="range"]::-webkit-slider-thumb:active {
+  transform: translate(1px, 1px);
+  box-shadow: 1px 1px 0px 0px #000000;
 }
 
-.glow-pink {
-  text-shadow: 0 0 16px rgba(244, 63, 94, 0.5);
+input[type="range"]::-moz-range-thumb {
+  width: 18px;
+  height: 22px;
+  background: #00e5ff;
+  border: 2px solid #000000;
+  box-shadow: 2px 2px 0px 0px #000000;
+  cursor: pointer;
 }
 
-.border-glow-cyan {
-  box-shadow: 0 0 20px -3px rgba(61, 214, 255, 0.2);
+/* Neobrutalist Tactile Buttons */
+.brutal-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font-family: 'JetBrains Mono', 'Fira Code', monospace;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  border: 2px solid #000000;
+  box-shadow: 3px 3px 0px 0px #000000;
+  transition: all 0.12s cubic-bezier(0.16, 1, 0.3, 1);
+  user-select: none;
 }
 
-.border-glow-blue {
-  box-shadow: 0 0 20px -3px rgba(0, 51, 160, 0.35);
+.brutal-btn:hover {
+  transform: translate(-1px, -1px);
+  box-shadow: 5px 5px 0px 0px #000000;
 }
 
-.border-glow-magenta {
-  box-shadow: 0 0 20px -3px rgba(224, 79, 208, 0.25);
+.brutal-btn:active {
+  transform: translate(2px, 2px);
+  box-shadow: 1px 1px 0px 0px #000000;
 }
 
-.border-glow-amber {
-  box-shadow: 0 0 20px -3px rgba(255, 176, 32, 0.25);
+.brutal-btn-cyan {
+  background: #00e5ff;
+  color: #000000;
+}
+.brutal-btn-cyan:hover {
+  background: #5df0ff;
 }
 
-.glass-card {
-  background: rgba(13, 20, 34, 0.7);
-  backdrop-filter: blur(12px);
-  -webkit-backdrop-filter: blur(12px);
-  border: 1px solid rgba(255, 255, 255, 0.08);
+.brutal-btn-blue {
+  background: #0033a0;
+  color: #ffffff;
+}
+.brutal-btn-blue:hover {
+  background: #1a4fc2;
 }
 
-.glass-card-hover:hover {
-  background: rgba(19, 28, 46, 0.85);
-  border-color: rgba(61, 214, 255, 0.3);
+.brutal-btn-yellow {
+  background: #ffe600;
+  color: #000000;
+}
+.brutal-btn-yellow:hover {
+  background: #fff04d;
+}
+
+.brutal-btn-amber {
+  background: #ffb020;
+  color: #000000;
+}
+.brutal-btn-amber:hover {
+  background: #ffc457;
+}
+
+.brutal-btn-pink {
+  background: #ff0055;
+  color: #ffffff;
+}
+.brutal-btn-pink:hover {
+  background: #ff3377;
+}
+
+.brutal-btn-lime {
+  background: #00ff66;
+  color: #000000;
+}
+.brutal-btn-lime:hover {
+  background: #4dff94;
+}
+
+.brutal-btn-emerald {
+  background: #00ff66;
+  color: #000000;
+}
+
+/* Neobrutalist Cards & Panels */
+.brutal-card {
+  border: 2px solid #000000;
+  box-shadow: 4px 4px 0px 0px #000000;
+  transition: transform 0.15s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.15s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.brutal-card-hover:hover {
+  transform: translate(-2px, -2px);
+  box-shadow: 6px 6px 0px 0px #000000;
+}
+
+.brutal-card-cyan {
+  border: 2px solid #000000;
+  box-shadow: 4px 4px 0px 0px #00e5ff;
+}
+
+.brutal-card-yellow {
+  border: 2px solid #000000;
+  box-shadow: 4px 4px 0px 0px #ffe600;
+}
+
+.brutal-card-magenta {
+  border: 2px solid #000000;
+  box-shadow: 4px 4px 0px 0px #ff0055;
+}
+
+.brutal-card-lime {
+  border: 2px solid #000000;
+  box-shadow: 4px 4px 0px 0px #00ff66;
+}
+
+.brutal-badge {
+  display: inline-flex;
+  align-items: center;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 11px;
+  font-weight: 700;
+  text-transform: uppercase;
+  border: 2px solid #000000;
+  box-shadow: 2px 2px 0px 0px #000000;
+  padding: 2px 8px;
+}
+
+.brutal-header {
+  border: 3px solid #000000;
+  box-shadow: 6px 6px 0px 0px #000000;
+  background-color: var(--bg-surface);
+}
+
+/* Neobrutalist Control-Room Hazard Stripes */
+.brutal-hazard {
+  background: repeating-linear-gradient(
+    -45deg,
+    #ffb020,
+    #ffb020 8px,
+    #000000 8px,
+    #000000 16px
+  );
+}
+
+.brutal-hazard-subtle {
+  background: repeating-linear-gradient(
+    -45deg,
+    rgba(255, 176, 32, 0.15),
+    rgba(255, 176, 32, 0.15) 8px,
+    transparent 8px,
+    transparent 16px
+  );
+}
+
+/* Cyber-Brutalist Technical Grid */
+.brutal-grid {
+  background-image: 
+    linear-gradient(to right, rgba(255, 255, 255, 0.05) 1px, transparent 1px),
+    linear-gradient(to bottom, rgba(255, 255, 255, 0.05) 1px, transparent 1px);
+  background-size: 24px 24px;
 }
 
 /* High contrast selection */
 ::selection {
-  background: #0055d4;
-  color: #ffffff;
+  background: #00e5ff;
+  color: #000000;
 }

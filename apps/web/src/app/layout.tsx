@@ -18,7 +18,7 @@ export default function RootLayout({
 }) {
   return (
     <html lang="en" className="dark">
-      <body className="min-h-screen flex flex-col bg-canvas text-text-primary antialiased selection:bg-cern-blue selection:text-white">
+      <body className="min-h-screen flex flex-col bg-canvas text-text-primary antialiased selection:bg-cern-cyan selection:text-black">
         <TopBar />
         <main className="flex-1 flex flex-col">{children}</main>
         <Footer />

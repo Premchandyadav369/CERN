@@ -1,9 +1,9 @@
 'use client';
 
-import React from 'react';
+import React, { useEffect } from 'react';
 import { useGlobalStore } from '@/lib/store';
 import { getManifestRecord } from '@/lib/manifest';
-import { X, ExternalLink, ShieldCheck, Database, Calendar, FileCode, AlertTriangle } from 'lucide-react';
+import { X, ExternalLink, ShieldCheck, AlertTriangle, FileCode } from 'lucide-react';
 
 export const CitationDrawer: React.FC = () => {
   const isOpen = useGlobalStore((s) => s.citationDrawerOpen);
@@ -11,46 +11,61 @@ export const CitationDrawer: React.FC = () => {
   const activeId = useGlobalStore((s) => s.activeManifestId);
   const setActiveId = useGlobalStore((s) => s.setActiveManifestId);
 
-  if (!isOpen || !activeId) return null;
-
-  const record = getManifestRecord(activeId);
-
   const handleClose = () => {
     setIsOpen(false);
     setActiveId(null);
   };
 
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.key === 'Escape' && isOpen) {
+        handleClose();
+      }
+    };
+    window.addEventListener('keydown', handleKeyDown);
+    return () => window.removeEventListener('keydown', handleKeyDown);
+  }, [isOpen]);
+
+  if (!isOpen || !activeId) return null;
+
+  const record = getManifestRecord(activeId);
+
   return (
-    <div className="fixed inset-0 z-50 flex justify-end bg-black/60 backdrop-blur-sm animate-in fade-in duration-200">
+    <div
+      className="fixed inset-0 z-50 flex justify-end bg-black/75 backdrop-blur-sm animate-in fade-in duration-150"
+      onClick={handleClose}
+    >
       <div
-        className="w-full max-w-lg h-full bg-canvas-surface border-l border-canvas-borderStrong p-6 overflow-y-auto shadow-2xl flex flex-col justify-between"
+        className="w-full max-w-lg h-full bg-canvas-surface border-l-3 border-black p-6 overflow-y-auto shadow-[-8px_0px_0px_0px_#000] flex flex-col justify-between"
         onClick={(e) => e.stopPropagation()}
       >
         <div>
           {/* Header */}
-          <div className="flex items-start justify-between pb-4 border-b border-canvas-border">
+          <div className="flex items-start justify-between pb-4 border-b-3 border-black">
             <div>
-              <div className="flex items-center gap-2 mb-1">
+              <div className="flex items-center gap-2 mb-2">
                 <span
-                  className={`px-2 py-0.5 rounded text-xs font-mono font-bold uppercase ${
+                  className={`px-2.5 py-1 text-xs font-mono font-bold uppercase border-2 border-black shadow-[3px_3px_0px_#000] ${
                     record?.dataClass === 'REAL'
-                      ? 'bg-emerald-500/20 text-emerald-400 border border-emerald-500/30'
+                      ? 'bg-emerald-400 text-black shadow-[3px_3px_0px_#00FF66]'
                       : record?.dataClass === 'PUBLISHED'
-                      ? 'bg-blue-500/20 text-blue-400 border border-blue-500/30'
-                      : 'bg-amber-500/20 text-amber-400 border border-amber-500/30'
+                      ? 'bg-cern-cyan text-black shadow-[3px_3px_0px_#00E5FF]'
+                      : 'bg-amber-400 text-black shadow-[3px_3px_0px_#FFE600]'
                   }`}
                 >
                   {record?.dataClass} DATA
                 </span>
-                <span className="text-xs text-text-muted font-mono">{record?.sourceTier}</span>
+                <span className="text-xs text-text-muted font-mono font-bold uppercase tracking-wider px-2 py-0.5 border-2 border-black bg-canvas-sub shadow-[2px_2px_0px_#000]">
+                  {record?.sourceTier}
+                </span>
               </div>
-              <h2 className="text-lg font-display font-semibold text-text-primary">
+              <h2 className="text-xl font-display font-extrabold text-white">
                 {record?.title || 'Scientific Provenance Record'}
               </h2>
             </div>
             <button
               onClick={handleClose}
-              className="p-1 rounded text-text-muted hover:text-text-primary hover:bg-canvas-raised transition-colors"
+              className="p-1.5 border-2 border-black bg-canvas-sub hover:bg-cern-red text-white transition-all shadow-[3px_3px_0px_#000] active:translate-x-[1px] active:translate-y-[1px] active:shadow-none"
               title="Close drawer"
             >
               <X className="w-5 h-5" />
@@ -59,39 +74,39 @@ export const CitationDrawer: React.FC = () => {
 
           {/* Record Details */}
           {record ? (
-            <div className="mt-6 space-y-5 text-sm">
-              {/* Manifest ID */}
-              <div>
-                <label className="text-xs text-text-muted uppercase font-mono block mb-1">
-                  Manifest Key
+            <div className="mt-6 space-y-4 text-xs font-mono">
+              {/* Manifest Key */}
+              <div className="p-3 bg-canvas-sub border-2 border-black shadow-[4px_4px_0px_#000]">
+                <label className="text-[10px] text-text-muted uppercase font-bold block mb-1">
+                  /// Manifest Key ///
                 </label>
-                <div className="p-2 bg-canvas-sub border border-canvas-border rounded font-mono text-xs text-cern-accent">
+                <div className="text-cern-cyan font-bold break-all">
                   {record.id}
                 </div>
               </div>
 
               {/* Source Link */}
-              <div>
-                <label className="text-xs text-text-muted uppercase font-mono block mb-1">
-                  Canonical Source URL & Record
+              <div className="p-3 bg-canvas-sub border-2 border-black shadow-[4px_4px_0px_#000]">
+                <label className="text-[10px] text-text-muted uppercase font-bold block mb-1">
+                  /// Canonical Source URL &amp; Record ///
                 </label>
                 <a
                   href={record.sourceUrl}
                   target="_blank"
                   rel="noreferrer"
-                  className="flex items-center justify-between p-2.5 bg-canvas-raised hover:bg-canvas-sub border border-canvas-border rounded text-text-primary text-xs transition-colors group"
+                  className="flex items-center justify-between p-2.5 bg-canvas-raised hover:bg-black border-2 border-black text-white text-xs transition-all group shadow-[3px_3px_0px_#000] hover:shadow-[3px_3px_0px_#00E5FF]"
                 >
-                  <span className="truncate pr-2">{record.sourceUrl}</span>
-                  <ExternalLink className="w-4 h-4 shrink-0 text-cern-accent group-hover:translate-x-0.5 transition-transform" />
+                  <span className="truncate pr-2 font-mono">{record.sourceUrl}</span>
+                  <ExternalLink className="w-4 h-4 shrink-0 text-cern-cyan group-hover:translate-x-0.5 transition-transform" />
                 </a>
               </div>
 
               {record.doiOrRecordId && (
-                <div>
-                  <label className="text-xs text-text-muted uppercase font-mono block mb-1">
-                    DOI / Document Identifier
+                <div className="p-3 bg-canvas-sub border-2 border-black shadow-[4px_4px_0px_#000]">
+                  <label className="text-[10px] text-text-muted uppercase font-bold block mb-1">
+                    /// DOI / Document Identifier ///
                   </label>
-                  <div className="p-2 bg-canvas-sub border border-canvas-border rounded font-mono text-xs text-text-secondary">
+                  <div className="text-text-secondary font-bold">
                     {record.doiOrRecordId}
                   </div>
                 </div>
@@ -99,62 +114,56 @@ export const CitationDrawer: React.FC = () => {
 
               {/* Formula */}
               {record.formula && (
-                <div>
-                  <label className="text-xs text-text-muted uppercase font-mono block mb-1">
-                    Physics Equation / Formula
+                <div className="p-3 bg-canvas-sub border-2 border-black shadow-[4px_4px_0px_#000]">
+                  <label className="text-[10px] text-text-muted uppercase font-bold block mb-1">
+                    /// Physics Equation / Formula ///
                   </label>
-                  <div className="p-2.5 bg-canvas-sub border border-canvas-border rounded font-mono text-xs text-amber-300">
+                  <div className="p-2.5 bg-black border-2 border-black text-amber-300 font-bold text-xs shadow-[3px_3px_0px_#FFE600]">
                     {record.formula}
                   </div>
                 </div>
               )}
 
               {/* Known Limitations */}
-              <div>
-                <label className="text-xs text-amber-400 uppercase font-mono flex items-center gap-1.5 mb-1 font-semibold">
-                  <AlertTriangle className="w-3.5 h-3.5" /> Known Limitations & Methodology
+              <div className="p-3.5 bg-amber-400 border-2 border-black shadow-[4px_4px_0px_#000] text-black">
+                <label className="text-xs uppercase font-extrabold flex items-center gap-1.5 mb-1.5 text-black">
+                  <AlertTriangle className="w-4 h-4" /> Known Limitations &amp; Methodology
                 </label>
-                <div className="p-3 bg-amber-950/20 border border-amber-500/30 rounded text-xs text-text-secondary leading-relaxed">
+                <p className="font-sans text-xs text-black font-medium leading-relaxed">
                   {record.knownLimitations}
-                </div>
+                </p>
               </div>
 
               {/* Metadata Grid */}
-              <div className="grid grid-cols-2 gap-3 pt-2">
-                <div className="p-2.5 bg-canvas-sub border border-canvas-border rounded">
-                  <span className="text-[11px] text-text-muted block">Retrieval Date</span>
-                  <span className="font-mono text-xs text-text-secondary">{record.retrievalDate}</span>
+              <div className="grid grid-cols-2 gap-3 pt-1">
+                <div className="p-2.5 bg-canvas-sub border-2 border-black shadow-[3px_3px_0px_#000]">
+                  <span className="text-[10px] text-text-muted uppercase block font-bold">Retrieval Date</span>
+                  <span className="text-white font-bold">{record.retrievalDate}</span>
                 </div>
-                <div className="p-2.5 bg-canvas-sub border border-canvas-border rounded">
-                  <span className="text-[11px] text-text-muted block">Licence</span>
-                  <span className="font-mono text-xs text-text-secondary">{record.license}</span>
+                <div className="p-2.5 bg-canvas-sub border-2 border-black shadow-[3px_3px_0px_#000]">
+                  <span className="text-[10px] text-text-muted uppercase block font-bold">Licence</span>
+                  <span className="text-white font-bold">{record.license}</span>
                 </div>
               </div>
 
               {record.transformScript && (
-                <div>
-                  <label className="text-xs text-text-muted uppercase font-mono block mb-1">
-                    Processing Script
-                  </label>
-                  <div className="p-2 bg-canvas-sub border border-canvas-border rounded font-mono text-xs text-text-muted flex items-center gap-2">
-                    <FileCode className="w-3.5 h-3.5 text-cern-cyan" />
-                    <span>{record.transformScript}</span>
-                  </div>
+                <div className="p-2.5 bg-canvas-sub border-2 border-black shadow-[3px_3px_0px_#000] flex items-center gap-2">
+                  <FileCode className="w-4 h-4 text-cern-cyan shrink-0" />
+                  <span className="text-text-muted text-[11px] truncate font-bold">Script: {record.transformScript}</span>
                 </div>
               )}
             </div>
           ) : (
-            <div className="mt-8 text-center text-text-muted">
-              Record not found in current manifest.
+            <div className="mt-8 p-6 text-center text-text-muted border-2 border-dashed border-black bg-canvas-sub shadow-[3px_3px_0px_#000] font-mono text-xs">
+              RECORD NOT FOUND IN CRYPTOGRAPHIC MANIFEST.
             </div>
           )}
         </div>
 
         {/* Footer */}
-        <div className="pt-6 border-t border-canvas-border text-[11px] text-text-muted">
-          <p>
-            CERN-X strict provenance policy: Every number rendered on this site is traceable to an
-            official, open-access, or reproducible computed record.
+        <div className="pt-6 border-t-3 border-black text-xs font-mono text-text-muted">
+          <p className="leading-relaxed font-bold">
+            /// CERN-X STRICT PROVENANCE POLICY: EVERY NUMBER RENDERED IS TRACEABLE TO AN OFFICIAL RECORD.
           </p>
         </div>
       </div>

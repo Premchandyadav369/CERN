@@ -22,10 +22,10 @@ export const DetectorTwin: React.FC = () => {
 
   // Subsystem active filters
   const [subsystems, setSubsystems] = useState<SubsystemToggle[]>([
-    { id: 'tracker', name: 'Inner Tracking System', category: 'TRACKER', active: true, color: '#FFD166' },
-    { id: 'ecal', name: 'Electromagnetic Calorimeter (ECAL)', category: 'ECAL', active: true, color: '#06D6A0' },
-    { id: 'hcal', name: 'Hadronic Calorimeter (HCAL)', category: 'HCAL', active: true, color: '#118AB2' },
-    { id: 'muon', name: 'Muon Spectrometer', category: 'MUON', active: true, color: '#EF476F' },
+    { id: 'tracker', name: 'Inner Tracking System', category: 'TRACKER', active: true, color: '#FFE600' },
+    { id: 'ecal', name: 'Electromagnetic Calorimeter (ECAL)', category: 'ECAL', active: true, color: '#00FF66' },
+    { id: 'hcal', name: 'Hadronic Calorimeter (HCAL)', category: 'HCAL', active: true, color: '#00E5FF' },
+    { id: 'muon', name: 'Muon Spectrometer', category: 'MUON', active: true, color: '#FF0055' },
   ]);
 
   const toggleSubsystem = (id: string) => {
@@ -53,22 +53,22 @@ export const DetectorTwin: React.FC = () => {
   const selectedObject = activeEvent.physicsObjects.find((o) => o.id === selectedObjectId);
 
   return (
-    <div className="w-full flex flex-col xl:flex-row gap-6 p-4 lg:p-6 bg-canvas-sub border border-canvas-border rounded-panel">
+    <div className="w-full flex flex-col xl:flex-row gap-6 p-4 lg:p-6 bg-canvas-sub border-3 border-black shadow-[6px_6px_0px_0px_#000000]">
       {/* LEFT: Detector & Subsystem Control Deck */}
-      <div className="w-full xl:w-80 flex flex-col justify-between bg-canvas-surface border border-canvas-border rounded-panel p-4 space-y-5">
+      <div className="w-full xl:w-80 flex flex-col justify-between bg-canvas-surface border-2 border-black shadow-[4px_4px_0px_#000] p-4 space-y-5">
         <div className="space-y-4">
-          <div className="flex items-center justify-between pb-2 border-b border-canvas-border">
-            <h3 className="text-xs font-mono font-bold text-text-primary uppercase flex items-center gap-1.5">
-              <Layers className="w-3.5 h-3.5 text-cern-cyan" /> Subdetector Controls
+          <div className="flex items-center justify-between pb-2 border-b-2 border-black bg-canvas-sub -mx-4 -mt-4 p-3 mb-2">
+            <h3 className="text-xs font-mono font-bold text-white uppercase flex items-center gap-1.5 tracking-wider">
+              <Layers className="w-4 h-4 text-cern-cyan" /> /// Subdetectors ///
             </h3>
-            <span className="text-[10px] font-mono text-emerald-400 bg-emerald-950/60 px-1.5 py-0.5 rounded border border-emerald-500/30">
-              REAL OPEN DATA
+            <span className="text-[10px] font-mono text-black font-bold bg-emerald-400 px-2 py-0.5 border-2 border-black shadow-[2px_2px_0px_#000]">
+              REAL DATA
             </span>
           </div>
 
           {/* Detector Switcher (ATLAS vs CMS) */}
           <div>
-            <label className="text-[11px] font-mono uppercase text-text-muted block mb-1.5 font-semibold">
+            <label className="text-[11px] font-mono uppercase text-text-muted block mb-1.5 font-bold">
               Experiment Model
             </label>
             <div className="grid grid-cols-2 gap-2 text-xs font-mono">
@@ -78,10 +78,10 @@ export const DetectorTwin: React.FC = () => {
                   setSelectedEventIndex(0);
                   setSelectedObjectId(null);
                 }}
-                className={`py-1.5 rounded border transition-colors ${
+                className={`py-2 px-1 border-2 border-black font-mono font-bold transition-all cursor-pointer ${
                   detector === 'atlas'
-                    ? 'bg-cern-blue border-cern-accent text-white font-bold'
-                    : 'bg-canvas-sub border-canvas-border text-text-secondary hover:text-text-primary'
+                    ? 'bg-cern-blue text-white shadow-[3px_3px_0px_#00E5FF] -translate-x-0.5 -translate-y-0.5'
+                    : 'bg-canvas-sub text-text-secondary hover:text-white shadow-[2px_2px_0px_#000]'
                 }`}
               >
                 ATLAS (Toroid)
@@ -92,10 +92,10 @@ export const DetectorTwin: React.FC = () => {
                   setSelectedEventIndex(0);
                   setSelectedObjectId(null);
                 }}
-                className={`py-1.5 rounded border transition-colors ${
+                className={`py-2 px-1 border-2 border-black font-mono font-bold transition-all cursor-pointer ${
                   detector === 'cms'
-                    ? 'bg-cern-blue border-cern-accent text-white font-bold'
-                    : 'bg-canvas-sub border-canvas-border text-text-secondary hover:text-text-primary'
+                    ? 'bg-cern-blue text-white shadow-[3px_3px_0px_#4C7DFF] -translate-x-0.5 -translate-y-0.5'
+                    : 'bg-canvas-sub text-text-secondary hover:text-white shadow-[2px_2px_0px_#000]'
                 }`}
               >
                 CMS (Solenoid)
@@ -105,10 +105,10 @@ export const DetectorTwin: React.FC = () => {
 
           {/* Real Event Selector */}
           <div>
-            <label className="text-[11px] font-mono uppercase text-text-muted block mb-1.5 font-semibold">
+            <label className="text-[11px] font-mono uppercase text-text-muted block mb-1.5 font-bold">
               Sample Collision Event
             </label>
-            <div className="space-y-1.5">
+            <div className="space-y-2">
               {currentEvents.map((evt, idx) => (
                 <button
                   key={evt.id}
@@ -116,14 +116,14 @@ export const DetectorTwin: React.FC = () => {
                     setSelectedEventIndex(idx);
                     setSelectedObjectId(null);
                   }}
-                  className={`w-full text-left p-2 rounded border text-xs font-mono transition-colors ${
+                  className={`w-full text-left p-2.5 border-2 border-black text-xs font-mono transition-all cursor-pointer ${
                     idx === selectedEventIndex
-                      ? 'bg-canvas-raised border-cern-cyan text-text-primary'
-                      : 'bg-canvas-sub border-canvas-border text-text-secondary hover:text-text-primary'
+                      ? 'bg-cern-blue/30 border-black text-white shadow-[3px_3px_0px_#00E5FF] -translate-x-0.5 -translate-y-0.5'
+                      : 'bg-canvas-sub text-text-secondary hover:text-white shadow-[2px_2px_0px_#000]'
                   }`}
                 >
-                  <div className="font-semibold">{evt.process}</div>
-                  <div className="text-[10px] text-text-muted mt-0.5">
+                  <div className="font-bold text-white">{evt.process}</div>
+                  <div className="text-[10px] text-text-muted mt-0.5 font-mono">
                     Run {evt.runNumber} · Event {evt.eventNumber}
                   </div>
                 </button>
@@ -134,7 +134,7 @@ export const DetectorTwin: React.FC = () => {
           {/* Subsystem Toggles */}
           <div>
             <div className="flex items-center justify-between mb-1.5">
-              <span className="text-[11px] font-mono uppercase text-text-muted font-semibold">
+              <span className="text-[11px] font-mono uppercase text-text-muted font-bold">
                 Subsystems (Toggle Filter)
               </span>
             </div>
@@ -143,18 +143,18 @@ export const DetectorTwin: React.FC = () => {
                 <div
                   key={sub.id}
                   onClick={() => toggleSubsystem(sub.id)}
-                  className={`flex items-center justify-between p-2 rounded border cursor-pointer text-xs font-mono transition-colors ${
+                  className={`flex items-center justify-between p-2 border-2 border-black cursor-pointer text-xs font-mono transition-all ${
                     sub.active
-                      ? 'bg-canvas-raised border-canvas-border text-text-primary'
-                      : 'bg-canvas-sub/50 border-canvas-border/50 text-text-muted opacity-60'
+                      ? 'bg-canvas-sub text-white shadow-[2px_2px_0px_#000]'
+                      : 'bg-canvas-sub/40 border-black/40 text-text-muted opacity-50'
                   }`}
                 >
                   <div className="flex items-center gap-2">
                     <span
-                      className="w-2.5 h-2.5 rounded-full"
+                      className="w-2.5 h-2.5 border border-black"
                       style={{ backgroundColor: sub.active ? sub.color : '#4B5563' }}
                     />
-                    <span>{sub.name}</span>
+                    <span className="font-bold">{sub.name}</span>
                   </div>
                   {sub.active ? (
                     <Eye className="w-3.5 h-3.5 text-cern-cyan" />
@@ -164,7 +164,7 @@ export const DetectorTwin: React.FC = () => {
                 </div>
               ))}
             </div>
-            <p className="text-[10px] text-amber-300/80 mt-2 font-mono leading-relaxed">
+            <p className="text-[10px] text-black font-bold mt-2 font-mono leading-relaxed p-2 bg-amber-400 border-2 border-black shadow-[2px_2px_0px_#000]">
               * Note: Toggling subsystems filters reconstructed event objects; it is an analytical
               visualization filter, not full detector simulation.
             </p>
@@ -172,20 +172,20 @@ export const DetectorTwin: React.FC = () => {
         </div>
 
         {/* Provenance Badge */}
-        <div className="pt-3 border-t border-canvas-border flex items-center justify-between text-xs font-mono">
-          <span className="text-text-muted">Dataset:</span>
+        <div className="pt-3 border-t-2 border-black flex items-center justify-between text-xs font-mono">
+          <span className="text-text-muted font-bold">Dataset:</span>
           <Value manifestId="atlas-higgs-ml-challenge-dataset" value="CERN Open Data" />
         </div>
       </div>
 
       {/* CENTER: Event Display Viewport (Transverse Projection) */}
-      <div className="flex-1 flex flex-col justify-between bg-canvas rounded-panel border border-canvas-border p-4 relative min-h-[460px]">
+      <div className="flex-1 flex flex-col justify-between bg-canvas border-2 border-black shadow-[4px_4px_0px_#000] p-4 relative min-h-[460px]">
         {/* Header */}
-        <div className="flex items-center justify-between pb-3 border-b border-canvas-border">
+        <div className="flex items-center justify-between pb-3 border-b-2 border-black bg-canvas-sub -mx-4 -mt-4 p-3 mb-2">
           <div className="flex items-center gap-2">
             <Disc className="w-4 h-4 text-cern-cyan" />
-            <h3 className="font-mono text-xs uppercase tracking-wider text-text-primary font-bold">
-              {detector.toUpperCase()} TRANSVERSE (R-φ) EVENT DISPLAY
+            <h3 className="font-mono text-xs uppercase tracking-wider text-white font-bold">
+              /// {detector.toUpperCase()} TRANSVERSE (R-φ) EVENT DISPLAY ///
             </h3>
           </div>
           <FidelityBadge type="ILLUSTRATIVE" />
@@ -199,7 +199,7 @@ export const DetectorTwin: React.FC = () => {
             <circle
               r="180"
               fill="none"
-              stroke={isMuonActive ? '#EF476F' : '#1C273C'}
+              stroke={isMuonActive ? '#FF0055' : '#1C273C'}
               strokeWidth="12"
               strokeOpacity={isMuonActive ? '0.35' : '0.1'}
             />
@@ -207,7 +207,7 @@ export const DetectorTwin: React.FC = () => {
             <circle
               r="140"
               fill="none"
-              stroke={isHcalActive ? '#118AB2' : '#1C273C'}
+              stroke={isHcalActive ? '#00E5FF' : '#1C273C'}
               strokeWidth="20"
               strokeOpacity={isHcalActive ? '0.45' : '0.1'}
             />
@@ -215,7 +215,7 @@ export const DetectorTwin: React.FC = () => {
             <circle
               r="105"
               fill="none"
-              stroke={isEcalActive ? '#06D6A0' : '#1C273C'}
+              stroke={isEcalActive ? '#00FF66' : '#1C273C'}
               strokeWidth="14"
               strokeOpacity={isEcalActive ? '0.5' : '0.1'}
             />
@@ -223,12 +223,12 @@ export const DetectorTwin: React.FC = () => {
             <circle
               r="70"
               fill="none"
-              stroke={isTrackerActive ? '#FFD166' : '#1C273C'}
+              stroke={isTrackerActive ? '#FFE600' : '#1C273C'}
               strokeWidth="8"
               strokeOpacity={isTrackerActive ? '0.6' : '0.1'}
             />
             {/* Beam Pipe */}
-            <circle r="12" fill="#0D1422" stroke="#3DD6FF" strokeWidth="1.5" />
+            <circle r="12" fill="#0D1422" stroke="#00E5FF" strokeWidth="2" />
 
             {/* Reconstructed Particle Tracks & Objects */}
             {visibleObjects.map((obj) => {
@@ -240,10 +240,10 @@ export const DetectorTwin: React.FC = () => {
 
               const objColor =
                 obj.type === 'MUON'
-                  ? '#EF476F'
+                  ? '#FF0055'
                   : obj.type === 'ELECTRON' || obj.type === 'PHOTON'
-                  ? '#06D6A0'
-                  : '#118AB2';
+                  ? '#00FF66'
+                  : '#00E5FF';
 
               return (
                 <g
@@ -302,12 +302,12 @@ export const DetectorTwin: React.FC = () => {
         </div>
 
         {/* Bottom Legend & Event Readouts */}
-        <div className="pt-3 border-t border-canvas-border flex flex-wrap items-center justify-between gap-2 text-xs font-mono text-text-muted">
-          <div>
+        <div className="pt-3 border-t-2 border-black flex flex-wrap items-center justify-between gap-2 text-xs font-mono text-text-muted">
+          <div className="bg-canvas-sub px-2 py-1 border-2 border-black shadow-[2px_2px_0px_#000]">
             <span>Run: {activeEvent.runNumber}</span> · <span>Event: {activeEvent.eventNumber}</span> ·{' '}
-            <span className="text-cern-cyan">√s = {activeEvent.sqrtSGev / 1000} TeV</span>
+            <span className="text-cern-cyan font-bold">√s = {activeEvent.sqrtSGev / 1000} TeV</span>
           </div>
-          <div>
+          <div className="bg-canvas-sub px-2 py-1 border-2 border-black shadow-[2px_2px_0px_#000]">
             <span>Reconstructed Mass: </span>
             <span className="text-emerald-400 font-bold">{activeEvent.reconstructedMassGev} GeV</span>
           </div>
@@ -315,59 +315,60 @@ export const DetectorTwin: React.FC = () => {
       </div>
 
       {/* RIGHT: Particle Object Inspector */}
-      <div className="w-full xl:w-80 flex flex-col justify-between bg-canvas-surface border border-canvas-border rounded-panel p-4 space-y-4">
+      <div className="w-full xl:w-80 flex flex-col justify-between bg-canvas-surface border-2 border-black shadow-[4px_4px_0px_#000] p-4 space-y-4">
         <div className="space-y-4">
-          <div className="pb-2 border-b border-canvas-border">
-            <h3 className="text-xs font-mono font-bold text-text-primary uppercase flex items-center gap-1.5">
-              <Info className="w-3.5 h-3.5 text-cern-accent" /> Object Inspector
+          <div className="pb-2 border-b-2 border-black bg-canvas-sub -mx-4 -mt-4 p-3 mb-2">
+            <h3 className="text-xs font-mono font-bold text-white uppercase flex items-center gap-1.5 tracking-wider">
+              <Info className="w-4 h-4 text-cern-accent" /> /// Object Inspector ///
             </h3>
           </div>
 
           {selectedObject ? (
-            <div className="space-y-3 text-xs font-mono">
-              <div className="flex items-center justify-between p-2 bg-canvas-sub rounded border border-canvas-border">
-                <span className="text-text-muted">Type:</span>
-                <span className="text-cern-cyan font-bold">{selectedObject.type}</span>
+            <div className="space-y-2 text-xs font-mono">
+              <div className="flex items-center justify-between p-2.5 bg-canvas-sub border-2 border-black shadow-[2px_2px_0px_#000]">
+                <span className="text-text-muted font-bold">Type:</span>
+                <span className="text-cern-cyan font-bold px-1.5 py-0.5 bg-black border-2 border-black shadow-[1px_1px_0px_#00E5FF]">{selectedObject.type}</span>
               </div>
-              <div className="flex items-center justify-between p-2 bg-canvas-sub rounded border border-canvas-border">
-                <span className="text-text-muted">Transverse p_T:</span>
+              <div className="flex items-center justify-between p-2.5 bg-canvas-sub border-2 border-black shadow-[2px_2px_0px_#000]">
+                <span className="text-text-muted font-bold">Transverse p_T:</span>
                 <span className="text-text-primary font-bold">{selectedObject.ptGev} GeV/c</span>
               </div>
-              <div className="flex items-center justify-between p-2 bg-canvas-sub rounded border border-canvas-border">
-                <span className="text-text-muted">Pseudorapidity η:</span>
+              <div className="flex items-center justify-between p-2.5 bg-canvas-sub border-2 border-black shadow-[2px_2px_0px_#000]">
+                <span className="text-text-muted font-bold">Pseudorapidity η:</span>
                 <span className="text-text-secondary">{selectedObject.eta}</span>
               </div>
-              <div className="flex items-center justify-between p-2 bg-canvas-sub rounded border border-canvas-border">
-                <span className="text-text-muted">Azimuth φ:</span>
+              <div className="flex items-center justify-between p-2.5 bg-canvas-sub border-2 border-black shadow-[2px_2px_0px_#000]">
+                <span className="text-text-muted font-bold">Azimuth φ:</span>
                 <span className="text-text-secondary">{selectedObject.phi} rad</span>
               </div>
-              <div className="flex items-center justify-between p-2 bg-canvas-sub rounded border border-canvas-border">
-                <span className="text-text-muted">Total Energy E:</span>
+              <div className="flex items-center justify-between p-2.5 bg-canvas-sub border-2 border-black shadow-[2px_2px_0px_#000]">
+                <span className="text-text-muted font-bold">Total Energy E:</span>
                 <span className="text-text-primary font-bold">{selectedObject.energyGev} GeV</span>
               </div>
-              <div className="flex items-center justify-between p-2 bg-canvas-sub rounded border border-canvas-border">
-                <span className="text-text-muted">Charge:</span>
-                <span className="text-text-secondary">
+              <div className="flex items-center justify-between p-2.5 bg-canvas-sub border-2 border-black shadow-[2px_2px_0px_#000]">
+                <span className="text-text-muted font-bold">Charge:</span>
+                <span className="text-text-secondary font-bold">
                   {selectedObject.charge > 0 ? `+${selectedObject.charge}` : selectedObject.charge}
                 </span>
               </div>
             </div>
           ) : (
-            <div className="p-4 bg-canvas-sub border border-canvas-border rounded text-xs text-text-muted text-center leading-relaxed font-mono">
+            <div className="p-4 bg-canvas-sub border-2 border-black shadow-[3px_3px_0px_#000] text-xs text-text-muted text-center leading-relaxed font-mono">
               Click any particle track or hit marker on the event display to inspect its measured
               kinematics.
             </div>
           )}
 
           {/* Detector Comparison Note */}
-          <div className="p-3 bg-canvas-sub border border-canvas-border rounded text-[11px] text-text-secondary leading-relaxed">
-            <strong>ATLAS vs CMS:</strong> ATLAS uses an air-core toroid for outer muon tracking and
-            accordion LAr calorimetry. CMS uses a single high-field 3.8 T solenoid enclosingPbWO4 crystal
+          <div className="p-3 bg-canvas-sub border-2 border-black shadow-[2px_2px_0px_#000] text-[11px] text-text-secondary leading-relaxed">
+            <strong className="text-white block font-mono uppercase mb-1">/// ATLAS vs CMS ///</strong>
+            ATLAS uses an air-core toroid for outer muon tracking and
+            accordion LAr calorimetry. CMS uses a single high-field 3.8 T solenoid enclosing PbWO4 crystal
             calorimeters. Both provide independent validation of discoveries.
           </div>
         </div>
 
-        <div className="pt-3 border-t border-canvas-border text-[11px] font-mono text-text-muted">
+        <div className="pt-3 border-t-2 border-black text-[11px] font-mono text-text-muted">
           <span>Source: CERN Open Data 13 TeV Records</span>
         </div>
       </div>

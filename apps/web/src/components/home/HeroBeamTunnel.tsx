@@ -62,8 +62,8 @@ const PRESETS: Record<string, BeamPreset> = {
     id: 'pbpb',
     name: 'Heavy Ion Pb-Pb',
     subtitle: '5.36 TeV Quark-Gluon Plasma',
-    cableColor: '#E04FD0',
-    pulseColor: '#F43F5E',
+    cableColor: '#FF0055',
+    pulseColor: '#FF3377',
     tunnelColor: '#581C87',
     tunnelOpacity: 0.22,
     speed: 0.11,
@@ -81,7 +81,7 @@ const PRESETS: Record<string, BeamPreset> = {
     id: 'hllhc',
     name: 'High-Lumi LHC (HL-LHC)',
     subtitle: '14 TeV Crab Cavity Squeeze',
-    cableColor: '#2ECC8F',
+    cableColor: '#00FF66',
     pulseColor: '#00E5FF',
     tunnelColor: '#064E3B',
     tunnelOpacity: 0.25,
@@ -184,7 +184,7 @@ export const HeroBeamTunnel: React.FC = () => {
   const effectiveMouseInteraction = !reduceMotion;
 
   return (
-    <div className="relative w-full rounded-2xl overflow-hidden border border-canvas-borderStrong bg-canvas shadow-2xl shadow-cyan-950/20">
+    <div className="relative w-full rounded-none overflow-hidden border-3 border-black bg-canvas shadow-[8px_8px_0px_0px_#000000]">
       {/* 1. WebGL LightTunnel Background Canvas */}
       <div className="absolute inset-0 w-full h-full pointer-events-auto">
         <ClientLightTunnel
@@ -220,28 +220,28 @@ export const HeroBeamTunnel: React.FC = () => {
 
       {/* 2. Cybernetic Control Room Grid Overlay & Vignette */}
       <div
-        className="absolute inset-0 pointer-events-none bg-gradient-to-t from-canvas via-canvas/50 to-canvas/40"
+        className="absolute inset-0 pointer-events-none bg-gradient-to-t from-canvas via-canvas/60 to-canvas/40"
         style={{
           backgroundImage: `
-            radial-gradient(circle at center, transparent 35%, rgba(6, 10, 18, 0.75) 85%, #060a12 100%),
-            linear-gradient(rgba(255, 255, 255, 0.02) 1px, transparent 1px),
-            linear-gradient(90deg, rgba(255, 255, 255, 0.02) 1px, transparent 1px)
+            radial-gradient(circle at center, transparent 30%, rgba(6, 10, 18, 0.8) 85%, #060a12 100%),
+            linear-gradient(rgba(255, 255, 255, 0.04) 1px, transparent 1px),
+            linear-gradient(90deg, rgba(255, 255, 255, 0.04) 1px, transparent 1px)
           `,
-          backgroundSize: '100% 100%, 48px 48px, 48px 48px',
+          backgroundSize: '100% 100%, 36px 36px, 36px 36px',
         }}
       />
 
-      {/* 3. High-Contrast Glassmorphic Hero Content */}
+      {/* 3. High-Contrast Hero Content */}
       <div className="relative z-10 w-full flex flex-col justify-between p-6 sm:p-8 lg:p-10 min-h-[640px] lg:min-h-[700px] pointer-events-none">
         {/* Top Header Bar: Status & Badges */}
         <div className="flex flex-wrap items-center justify-between gap-3 pointer-events-auto">
           {/* CERN Status Pill */}
-          <div className="flex items-center gap-2 px-3 py-1.5 rounded-full bg-canvas/80 backdrop-blur-md border border-emerald-500/40 text-emerald-300 text-xs font-mono shadow-lg shadow-emerald-950/40">
+          <div className="flex items-center gap-2 px-3 py-1.5 bg-canvas/90 border-2 border-black shadow-[3px_3px_0px_#000] text-emerald-300 text-xs font-mono font-bold">
             <span className="relative flex h-2.5 w-2.5">
-              <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75" />
-              <span className="relative inline-flex rounded-full h-2.5 w-2.5 bg-emerald-400" />
+              <span className="animate-ping absolute inline-flex h-full w-full rounded-none bg-emerald-400 opacity-75" />
+              <span className="relative inline-flex rounded-none h-2.5 w-2.5 bg-emerald-400 border border-black" />
             </span>
-            <span className="font-bold tracking-wider">LHC RUN 3 : STABLE BEAMS</span>
+            <span className="tracking-wider">LHC RUN 3 : STABLE BEAMS</span>
             <span className="text-text-muted hidden sm:inline">|</span>
             <span className="text-text-secondary hidden sm:inline">26.7 km Superconducting Ring</span>
           </div>
@@ -249,23 +249,23 @@ export const HeroBeamTunnel: React.FC = () => {
           {/* Provenance & Tests Pill */}
           <div className="flex items-center gap-2">
             {reduceMotion && (
-              <span className="px-2.5 py-1 rounded-full bg-amber-950/80 border border-amber-500/40 text-[11px] font-mono text-amber-300">
+              <span className="px-2.5 py-1 bg-amber-400 border-2 border-black shadow-[2px_2px_0px_#000] text-xs font-mono font-bold text-black uppercase">
                 Reduced Motion
               </span>
             )}
-            <div className="flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-canvas/80 backdrop-blur-md border border-canvas-border text-xs font-mono text-cern-cyan">
-              <ShieldCheck className="w-3.5 h-3.5" />
+            <div className="flex items-center gap-1.5 px-3 py-1.5 bg-canvas/90 border-2 border-black shadow-[3px_3px_0px_#000] text-xs font-mono font-bold text-cern-cyan">
+              <ShieldCheck className="w-4 h-4" />
               <span className="hidden sm:inline">12/12 PHYSICS TESTS</span>
               <span className="sm:hidden">12/12</span>
             </div>
             <button
               onClick={() => setShowControls(!showControls)}
-              className="flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-canvas-surface/90 hover:bg-canvas-raised backdrop-blur-md border border-cern-cyan/50 text-xs font-mono text-text-primary transition-all shadow-lg hover:border-cern-cyan"
+              className="flex items-center gap-1.5 px-3 py-1.5 bg-cern-blue text-white border-2 border-black shadow-[3px_3px_0px_#00E5FF] hover:shadow-[4px_4px_0px_#00E5FF] active:translate-x-[1px] active:translate-y-[1px] active:shadow-none text-xs font-mono font-bold transition-all"
             >
               <Sliders className="w-3.5 h-3.5 text-cern-cyan" />
               <span>Tuning Console</span>
               <ChevronDown
-                className={`w-3 h-3 text-text-muted transition-transform duration-200 ${
+                className={`w-3.5 h-3.5 transition-transform duration-150 ${
                   showControls ? 'rotate-180' : ''
                 }`}
               />
@@ -275,19 +275,19 @@ export const HeroBeamTunnel: React.FC = () => {
 
         {/* Middle Main Narrative Banner */}
         <div className="my-auto py-8 max-w-3xl space-y-4">
-          <div className="inline-flex items-center gap-2 px-2.5 py-1 rounded bg-cern-blue/30 border border-cern-accent/40 text-cern-cyan text-xs font-mono font-bold tracking-widest uppercase">
-            <Radio className="w-3.5 h-3.5 text-cern-cyan animate-pulse" />
+          <div className="inline-flex items-center gap-2 px-3 py-1 bg-cern-blue border-2 border-black shadow-[3px_3px_0px_#000] text-white text-xs font-mono font-bold tracking-widest uppercase">
+            <Radio className="w-4 h-4 text-cern-cyan animate-pulse" />
             27-Kilometre Ultra-High Vacuum Beamline
           </div>
 
-          <h1 className="text-3xl sm:text-5xl lg:text-6xl font-display font-extrabold tracking-tight text-white leading-[1.1] drop-shadow-md">
+          <h1 className="text-3xl sm:text-5xl lg:text-6xl font-display font-extrabold tracking-tight text-white leading-[1.08] drop-shadow-[0_4px_0_rgba(0,0,0,1)]">
             The Interactive <br className="hidden sm:block" />
-            <span className="text-transparent bg-clip-text bg-gradient-to-r from-cern-cyan via-sky-300 to-indigo-300">
+            <span className="text-cern-cyan underline decoration-4 decoration-cern-blue underline-offset-8">
               Digital Universe of CERN
             </span>
           </h1>
 
-          <p className="text-sm sm:text-base lg:text-lg text-text-secondary leading-relaxed max-w-2xl backdrop-blur-[2px]">
+          <p className="text-sm sm:text-base lg:text-lg text-text-secondary leading-relaxed max-w-2xl bg-canvas/80 p-3 border-2 border-black shadow-[3px_3px_0px_#000]">
             Explore the particle physics frontier through quantitative digital twins: relativistic
             beam acceleration, ATLAS &amp; CMS multi-layer detector cutaways, FPGA Level-1 trigger
             topologies, and the Worldwide LHC Computing Grid.
@@ -297,7 +297,7 @@ export const HeroBeamTunnel: React.FC = () => {
           <div className="flex flex-wrap items-center gap-3 pt-2 pointer-events-auto">
             <Link
               href="/accelerators"
-              className="px-5 py-3 rounded-lg bg-cern-blue hover:bg-cern-accent text-white font-mono font-bold text-xs sm:text-sm flex items-center gap-2 shadow-lg shadow-cern-blue/30 transition-all hover:translate-y-[-1px]"
+              className="px-5 py-3 bg-cern-blue hover:bg-cern-accent text-white font-mono font-bold text-xs sm:text-sm flex items-center gap-2 border-2 border-black shadow-[4px_4px_0px_#000] hover:shadow-[5px_5px_0px_#00E5FF] active:translate-x-[2px] active:translate-y-[2px] active:shadow-none transition-all"
             >
               <Zap className="w-4 h-4 text-cern-cyan" />
               <span>Launch Accelerator Sim</span>
@@ -306,7 +306,7 @@ export const HeroBeamTunnel: React.FC = () => {
 
             <Link
               href="/detectors"
-              className="px-5 py-3 rounded-lg bg-canvas-surface/80 hover:bg-canvas-raised/90 backdrop-blur-md border border-canvas-border hover:border-cern-cyan/60 text-text-primary font-mono font-semibold text-xs sm:text-sm flex items-center gap-2 transition-all hover:translate-y-[-1px]"
+              className="px-5 py-3 bg-canvas-surface hover:bg-canvas-raised text-white font-mono font-bold text-xs sm:text-sm flex items-center gap-2 border-2 border-black shadow-[4px_4px_0px_#000] hover:shadow-[5px_5px_0px_#4C7DFF] active:translate-x-[2px] active:translate-y-[2px] active:shadow-none transition-all"
             >
               <Layers className="w-4 h-4 text-cern-accent" />
               <span>ATLAS &amp; CMS Twins</span>
@@ -314,7 +314,7 @@ export const HeroBeamTunnel: React.FC = () => {
 
             <Link
               href="/ai-lab"
-              className="px-4 py-3 rounded-lg bg-canvas-surface/80 hover:bg-canvas-raised/90 backdrop-blur-md border border-canvas-border hover:border-amber-400/60 text-text-secondary hover:text-text-primary font-mono text-xs sm:text-sm flex items-center gap-2 transition-all"
+              className="px-4 py-3 bg-canvas-surface hover:bg-canvas-raised text-amber-300 hover:text-white font-mono font-bold text-xs sm:text-sm flex items-center gap-2 border-2 border-black shadow-[4px_4px_0px_#000] hover:shadow-[5px_5px_0px_#FFE600] active:translate-x-[2px] active:translate-y-[2px] active:shadow-none transition-all"
             >
               <Cpu className="w-4 h-4 text-amber-400" />
               <span>AI Lab</span>
@@ -322,7 +322,7 @@ export const HeroBeamTunnel: React.FC = () => {
 
             <Link
               href="/simulations?module=discovery"
-              className="px-4 py-3 rounded-lg bg-canvas-surface/80 hover:bg-canvas-raised/90 backdrop-blur-md border border-canvas-border hover:border-pink-400/60 text-text-secondary hover:text-text-primary font-mono text-xs sm:text-sm flex items-center gap-2 transition-all"
+              className="px-4 py-3 bg-canvas-surface hover:bg-canvas-raised text-pink-300 hover:text-white font-mono font-bold text-xs sm:text-sm flex items-center gap-2 border-2 border-black shadow-[4px_4px_0px_#000] hover:shadow-[5px_5px_0px_#FF0055] active:translate-x-[2px] active:translate-y-[2px] active:shadow-none transition-all"
             >
               <span className="text-pink-400 font-bold">5σ</span>
               <span>Discovery Lab</span>
@@ -334,7 +334,7 @@ export const HeroBeamTunnel: React.FC = () => {
         <div className="space-y-3 pointer-events-auto">
           {/* Preset Selector Ribbon */}
           <div className="flex items-center gap-2 overflow-x-auto pb-1 scrollbar-none">
-            <span className="text-[11px] font-mono uppercase text-text-muted shrink-0 font-bold hidden sm:inline mr-1">
+            <span className="text-xs font-mono uppercase text-white shrink-0 font-bold hidden sm:inline mr-1 px-2.5 py-1.5 bg-black border-2 border-black shadow-[2px_2px_0px_#000]">
               Beam Scenario:
             </span>
             {Object.values(PRESETS).map((p) => {
@@ -343,17 +343,17 @@ export const HeroBeamTunnel: React.FC = () => {
                 <button
                   key={p.id}
                   onClick={() => handleSelectPreset(p.id)}
-                  className={`shrink-0 px-3 py-1.5 rounded-lg text-xs font-mono transition-all flex items-center gap-1.5 border backdrop-blur-md ${
+                  className={`shrink-0 px-3.5 py-2 text-xs font-mono font-bold transition-all flex items-center gap-2 border-2 border-black active:translate-x-[1px] active:translate-y-[1px] ${
                     isSelected
-                      ? 'bg-canvas-raised text-white border-cern-cyan shadow-md shadow-cern-cyan/20 ring-1 ring-cern-cyan'
-                      : 'bg-canvas-surface/70 text-text-secondary border-canvas-border hover:bg-canvas-raised hover:text-text-primary'
+                      ? 'bg-canvas-raised text-white shadow-[4px_4px_0px_#00E5FF] -translate-x-0.5 -translate-y-0.5'
+                      : 'bg-canvas-surface/90 text-text-secondary hover:text-white shadow-[3px_3px_0px_#000]'
                   }`}
                 >
                   <span
-                    className="w-2 h-2 rounded-full shrink-0"
+                    className="w-2.5 h-2.5 border border-black shrink-0"
                     style={{ backgroundColor: p.cableColor }}
                   />
-                  <span className="font-semibold">{p.name}</span>
+                  <span>{p.name}</span>
                   <span className="text-[10px] text-text-muted hidden md:inline">({p.energy})</span>
                 </button>
               );
@@ -362,37 +362,37 @@ export const HeroBeamTunnel: React.FC = () => {
 
           {/* Interactive Beamline Tuner Drawer (Expandable) */}
           {showControls && (
-            <div className="p-4 rounded-xl bg-canvas-sub/90 backdrop-blur-xl border border-cern-cyan/40 shadow-2xl space-y-4 animate-in fade-in slide-in-from-bottom-2 duration-200">
-              <div className="flex items-center justify-between border-b border-canvas-border pb-2">
+            <div className="p-5 bg-canvas-sub border-3 border-black shadow-[8px_8px_0px_#000] space-y-4 animate-in fade-in slide-in-from-bottom-2 duration-150">
+              <div className="flex items-center justify-between border-b-2 border-black pb-2 bg-canvas-surface -mx-5 -mt-5 p-3.5">
                 <div className="flex items-center gap-2">
                   <Sliders className="w-4 h-4 text-cern-cyan" />
-                  <span className="font-mono text-xs font-bold text-text-primary uppercase">
-                    Interactive Beamline Tuner · {preset.name}
+                  <span className="font-mono text-xs font-bold text-white uppercase tracking-wider">
+                    /// Interactive Beamline Tuner · {preset.name} ///
                   </span>
                 </div>
                 <div className="flex items-center gap-3">
                   <button
                     onClick={() => setReduceMotion(!reduceMotion)}
-                    className="text-[11px] font-mono text-text-muted hover:text-amber-400 flex items-center gap-1"
+                    className="text-xs font-mono text-text-muted hover:text-amber-400 flex items-center gap-1 font-bold"
                     title="Toggle motion damping"
                   >
-                    {reduceMotion ? <EyeOff className="w-3 h-3 text-amber-400" /> : <Eye className="w-3 h-3" />}
+                    {reduceMotion ? <EyeOff className="w-3.5 h-3.5 text-amber-400" /> : <Eye className="w-3.5 h-3.5" />}
                     <span>{reduceMotion ? 'Motion Damped' : 'Motion Full'}</span>
                   </button>
                   <button
                     onClick={handleResetCurrentPreset}
-                    className="text-[11px] font-mono text-text-muted hover:text-cern-cyan flex items-center gap-1"
+                    className="text-xs font-mono text-text-muted hover:text-cern-cyan flex items-center gap-1 font-bold"
                   >
-                    <RefreshCw className="w-3 h-3" /> Reset Nominal
+                    <RefreshCw className="w-3.5 h-3.5" /> Reset Nominal
                   </button>
                 </div>
               </div>
 
-              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-4 text-xs font-mono">
+              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-4 text-xs font-mono pt-2">
                 {/* Speed Slider */}
-                <div className="space-y-1">
+                <div className="p-3 bg-canvas-surface border-2 border-black shadow-[3px_3px_0px_#000] space-y-2">
                   <div className="flex justify-between text-text-muted">
-                    <span>Relativistic Speed:</span>
+                    <span className="font-bold">Speed:</span>
                     <span className="text-cern-cyan font-bold">
                       {(preset.speed * speedMultiplier * 10).toFixed(1)}×
                     </span>
@@ -405,15 +405,15 @@ export const HeroBeamTunnel: React.FC = () => {
                     value={speedMultiplier}
                     disabled={reduceMotion}
                     onChange={(e) => setSpeedMultiplier(Number(e.target.value))}
-                    className="w-full accent-cern-cyan cursor-pointer disabled:opacity-50"
+                    className="w-full cursor-pointer disabled:opacity-50"
                   />
                 </div>
 
                 {/* Cable Count / Lattice Density */}
-                <div className="space-y-1">
+                <div className="p-3 bg-canvas-surface border-2 border-black shadow-[3px_3px_0px_#000] space-y-2">
                   <div className="flex justify-between text-text-muted">
-                    <span>Magnetic Sectors:</span>
-                    <span className="text-text-primary font-bold">{cableDensity}</span>
+                    <span className="font-bold">Sectors:</span>
+                    <span className="text-white font-bold">{cableDensity}</span>
                   </div>
                   <input
                     type="range"
@@ -422,15 +422,15 @@ export const HeroBeamTunnel: React.FC = () => {
                     step={2}
                     value={cableDensity}
                     onChange={(e) => setCableDensity(Number(e.target.value))}
-                    className="w-full accent-cern-accent cursor-pointer"
+                    className="w-full cursor-pointer"
                   />
                 </div>
 
                 {/* Vacuum Bore Opacity */}
-                <div className="space-y-1">
+                <div className="p-3 bg-canvas-surface border-2 border-black shadow-[3px_3px_0px_#000] space-y-2">
                   <div className="flex justify-between text-text-muted">
-                    <span>Bore Chamber Luminescence:</span>
-                    <span className="text-text-primary font-bold">
+                    <span className="font-bold">Bore Light:</span>
+                    <span className="text-white font-bold">
                       {(boreOpacity * 100).toFixed(0)}%
                     </span>
                   </div>
@@ -441,14 +441,14 @@ export const HeroBeamTunnel: React.FC = () => {
                     step={0.02}
                     value={boreOpacity}
                     onChange={(e) => setBoreOpacity(Number(e.target.value))}
-                    className="w-full accent-cern-blue cursor-pointer"
+                    className="w-full cursor-pointer"
                   />
                 </div>
 
                 {/* Glow Luminance Boost */}
-                <div className="space-y-1">
+                <div className="p-3 bg-canvas-surface border-2 border-black shadow-[3px_3px_0px_#000] space-y-2">
                   <div className="flex justify-between text-text-muted">
-                    <span>Rim Glow Boost:</span>
+                    <span className="font-bold">Rim Glow:</span>
                     <span className="text-sky-300 font-bold">{glowBoost.toFixed(2)}×</span>
                   </div>
                   <input
@@ -458,33 +458,33 @@ export const HeroBeamTunnel: React.FC = () => {
                     step={0.1}
                     value={glowBoost}
                     onChange={(e) => setGlowBoost(Number(e.target.value))}
-                    className="w-full accent-sky-400 cursor-pointer"
+                    className="w-full cursor-pointer"
                   />
                 </div>
 
                 {/* Direction Switch */}
-                <div className="space-y-1">
+                <div className="p-3 bg-canvas-surface border-2 border-black shadow-[2px_2px_0px_#000] space-y-2">
                   <div className="flex justify-between text-text-muted">
-                    <span>Flow Trajectory:</span>
+                    <span className="font-bold">Trajectory:</span>
                     <span className="text-emerald-400 font-bold uppercase">{activeDirection}</span>
                   </div>
-                  <div className="grid grid-cols-2 gap-1 pt-0.5">
+                  <div className="grid grid-cols-2 gap-1.5 pt-0.5">
                     <button
                       onClick={() => setDirectionOverride('outward')}
-                      className={`py-1 rounded text-[11px] border transition-colors ${
+                      className={`py-1 text-xs font-mono font-bold border-2 transition-all active:translate-x-[1px] active:translate-y-[1px] ${
                         activeDirection === 'outward'
-                          ? 'bg-cern-blue text-white border-cern-accent font-bold'
-                          : 'bg-canvas-surface border-canvas-border text-text-muted hover:text-text-primary'
+                          ? 'bg-cern-blue text-white border-black shadow-[2px_2px_0px_#000]'
+                          : 'bg-canvas-sub border-black text-text-muted hover:text-white'
                       }`}
                     >
                       Outward
                     </button>
                     <button
                       onClick={() => setDirectionOverride('inward')}
-                      className={`py-1 rounded text-[11px] border transition-colors ${
+                      className={`py-1 text-xs font-mono font-bold border-2 transition-all active:translate-x-[1px] active:translate-y-[1px] ${
                         activeDirection === 'inward'
-                          ? 'bg-cern-blue text-white border-cern-accent font-bold'
-                          : 'bg-canvas-surface border-canvas-border text-text-muted hover:text-text-primary'
+                          ? 'bg-cern-blue text-white border-black shadow-[2px_2px_0px_#000]'
+                          : 'bg-canvas-sub border-black text-text-muted hover:text-white'
                       }`}
                     >
                       Inward
@@ -496,31 +496,31 @@ export const HeroBeamTunnel: React.FC = () => {
           )}
 
           {/* Live Telemetry Hud Ribbon */}
-          <div className="grid grid-cols-2 sm:grid-cols-4 lg:grid-cols-5 gap-2.5">
-            <div className="p-3 rounded-lg bg-canvas-sub/80 backdrop-blur-md border border-canvas-border">
-              <span className="text-[10px] font-mono text-text-muted block">Energy (Per Beam)</span>
-              <span className="font-mono text-sm font-bold text-cern-cyan">{preset.energy}</span>
+          <div className="grid grid-cols-2 sm:grid-cols-4 lg:grid-cols-5 gap-3">
+            <div className="p-3 bg-canvas-surface border-2 border-black shadow-[3px_3px_0px_#000]">
+              <span className="text-[10px] font-mono uppercase text-text-muted block font-bold">Energy (Per Beam)</span>
+              <span className="font-mono text-sm sm:text-base font-bold text-cern-cyan">{preset.energy}</span>
             </div>
 
-            <div className="p-3 rounded-lg bg-canvas-sub/80 backdrop-blur-md border border-canvas-border">
-              <span className="text-[10px] font-mono text-text-muted block">Velocity (β)</span>
-              <span className="font-mono text-sm font-bold text-emerald-400">0.999999991 c</span>
+            <div className="p-3 bg-canvas-surface border-2 border-black shadow-[3px_3px_0px_#000]">
+              <span className="text-[10px] font-mono uppercase text-text-muted block font-bold">Velocity (β)</span>
+              <span className="font-mono text-sm sm:text-base font-bold text-emerald-400">0.999999991 c</span>
             </div>
 
-            <div className="p-3 rounded-lg bg-canvas-sub/80 backdrop-blur-md border border-canvas-border">
-              <span className="text-[10px] font-mono text-text-muted block">Lorentz Factor γ</span>
-              <span className="font-mono text-sm font-bold text-text-primary">
+            <div className="p-3 bg-canvas-surface border-2 border-black shadow-[3px_3px_0px_#000]">
+              <span className="text-[10px] font-mono uppercase text-text-muted block font-bold">Lorentz Factor γ</span>
+              <span className="font-mono text-sm sm:text-base font-bold text-white">
                 {preset.lorentzGamma}
               </span>
             </div>
 
-            <div className="p-3 rounded-lg bg-canvas-sub/80 backdrop-blur-md border border-canvas-border">
-              <span className="text-[10px] font-mono text-text-muted block">Main Dipole Field</span>
-              <span className="font-mono text-sm font-bold text-amber-300">8.33 Tesla (1.9 K)</span>
+            <div className="p-3 bg-canvas-surface border-2 border-black shadow-[3px_3px_0px_#000]">
+              <span className="text-[10px] font-mono uppercase text-text-muted block font-bold">Main Dipole Field</span>
+              <span className="font-mono text-sm sm:text-base font-bold text-amber-300">8.33 T (1.9 K)</span>
             </div>
 
-            <div className="col-span-2 sm:col-span-4 lg:col-span-1 p-3 rounded-lg bg-canvas-sub/80 backdrop-blur-md border border-canvas-border">
-              <span className="text-[10px] font-mono text-text-muted block">Instantaneous Lumi</span>
+            <div className="col-span-2 sm:col-span-4 lg:col-span-1 p-3 bg-canvas-surface border-2 border-black shadow-[3px_3px_0px_#000]">
+              <span className="text-[10px] font-mono uppercase text-text-muted block font-bold">Instantaneous Lumi</span>
               <span className="font-mono text-xs sm:text-sm font-bold text-sky-300 truncate block">
                 {preset.lumi}
               </span>

@@ -16,6 +16,7 @@ import {
   Sliders,
   ExternalLink,
 } from 'lucide-react';
+import { AppLogo } from '@/components/ui/AppLogo';
 
 export const TopBar: React.FC = () => {
   const pathname = usePathname();
@@ -47,7 +48,8 @@ export const TopBar: React.FC = () => {
       <div className="flex items-center justify-between px-4 lg:px-6 h-14">
         {/* Brand & Wordmark */}
         <div className="flex items-center gap-6">
-          <Link href="/" className="flex items-center gap-2 group">
+          <Link href="/" className="flex items-center gap-2.5 group">
+            <AppLogo size={34} />
             <span className="font-mono font-bold text-base tracking-wider text-white px-2.5 py-1 border-2 border-black bg-cern-blue shadow-[3px_3px_0px_#00E5FF] group-hover:translate-x-[-1px] group-hover:translate-y-[-1px] group-hover:shadow-[4px_4px_0px_#00E5FF] active:translate-x-[1px] active:translate-y-[1px] active:shadow-none transition-all">
               CERN-X
             </span>

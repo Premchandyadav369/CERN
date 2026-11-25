@@ -1,0 +1,22 @@
+{
+  "name": "CERN-X: The Interactive Digital Universe of CERN",
+  "short_name": "CERN-X",
+  "description": "An interactive, open-source scientific digital twin and simulation laboratory modeling CERN accelerators, detectors, trigger pipelines, computing, and research experiments.",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#0B0F17",
+  "theme_color": "#0053A0",
+  "icons": [
+    {
+      "src": "/logo.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "/icon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml"
+    }
+  ]
+}

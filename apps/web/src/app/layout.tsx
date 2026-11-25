@@ -9,6 +9,11 @@ export const metadata: Metadata = {
   title: 'CERN-X | The Interactive Digital Universe of CERN',
   description:
     'An interactive, open-source scientific digital twin and simulation laboratory modeling CERN accelerators, detectors, trigger pipelines, computing, and research experiments.',
+  icons: {
+    icon: '/icon.svg',
+    shortcut: '/favicon.svg',
+    apple: '/logo.svg',
+  },
 };
 
 export default function RootLayout({

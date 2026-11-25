@@ -3,6 +3,7 @@
 import React, { useState } from 'react';
 import Link from 'next/link';
 import experimentsData from '../../../../../content/experiments.json';
+import { Eli5Card } from '@/components/ui/Eli5Card';
 import { Value } from '@/components/provenance/Value';
 import { ExternalLink, Layers, ArrowRight, Eye, Atom, CheckCircle2 } from 'lucide-react';
 
@@ -30,6 +31,19 @@ export default function ExperimentsPage() {
           spectroscopy, and advanced plasma acceleration.
         </p>
       </div>
+
+      <Eli5Card
+        title="Why Does CERN Build Different Giant Cameras Around the Same Ring?"
+        analogy="Think of ATLAS, CMS, ALICE, and LHCb like four specialized wildlife photographers watching the same jungle—using totally different lenses! Two giant general cameras (ATLAS & CMS) check each other’s Higgs discoveries using completely independent designs, while ALICE films molten primordial soup and LHCb catches ultra-fast antimatter glitches."
+        keyPoints={[
+          'ATLAS & CMS: General-purpose 360° barrel detectors verifying Higgs & new-physics discoveries independently.',
+          'ALICE: Optimized for heavy Lead-ion crashes that recreate the universe 1 microsecond after the Big Bang.',
+          'LHCb & Non-LHC (ALPHA, ISOLDE, NA62): Asymmetric forward traps catching tiny matter-vs-antimatter differences.',
+        ]}
+        whatToTry="Filter experiments by DEEP, INTERACTIVE, or KNOWLEDGE fidelity tiers below to explore specialized detectors beyond the main ring!"
+        doi="10.1088/1748-0221/3/08/S08001"
+        citationLabel="JINST LHC Experiment & Machine Technical Design Compendium"
+      />
 
       {/* Tier Filter Bar */}
       <div className="flex items-center gap-2 overflow-x-auto pb-2 scrollbar-none text-xs font-mono">

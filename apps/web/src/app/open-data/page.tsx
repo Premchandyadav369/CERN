@@ -4,6 +4,7 @@ import React, { useState } from 'react';
 import atlasEventsData from '../../../../../data/real_events/sample_atlas_events.json';
 import cmsEventsData from '../../../../../data/real_events/sample_cms_events.json';
 import { HepdataOverlay } from '@/components/open-data/HepdataOverlay';
+import { Eli5Card } from '@/components/ui/Eli5Card';
 import { Value } from '@/components/provenance/Value';
 import { Database, ExternalLink, Download, Filter, Search, Play, CheckCircle2, Layers } from 'lucide-react';
 
@@ -81,6 +82,19 @@ export default function OpenDataPage() {
           this portal is grounded in verifiable DOIs.
         </p>
       </div>
+
+      <Eli5Card
+        title="Filtering Gold Nuggets Out of Cosmic Static (Cutflow Selection)"
+        analogy="Imagine panning for tiny gold flakes mixed inside a million pebbles of river sand! A 'cutflow' is like stacking smarter sieves: first toss away low-energy sideways pebbles (low p_T), ignore edges of the bucket (high |η|), and keep only collisions adding up right around 125 GeV where the Higgs boson hides!"
+        keyPoints={[
+          'Transverse Momentum (p_T): How hard particles fly sideways out of the beam pipe—rare heavy decays throw high-p_T tracks!',
+          'Pseudorapidity (|η| ≤ 2.5): Keeps tracks aimed straight through the most accurate central silicon layers.',
+          'Real CC0 Public Data: Every event you filter here comes from real ATLAS & CMS 13 TeV Open Data DOIs.',
+        ]}
+        whatToTry="Drag the Minimum p_T slider up from 20 GeV to 45 GeV and watch noisy background events vanish while genuine Z⁰ & Higgs candidates survive!"
+        doi="10.7483/OPENDATA.CMS.89E4.W6W8"
+        citationLabel="CERN Open Data Portal (CC0 Public Release)"
+      />
 
       {/* Published HEPData Overlay Section */}
       <section className="space-y-3">

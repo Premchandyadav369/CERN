@@ -19,6 +19,12 @@ import {
   asimovSignificance,
   calculateAMS,
 } from '../src/physics/statistics.js';
+import {
+  validateInteractionConservation,
+  calculateEeToMumuCrossSectionNb,
+  calculateCyclotronRadiusMeters,
+  calculateVacuumMetrics,
+} from '../src/physics/feynman.js';
 import { SeededRNG } from '../src/rng/prng.js';
 
 describe('Physics Validation Suite', () => {
@@ -154,6 +160,49 @@ describe('Physics Validation Suite', () => {
       const seq1 = Array.from({ length: 5 }, () => rng1.nextFloat());
       const seq2 = Array.from({ length: 5 }, () => rng2.nextFloat());
       expect(seq1).not.toEqual(seq2);
+    });
+  });
+
+  describe('Feynman Conservation, QED Cross Sections & Engineering Physics', () => {
+    it('validates allowed QED muon pair production e+ e- -> mu+ mu- above threshold', () => {
+      const res = validateInteractionConservation(['e+', 'e-'], ['mu+', 'mu-'], 10.0);
+      expect(res.valid).toBe(true);
+      expect(res.quantumValid).toBe(true);
+      expect(res.kinematicallyAllowed).toBe(true);
+      expect(res.violations).toHaveLength(0);
+    });
+
+    it('rejects forbidden lepton-flavor violation e- -> mu- + gamma and below-threshold kinematics', () => {
+      const lfv = validateInteractionConservation(['e-'], ['mu-', 'gamma'], 10.0);
+      expect(lfv.valid).toBe(false);
+      expect(lfv.quantumValid).toBe(false);
+      expect(lfv.deltaLe).toBe(-1);
+      expect(lfv.deltaLmu).toBe(1);
+
+      const subThreshold = validateInteractionConservation(['e+', 'e-'], ['mu+', 'mu-'], 0.15);
+      expect(subThreshold.quantumValid).toBe(true);
+      expect(subThreshold.kinematicallyAllowed).toBe(false);
+      expect(subThreshold.valid).toBe(false);
+    });
+
+    it('validates Z0 Breit-Wigner peak near 91.19 GeV in e+ e- -> mu+ mu-', () => {
+      const offPeak = calculateEeToMumuCrossSectionNb(30.0);
+      const onPeak = calculateEeToMumuCrossSectionNb(91.1876);
+      expect(onPeak.withZResonanceNb).toBeGreaterThan(offPeak.withZResonanceNb * 10);
+    });
+
+    it('computes cyclotron curvature radius R = p / (0.2998 * |q| * B)', () => {
+      // 0.3 GeV/c unit-charge particle in 1.0 T magnetic field -> R ≈ 1.0 m
+      const radius = calculateCyclotronRadiusMeters(0.299792458, 1.0, 1);
+      expect(radius).toBeCloseTo(1.0, 4);
+      expect(calculateCyclotronRadiusMeters(1.0, 0.0, 1)).toBe(Infinity);
+    });
+
+    it('validates LHC ultra-high vacuum beam lifetime (> 100 h at 1e-10 mbar and 1.9 K)', () => {
+      const nominal = calculateVacuumMetrics(1e-10, 1.9);
+      expect(nominal.beamLifetimeHours).toBeGreaterThan(100);
+      const degraded = calculateVacuumMetrics(1e-6, 1.9);
+      expect(degraded.beamLifetimeHours).toBeLessThan(0.1);
     });
   });
 });

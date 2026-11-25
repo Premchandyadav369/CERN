@@ -13,6 +13,8 @@ import { LhcbDecaySimulator } from '@/components/simulations/LhcbDecaySimulator'
 import { CrabCavitySimulator } from '@/components/simulations/CrabCavitySimulator';
 import { FccSimulator } from '@/components/simulations/FccSimulator';
 import { BraggPeakSimulator } from '@/components/simulations/BraggPeakSimulator';
+import { FeynmanLab } from '@/components/simulations/FeynmanLab';
+import { CloudChamberSimulator } from '@/components/simulations/CloudChamberSimulator';
 import { DetectorMaterialViewer } from '@/components/detectors/DetectorMaterialViewer';
 import { ScienceLiteratureBridge } from '@/components/knowledge/ScienceLiteratureBridge';
 import {
@@ -29,6 +31,8 @@ import {
   BookOpen,
   HeartPulse,
   Box,
+  GitBranch,
+  CloudLightning,
 } from 'lucide-react';
 
 function SimulationsContent() {
@@ -50,6 +54,8 @@ function SimulationsContent() {
     { id: 'lhcb', label: 'LHCb Rare Decays', icon: Sparkles, color: 'text-purple-400', shadow: 'shadow-[4px_4px_0px_#C084FC]' },
     { id: 'crab', label: 'HL-LHC Crab Cavity', icon: Layers, color: 'text-emerald-400', shadow: 'shadow-[4px_4px_0px_#00FF66]' },
     { id: 'fcc', label: 'FCC 91km Collider', icon: Compass, color: 'text-cern-cyan', shadow: 'shadow-[4px_4px_0px_#00E5FF]' },
+    { id: 'feynman', label: 'Feynman S-Matrix', icon: GitBranch, color: 'text-emerald-400', shadow: 'shadow-[4px_4px_0px_#00FF66]' },
+    { id: 'cloud-chamber', label: 'Cloud Chamber Lab', icon: CloudLightning, color: 'text-cern-cyan', shadow: 'shadow-[4px_4px_0px_#00E5FF]' },
     { id: 'bragg-peak', label: 'Hadron Therapy & Bragg Peak', icon: HeartPulse, color: 'text-cern-magenta', shadow: 'shadow-[4px_4px_0px_#FF0055]' },
     { id: 'materials', label: '3D Detector Crystals & Nb₃Sn', icon: Box, color: 'text-amber-300', shadow: 'shadow-[4px_4px_0px_#FFE600]' },
     { id: 'trigger', label: 'Trigger & DAQ', icon: Gauge, color: 'text-amber-400', shadow: 'shadow-[4px_4px_0px_#FFE600]' },
@@ -124,6 +130,8 @@ function SimulationsContent() {
         {activeTab === 'lhcb' && <LhcbDecaySimulator />}
         {activeTab === 'crab' && <CrabCavitySimulator />}
         {activeTab === 'fcc' && <FccSimulator />}
+        {activeTab === 'feynman' && <FeynmanLab />}
+        {activeTab === 'cloud-chamber' && <CloudChamberSimulator />}
         {activeTab === 'bragg-peak' && <BraggPeakSimulator />}
         {activeTab === 'materials' && <DetectorMaterialViewer />}
         {activeTab === 'trigger' && <TriggerLab />}

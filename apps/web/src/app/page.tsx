@@ -1,6 +1,7 @@
 import React from 'react';
 import Link from 'next/link';
 import { HeroBeamTunnel } from '@/components/home/HeroBeamTunnel';
+import { ProtonJourneyStepper } from '@/components/home/ProtonJourneyStepper';
 import { RingMap } from '@/components/home/RingMap';
 import { PipelineView } from '@/components/pipeline/PipelineView';
 import { Value } from '@/components/provenance/Value';
@@ -76,6 +77,9 @@ export default function HomePage() {
           </div>
         </div>
       </section>
+
+      {/* 2.5 End-to-End Interactive Guided Tour: Journey of a Single Proton */}
+      <ProtonJourneyStepper />
 
       {/* 3. Signature Component 1: Interactive Ring Map */}
       <section className="space-y-3 pt-2">

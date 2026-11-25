@@ -1,50 +1,35 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" width="100%" height="100%">
   <defs>
-    <radialGradient id="coreGlow" cx="50%" cy="50%" r="50%">
-      <stop offset="0%" stop-color="#00E5FF" stop-opacity="0.35"/>
-      <stop offset="50%" stop-color="#7C3AED" stop-opacity="0.15"/>
-      <stop offset="100%" stop-color="#0B0F17" stop-opacity="0"/>
-    </radialGradient>
-    <linearGradient id="beamCyan" x1="0%" y1="0%" x2="100%" y2="100%">
+    <linearGradient id="cyanOrbit" x1="0%" y1="0%" x2="100%" y2="100%">
       <stop offset="0%" stop-color="#00E5FF"/>
-      <stop offset="100%" stop-color="#0053A0"/>
+      <stop offset="100%" stop-color="#0066FF"/>
     </linearGradient>
-    <linearGradient id="beamMagenta" x1="100%" y1="0%" x2="0%" y2="100%">
-      <stop offset="0%" stop-color="#F43F5E"/>
-      <stop offset="100%" stop-color="#A855F7"/>
+    <linearGradient id="magentaOrbit" x1="100%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" stop-color="#FF0055"/>
+      <stop offset="100%" stop-color="#9333EA"/>
     </linearGradient>
-    <linearGradient id="goldGlow" x1="0%" y1="0%" x2="100%" y2="100%">
-      <stop offset="0%" stop-color="#FFF500"/>
+    <linearGradient id="vertexGold" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#FFF700"/>
       <stop offset="100%" stop-color="#FF9900"/>
     </linearGradient>
-    <filter id="neoShadow" x="-10%" y="-10%" width="130%" height="130%">
-      <feDropShadow dx="14" dy="14" stdDeviation="0" flood-color="#000000"/>
-    </filter>
   </defs>
-  <rect x="32" y="32" width="448" height="448" rx="88" fill="#0E131F" stroke="#000000" stroke-width="16" filter="url(#neoShadow)"/>
-  <circle cx="256" cy="256" r="200" fill="url(#coreGlow)"/>
-  <circle cx="256" cy="256" r="180" fill="none" stroke="#222F3E" stroke-width="6" stroke-dasharray="14 10"/>
-  <circle cx="256" cy="256" r="148" fill="none" stroke="#1E293B" stroke-width="4"/>
-  <rect x="236" y="52" width="40" height="32" rx="6" fill="#FFE500" stroke="#000000" stroke-width="6"/>
-  <rect x="236" y="428" width="40" height="32" rx="6" fill="#FFE500" stroke="#000000" stroke-width="6"/>
-  <rect x="52" y="236" width="32" height="40" rx="6" fill="#FFE500" stroke="#000000" stroke-width="6"/>
-  <rect x="428" y="236" width="32" height="40" rx="6" fill="#FFE500" stroke="#000000" stroke-width="6"/>
-  <path d="M 136 256 A 120 120 0 1 1 376 256" fill="none" stroke="url(#beamCyan)" stroke-width="18" stroke-linecap="round"/>
-  <path d="M 376 256 A 120 120 0 1 1 136 256" fill="none" stroke="url(#beamMagenta)" stroke-width="18" stroke-linecap="round"/>
-  <circle cx="256" cy="256" r="82" fill="#080C14" stroke="#00E5FF" stroke-width="5" stroke-dasharray="8 6"/>
-  <line x1="256" y1="256" x2="390" y2="122" stroke="#00E5FF" stroke-width="7" stroke-linecap="round" stroke-dasharray="16 8"/>
-  <circle cx="390" cy="122" r="7" fill="#00E5FF" stroke="#000000" stroke-width="3"/>
-  <line x1="256" y1="256" x2="380" y2="350" stroke="#FFE500" stroke-width="6" stroke-linecap="round"/>
-  <line x1="256" y1="256" x2="350" y2="385" stroke="#FFE500" stroke-width="5" stroke-linecap="round"/>
-  <line x1="256" y1="256" x2="122" y2="390" stroke="#A855F7" stroke-width="7" stroke-linecap="round" stroke-dasharray="16 8"/>
-  <circle cx="122" cy="390" r="7" fill="#A855F7" stroke="#000000" stroke-width="3"/>
-  <line x1="256" y1="256" x2="135" y2="135" stroke="#F43F5E" stroke-width="6" stroke-linecap="round" stroke-dasharray="8 6"/>
-  <circle cx="135" cy="135" r="7" fill="#F43F5E" stroke="#000000" stroke-width="3"/>
-  <path d="M 256 196 L 268 244 L 316 256 L 268 268 L 256 316 L 244 268 L 196 256 L 244 244 Z" fill="url(#goldGlow)" stroke="#000000" stroke-width="5"/>
-  <circle cx="256" cy="256" r="22" fill="#FFFFFF" stroke="#000000" stroke-width="6"/>
-  <circle cx="256" cy="256" r="10" fill="#FFE500"/>
-  <path d="M 72 92 L 92 92 M 92 72 L 92 92" stroke="#00E5FF" stroke-width="4" stroke-linecap="square"/>
-  <path d="M 440 92 L 420 92 M 420 72 L 420 92" stroke="#00E5FF" stroke-width="4" stroke-linecap="square"/>
-  <path d="M 72 420 L 92 420 M 92 440 L 92 420" stroke="#00E5FF" stroke-width="4" stroke-linecap="square"/>
-  <path d="M 440 420 L 420 420 M 420 440 L 420 420" stroke="#00E5FF" stroke-width="4" stroke-linecap="square"/>
+  <rect x="48" y="48" width="440" height="440" rx="92" fill="#00E5FF" stroke="#000000" stroke-width="16"/>
+  <rect x="24" y="24" width="440" height="440" rx="92" fill="#0A0F1C" stroke="#000000" stroke-width="18"/>
+  <circle cx="244" cy="244" r="158" fill="#060911" stroke="#1E293B" stroke-width="10"/>
+  <circle cx="244" cy="244" r="144" fill="none" stroke="#00E5FF" stroke-width="6" stroke-opacity="0.35"/>
+  <rect x="224" y="42" width="40" height="28" rx="6" fill="#FFE600" stroke="#000000" stroke-width="8"/>
+  <rect x="224" y="418" width="40" height="28" rx="6" fill="#FFE600" stroke="#000000" stroke-width="8"/>
+  <rect x="42" y="224" width="28" height="40" rx="6" fill="#FFE600" stroke="#000000" stroke-width="8"/>
+  <rect x="418" y="224" width="28" height="40" rx="6" fill="#FFE600" stroke="#000000" stroke-width="8"/>
+  <g transform="rotate(45 244 244)">
+    <ellipse cx="244" cy="244" rx="164" ry="62" fill="none" stroke="#000000" stroke-width="40"/>
+    <ellipse cx="244" cy="244" rx="164" ry="62" fill="none" stroke="url(#cyanOrbit)" stroke-width="24"/>
+  </g>
+  <g transform="rotate(-45 244 244)">
+    <ellipse cx="244" cy="244" rx="164" ry="62" fill="none" stroke="#000000" stroke-width="40"/>
+    <ellipse cx="244" cy="244" rx="164" ry="62" fill="none" stroke="url(#magentaOrbit)" stroke-width="24"/>
+  </g>
+  <path d="M 244 152 L 266 222 L 336 244 L 266 266 L 244 336 L 222 266 L 152 244 L 222 222 Z" fill="url(#vertexGold)" stroke="#000000" stroke-width="10" stroke-linejoin="round"/>
+  <circle cx="244" cy="244" r="30" fill="#FFFFFF" stroke="#000000" stroke-width="10"/>
+  <circle cx="244" cy="244" r="12" fill="#00E5FF"/>
 </svg>

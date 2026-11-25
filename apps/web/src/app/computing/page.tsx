@@ -2,6 +2,7 @@
 
 import React from 'react';
 import { GridSimulator } from '@/components/computing/GridSimulator';
+import { Eli5Card } from '@/components/ui/Eli5Card';
 import { Server, Database, Network, ShieldCheck } from 'lucide-react';
 
 export default function ComputingPage() {
@@ -26,6 +27,19 @@ export default function ComputingPage() {
           collision data each year across Tier-0, Tier-1, and Tier-2 data centres.
         </p>
       </div>
+
+      <Eli5Card
+        title="How 170+ World Supercomputers Share 1 Petabyte of Data Every Second"
+        analogy="Think of LHC collisions like 40 million ultra-HD photos taken every single second! No laptop—or even one building—can save all of them. So super-fast triggers delete 99.99% of boring background noise, and a worldwide library network (Tier-0 at CERN → Tier-1 national vaults → Tier-2 universities) lets scientists analyze discoveries anywhere on Earth!"
+        keyPoints={[
+          'Tier-0 (CERN Meyrin): First digital safety vault recording collision streams onto high-density magnetic tape & fiber.',
+          'Tier-1 (13 National Labs): Permanent mirror backups connected over dedicated 100 Gbps optical links.',
+          'Tier-2 (160+ Universities): Where PhD researchers run Monte Carlo event jobs on GPUs and CPUs.',
+        ]}
+        whatToTry="Simulate a sudden Tier-1 fiber outage or raise HL-LHC pile-up below to watch queue congestion spread across the grid!"
+        doi="10.1088/1742-6596/331/1/012002"
+        citationLabel="WLCG Collaboration, Worldwide LHC Computing Grid Technical Overview"
+      />
 
       {/* Main Interactive Simulator */}
       <section>

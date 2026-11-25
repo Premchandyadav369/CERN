@@ -1,19 +1,38 @@
 'use client';
 
-import React, { useState, useMemo } from 'react';
+import React, { useState, useMemo, useEffect } from 'react';
 import { SeededRNG, asimovSignificance, simpleSignificance } from '@cern-x/sim-core';
 import { FidelityBadge } from '@/components/provenance/FidelityBadge';
 import { Value } from '@/components/provenance/Value';
 import { Eli5Card } from '@/components/ui/Eli5Card';
-import { Sliders, Sparkles, AlertCircle, Eye, RefreshCw, CheckCircle2, Download } from 'lucide-react';
+import { useGlobalStore } from '@/lib/store';
+import { Sliders, Sparkles, AlertCircle, Eye, RefreshCw, CheckCircle2, Download, Play, Pause } from 'lucide-react';
 
 export const DiscoveryExercise: React.FC = () => {
+  const reduceMotion = useGlobalStore((s) => s.reduceMotion);
   const [minPt1Gev, setMinPt1Gev] = useState<number>(35);
   const [minPt2Gev, setMinPt2Gev] = useState<number>(25);
   const [seed, setSeed] = useState<number>(42);
   const [revealed, setRevealed] = useState<boolean>(false);
+  const [lumiFrac, setLumiFrac] = useState<number>(1.0);
+  const [isStreaming, setIsStreaming] = useState<boolean>(false);
 
-  // Generate synthetic mass histogram deterministically based on cuts and seed
+  useEffect(() => {
+    if (!isStreaming || reduceMotion) return;
+    const timer = setInterval(() => {
+      setLumiFrac((prev) => {
+        const next = prev + 0.03;
+        if (next >= 1.0) {
+          setIsStreaming(false);
+          return 1.0;
+        }
+        return next;
+      });
+    }, 90);
+    return () => clearInterval(timer);
+  }, [isStreaming, reduceMotion]);
+
+  // Generate synthetic mass histogram deterministically based on cuts, luminosity fraction, and seed
   const { bins, signalCount, backgroundCount, significance } = useMemo(() => {
     const rng = new SeededRNG(seed);
     const binCounts: number[] = new Array(50).fill(0); // 100 to 150 GeV in 1 GeV bins
@@ -22,7 +41,7 @@ export const DiscoveryExercise: React.FC = () => {
     const rawBackground = 4000;
     // Tighter cuts reduce background faster than signal:
     const cutEfficiencyBg = Math.exp(-(minPt1Gev - 25) * 0.06 - (minPt2Gev - 20) * 0.05);
-    const numBgEvents = Math.round(rawBackground * cutEfficiencyBg);
+    const numBgEvents = Math.round(rawBackground * cutEfficiencyBg * lumiFrac);
 
     for (let i = 0; i < numBgEvents; i++) {
       // Sample exponential background in [100, 150]
@@ -37,7 +56,7 @@ export const DiscoveryExercise: React.FC = () => {
     // Injected Resonance: Gaussian peak at 125.0 GeV with sigma = 1.8 GeV
     const rawSignal = 180;
     const cutEfficiencySig = Math.max(0.2, 1.0 - (minPt1Gev - 25) * 0.02 - (minPt2Gev - 20) * 0.02);
-    const numSigEvents = Math.round(rawSignal * cutEfficiencySig);
+    const numSigEvents = Math.round(rawSignal * cutEfficiencySig * lumiFrac);
 
     for (let i = 0; i < numSigEvents; i++) {
       const m = rng.gaussian(125.0, 1.8);
@@ -62,7 +81,7 @@ export const DiscoveryExercise: React.FC = () => {
       backgroundCount: Math.round(estimatedBgInWindow),
       significance: z,
     };
-  }, [minPt1Gev, minPt2Gev, seed]);
+  }, [minPt1Gev, minPt2Gev, seed, lumiFrac]);
 
   const maxBin = Math.max(...bins, 1);
 
@@ -209,8 +228,27 @@ export const DiscoveryExercise: React.FC = () => {
           </div>
         </div>
 
-        {/* Action: Reveal Truth & Export */}
+        {/* Action: Stream Collisions, Reveal Truth & Export */}
         <div className="pt-3 border-t-2 border-black space-y-2">
+          <button
+            onClick={() => {
+              if (isStreaming) {
+                setIsStreaming(false);
+              } else {
+                setLumiFrac(0.06);
+                setIsStreaming(true);
+              }
+            }}
+            className="w-full py-2.5 px-3 bg-[#FFE600] hover:bg-amber-300 active:translate-x-[1px] active:translate-y-[1px] border-2 border-black shadow-[3px_3px_0px_#000] text-black font-mono font-black text-xs uppercase transition-all flex items-center justify-center gap-1.5 cursor-pointer"
+          >
+            {isStreaming ? <Pause className="w-3.5 h-3.5" /> : <Play className="w-3.5 h-3.5 fill-current" />}
+            <span>
+              {isStreaming
+                ? `Streaming Data... ${(lumiFrac * 25).toFixed(1)} / 25 fb⁻¹`
+                : 'Stream Collisions Live (0 → 25 fb⁻¹)'}
+            </span>
+          </button>
+
           <button
             onClick={() => setRevealed(!revealed)}
             className="w-full py-2.5 px-3 bg-cern-blue hover:bg-cern-accent active:translate-x-[1px] active:translate-y-[1px] border-2 border-black shadow-[3px_3px_0px_#00E5FF] active:shadow-none text-white font-mono font-bold text-xs transition-all flex items-center justify-center gap-1.5 cursor-pointer"

@@ -13,6 +13,7 @@ import {
 import { Value } from '@/components/provenance/Value';
 import { FidelityBadge } from '@/components/provenance/FidelityBadge';
 import { Eli5Card } from '@/components/ui/Eli5Card';
+import { Lhc3DRingCanvas } from './Lhc3DRingCanvas';
 import { Play, Pause, RotateCcw, Sliders, Info, Zap, Activity, Download } from 'lucide-react';
 
 export const LhcSimulator: React.FC = () => {
@@ -288,84 +289,17 @@ export const LhcSimulator: React.FC = () => {
           <FidelityBadge type="ANALYTIC" formula="B = p / (0.29979 * rho)" />
         </div>
 
-        {/* Orbit Visualization Graphic */}
-        <div className="w-full h-72 flex items-center justify-center relative overflow-hidden">
-          <svg viewBox="0 0 400 400" className="w-72 h-72 select-none">
-            {/* 27 km Vacuum Beam Pipes */}
-            <circle
-              cx="200"
-              cy="200"
-              r="140"
-              fill="none"
-              stroke="#131C2E"
-              strokeWidth="20"
-            />
-            <circle
-              cx="200"
-              cy="200"
-              r="140"
-              fill="none"
-              stroke="#000000"
-              strokeWidth="2"
-              strokeDasharray="4 4"
-            />
-
-            {/* Beam 1 (Clockwise, Cyan) */}
-            <circle
-              cx="200"
-              cy="200"
-              r="144"
-              fill="none"
-              stroke="#00E5FF"
-              strokeWidth="3"
-              strokeDasharray="80 300"
-              className={isRunning ? 'animate-spin' : ''}
-              style={{ animationDuration: '3s' }}
-            />
-
-            {/* Beam 2 (Counter-Clockwise, Magenta) */}
-            <circle
-              cx="200"
-              cy="200"
-              r="136"
-              fill="none"
-              stroke="#FF0055"
-              strokeWidth="3"
-              strokeDasharray="80 300"
-              className={isRunning ? 'animate-spin' : ''}
-              style={{ animationDirection: 'reverse', animationDuration: '3s' }}
-            />
-
-            {/* 4 Interaction Points */}
-            <circle cx="200" cy="60" r="8" fill="#FF5C5C" stroke="#000" strokeWidth="2" />
-            <text x="200" y="44" fill="#FFFFFF" fontSize="10" fontFamily="JetBrains Mono" fontWeight="bold" textAnchor="middle">
-              ATLAS (IP1)
-            </text>
-
-            <circle cx="340" cy="200" r="8" fill="#FF5C5C" stroke="#000" strokeWidth="2" />
-            <text x="340" y="224" fill="#FFFFFF" fontSize="10" fontFamily="JetBrains Mono" fontWeight="bold" textAnchor="middle">
-              ALICE (IP2)
-            </text>
-
-            <circle cx="200" cy="340" r="8" fill="#FF5C5C" stroke="#000" strokeWidth="2" />
-            <text x="200" y="364" fill="#FFFFFF" fontSize="10" fontFamily="JetBrains Mono" fontWeight="bold" textAnchor="middle">
-              CMS (IP5)
-            </text>
-
-            <circle cx="60" cy="200" r="8" fill="#FF5C5C" stroke="#000" strokeWidth="2" />
-            <text x="60" y="224" fill="#FFFFFF" fontSize="10" fontFamily="JetBrains Mono" fontWeight="bold" textAnchor="middle">
-              LHCb (IP8)
-            </text>
-
-            {/* Center Monospace Readout */}
-            <text x="200" y="195" fill="#00E5FF" fontSize="15" fontFamily="JetBrains Mono" fontWeight="bold" textAnchor="middle">
-              {(relState.velocityMS / 299792458).toFixed(8)} c
-            </text>
-            <text x="200" y="215" fill="#FFFFFF" fontSize="11" fontFamily="JetBrains Mono" fontWeight="bold" textAnchor="middle">
-              √s = {((beamEnergyGev * 2) / 1000).toFixed(2)} TeV
-            </text>
-          </svg>
-        </div>
+        {/* Interactive 3D WebGL Superconducting Ring */}
+        <Lhc3DRingCanvas
+          beamEnergyGev={beamEnergyGev}
+          bunches={bunches}
+          betaStarM={betaStarM}
+          particleType={particleType}
+          isRunning={isRunning}
+          betaVelocity={relState.velocityMS / 299792458}
+          pileup={pileup}
+          dipoleFieldTesla={dipoleFieldTesla}
+        />
 
         {/* Live Kinematic Readout Tiles */}
         <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 pt-3 border-t-2 border-black">

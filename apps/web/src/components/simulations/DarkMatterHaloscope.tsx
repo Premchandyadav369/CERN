@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState, useMemo } from 'react';
+import React, { useState, useMemo, useEffect } from 'react';
 import { calculatePrimakoffConversion } from '@cern-x/sim-core';
 import { FidelityBadge } from '@/components/provenance/FidelityBadge';
 import { Eli5Card } from '@/components/ui/Eli5Card';
@@ -9,7 +9,22 @@ import { EyeOff, Sun, Magnet, Target, Sliders, Info, Radio } from 'lucide-react'
 
 export const DarkMatterHaloscope: React.FC = () => {
   const userLevel = useGlobalStore((s) => s.userLevel);
+  const reduceMotion = useGlobalStore((s) => s.reduceMotion);
   const [subMode, setSubMode] = useState<'cast' | 'monojet'>('cast');
+  const [animPhase, setAnimPhase] = useState<number>(0);
+
+  useEffect(() => {
+    if (reduceMotion) return;
+    let rafId = 0;
+    let start: number | null = null;
+    const step = (ts: number) => {
+      if (start === null) start = ts;
+      setAnimPhase(((ts - start) / 1000) * 1.4);
+      rafId = requestAnimationFrame(step);
+    };
+    rafId = requestAnimationFrame(step);
+    return () => cancelAnimationFrame(rafId);
+  }, [reduceMotion]);
 
   // CAST Helioscope parameters
   const [axionMassEv, setAxionMassEv] = useState<number>(0.42);
@@ -145,6 +160,38 @@ export const DarkMatterHaloscope: React.FC = () => {
               </span>
             </div>
 
+            {/* Live Animated CAST Dipole Magnet Bore Conversion Tube */}
+            <svg viewBox="0 0 440 72" className="w-full h-18 bg-[#04070D] border-2 border-zinc-800">
+              <rect x="82" y="10" width="270" height="52" fill="#0c1526" stroke="#38bdf8" strokeWidth="2" />
+              <text x="217" y="22" fill="#38bdf8" fontSize="9" fontFamily="monospace" fontWeight="bold" textAnchor="middle">
+                CAST 9.26m SUPERCONDUCTING DIPOLE ({bFieldT.toFixed(1)} T · ⁴He m_γ={plasmaMassEv.toFixed(2)}eV)
+              </text>
+              <text x="40" y="40" fill="#FACC15" fontSize="10" fontFamily="monospace" fontWeight="bold" textAnchor="middle">
+                ☀️ AXIONS
+              </text>
+              <text x="398" y="40" fill="#00E5FF" fontSize="10" fontFamily="monospace" fontWeight="bold" textAnchor="middle">
+                X-RAY DET
+              </text>
+              {/* Traveling Solar Axions & Primakoff Photons */}
+              {Array.from({ length: 6 }, (_, i) => {
+                const prog = (animPhase * 0.45 + i / 6) % 1;
+                const px = 65 + prog * 310;
+                const insideMagnet = px >= 85 && px <= 350;
+                const converted = prog > 0.48 && primakoff.coherenceFactor > 0.15;
+                const cy = 42 + Math.sin(prog * 18 + i) * 7;
+                return (
+                  <circle
+                    key={i}
+                    cx={px}
+                    cy={cy}
+                    r={converted ? 4 + primakoff.coherenceFactor * 2 : 3}
+                    fill={converted ? '#00E5FF' : '#FACC15'}
+                    opacity={insideMagnet || converted ? 0.95 : 0.65}
+                  />
+                );
+              })}
+            </svg>
+
             <svg viewBox="0 0 440 165" className="w-full h-44 bg-[#04070D] border-2 border-zinc-800">
               <line x1="35" y1="135" x2="415" y2="135" stroke="#334155" strokeWidth="1.5" />
               <polyline
@@ -273,20 +320,32 @@ export const DarkMatterHaloscope: React.FC = () => {
               <circle cx="160" cy="120" r="72" fill="none" stroke="#0F172A" strokeWidth="12" />
               <circle cx="160" cy="120" r="40" fill="none" stroke="#1E293B" strokeWidth="1.5" strokeDasharray="3 3" />
 
-              {/* Visible Jet Spray Cone */}
-              {[-10, -4, 0, 4, 10].map((offset) => {
+              {/* Visible Jet Spray Cone + Animated Particles */}
+              {[-10, -4, 0, 4, 10].map((offset, idx) => {
                 const r = ((jetAngleDeg + offset) * Math.PI) / 180;
+                const pulseFrac = (animPhase * 0.8 + idx * 0.18) % 1;
+                const dotDist = 12 + pulseFrac * (vectorLen - 12);
                 return (
-                  <line
-                    key={offset}
-                    x1="160"
-                    y1="120"
-                    x2={160 + Math.cos(r) * vectorLen}
-                    y2={120 - Math.sin(r) * vectorLen}
-                    stroke="#00FF66"
-                    strokeWidth={offset === 0 ? 3.5 : 1.5}
-                    opacity={offset === 0 ? 1 : 0.65}
-                  />
+                  <g key={offset}>
+                    <line
+                      x1="160"
+                      y1="120"
+                      x2={160 + Math.cos(r) * vectorLen}
+                      y2={120 - Math.sin(r) * vectorLen}
+                      stroke="#00FF66"
+                      strokeWidth={offset === 0 ? 3.5 : 1.5}
+                      opacity={offset === 0 ? 1 : 0.65}
+                    />
+                    {!reduceMotion && (
+                      <circle
+                        cx={160 + Math.cos(r) * dotDist}
+                        cy={120 - Math.sin(r) * dotDist}
+                        r={2.8}
+                        fill="#FFFFFF"
+                        opacity={1 - pulseFrac * 0.6}
+                      />
+                    )}
+                  </g>
                 );
               })}
 
@@ -299,6 +358,7 @@ export const DarkMatterHaloscope: React.FC = () => {
                 stroke="#FF0055"
                 strokeWidth="3.5"
                 strokeDasharray="6 4"
+                strokeDashoffset={-animPhase * 18}
               />
               <circle cx={metX} cy={metY} r="5" fill="#FF0055" stroke="#000" strokeWidth="1.5" />
               <circle cx={jetX} cy={jetY} r="5" fill="#00FF66" stroke="#000" strokeWidth="1.5" />

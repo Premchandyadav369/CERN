@@ -1,9 +1,10 @@
 'use client';
 
-import React, { useState } from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 import { Value } from '@/components/provenance/Value';
 import { FidelityBadge } from '@/components/provenance/FidelityBadge';
 import { Eli5Card } from '@/components/ui/Eli5Card';
+import { useGlobalStore } from '@/lib/store';
 import { Sliders, Cpu, Activity, AlertTriangle, ShieldCheck, Gauge, Download } from 'lucide-react';
 
 export const TriggerLab: React.FC = () => {
@@ -44,6 +45,156 @@ export const TriggerLab: React.FC = () => {
   const hltBudgetMaxHz = 2000;
   const isL1OverBudget = baseL1RateKhz > l1BudgetMaxKhz;
   const isHltOverBudget = baseHltRateHz > hltBudgetMaxHz;
+
+  const reduceMotion = useGlobalStore((s) => s.reduceMotion);
+  const triggerCanvasRef = useRef<HTMLCanvasElement | null>(null);
+  const ratesRef = useRef({
+    l1Ratio: baseL1RateKhz / 150,
+    hltRatio: Math.min(1, baseHltRateHz / 3000),
+    l1Over: isL1OverBudget,
+    hltOver: isHltOverBudget,
+  });
+
+  useEffect(() => {
+    ratesRef.current = {
+      l1Ratio: Math.min(1, Math.max(0.08, baseL1RateKhz / 140)),
+      hltRatio: Math.min(1, Math.max(0.04, baseHltRateHz / 2500)),
+      l1Over: isL1OverBudget,
+      hltOver: isHltOverBudget,
+    };
+  }, [baseL1RateKhz, baseHltRateHz, isL1OverBudget, isHltOverBudget]);
+
+  useEffect(() => {
+    const canvas = triggerCanvasRef.current;
+    if (!canvas) return;
+    const ctx = canvas.getContext('2d');
+    if (!ctx) return;
+
+    let rafId = 0;
+    interface EventDot {
+      x: number;
+      y: number;
+      vx: number;
+      vy: number;
+      stage: 0 | 1 | 2; // 0: incoming, 1: survived L1, 2: survived HLT
+      dropped: boolean;
+      tierKey: number;
+    }
+
+    const dots: EventDot[] = Array.from({ length: 55 }, (_, i) => ({
+      x: (i / 55) * canvas.width,
+      y: 35 + ((i * 19) % 70),
+      vx: 2.2 + (i % 4) * 0.45,
+      vy: 0,
+      stage: 0,
+      dropped: false,
+      tierKey: (i * 0.6180339) % 1,
+    }));
+
+    const renderFrame = (nowMs: number) => {
+      const w = canvas.width;
+      const h = canvas.height;
+      const { l1Ratio, hltRatio, l1Over, hltOver } = ratesRef.current;
+
+      ctx.fillStyle = '#050811';
+      ctx.fillRect(0, 0, w, h);
+
+      // Draw Pipeline Lanes
+      ctx.strokeStyle = '#1e293b';
+      ctx.lineWidth = 1;
+      ctx.beginPath();
+      ctx.moveTo(0, h / 2);
+      ctx.lineTo(w, h / 2);
+      ctx.stroke();
+
+      const gate1X = 185;
+      const gate2X = 385;
+      const tapeX = 560;
+
+      // Draw L1 Gate
+      const pulse = 0.7 + 0.3 * Math.sin(nowMs * 0.01);
+      ctx.fillStyle = l1Over ? `rgba(239, 68, 68, ${pulse * 0.35})` : 'rgba(0, 229, 255, 0.14)';
+      ctx.fillRect(gate1X - 10, 14, 20, h - 28);
+      ctx.strokeStyle = l1Over ? '#ef4444' : '#00E5FF';
+      ctx.lineWidth = 2;
+      ctx.strokeRect(gate1X - 10, 14, 20, h - 28);
+      ctx.fillStyle = l1Over ? '#fca5a5' : '#00E5FF';
+      ctx.font = 'bold 10px monospace';
+      ctx.textAlign = 'center';
+      ctx.fillText('L1 FPGA', gate1X, 11);
+
+      // Draw HLT Gate
+      ctx.fillStyle = hltOver ? `rgba(239, 68, 68, ${pulse * 0.35})` : 'rgba(255, 230, 0, 0.14)';
+      ctx.fillRect(gate2X - 10, 14, 20, h - 28);
+      ctx.strokeStyle = hltOver ? '#ef4444' : '#FFE600';
+      ctx.strokeRect(gate2X - 10, 14, 20, h - 28);
+      ctx.fillStyle = hltOver ? '#fca5a5' : '#FFE600';
+      ctx.fillText('HLT FARM', gate2X, 11);
+
+      // Draw Storage Vault
+      ctx.fillStyle = 'rgba(0, 255, 102, 0.18)';
+      ctx.fillRect(tapeX - 14, 18, 28, h - 36);
+      ctx.strokeStyle = '#00FF66';
+      ctx.strokeRect(tapeX - 14, 18, 28, h - 36);
+      ctx.fillStyle = '#00FF66';
+      ctx.fillText('TAPE', tapeX, 11);
+
+      // Update & draw streaming collision events
+      for (const d of dots) {
+        if (!reduceMotion) {
+          d.x += d.vx;
+          d.y += d.vy;
+        }
+
+        if (d.stage === 0 && d.x >= gate1X) {
+          if (d.tierKey > l1Ratio * 0.65) {
+            d.dropped = true;
+            d.vy = d.y > h / 2 ? 1.8 : -1.8;
+            d.vx *= 0.4;
+          } else {
+            d.stage = 1;
+          }
+        } else if (d.stage === 1 && !d.dropped && d.x >= gate2X) {
+          if ((d.tierKey * 1.7) % 1 > hltRatio * 0.65) {
+            d.dropped = true;
+            d.vy = d.y > h / 2 ? 1.6 : -1.6;
+            d.vx *= 0.4;
+          } else {
+            d.stage = 2;
+          }
+        }
+
+        if (d.x > w + 10 || d.y < 0 || d.y > h) {
+          d.x = 6;
+          d.y = 32 + ((d.tierKey * 97) % 68);
+          d.vx = 2.2 + (d.tierKey % 0.8) * 1.2;
+          d.vy = 0;
+          d.stage = 0;
+          d.dropped = false;
+        }
+
+        ctx.fillStyle = d.dropped
+          ? 'rgba(100, 116, 139, 0.35)'
+          : d.stage === 2
+          ? '#00FF66'
+          : d.stage === 1
+          ? '#FFE600'
+          : '#00E5FF';
+        ctx.beginPath();
+        ctx.arc(d.x, d.y, d.stage === 2 ? 3.8 : d.dropped ? 2 : 2.8, 0, Math.PI * 2);
+        ctx.fill();
+      }
+
+      if (!reduceMotion) {
+        rafId = requestAnimationFrame(renderFrame);
+      }
+    };
+
+    if (reduceMotion) renderFrame(0);
+    else rafId = requestAnimationFrame(renderFrame);
+
+    return () => cancelAnimationFrame(rafId);
+  }, [reduceMotion]);
 
   // Export JSON
   const exportJson = () => {
@@ -233,6 +384,20 @@ export const TriggerLab: React.FC = () => {
           <span className="text-xs font-mono text-text-muted font-bold">
             CROSSING: <strong className="text-cern-cyan">40 MHz</strong>
           </span>
+        </div>
+
+        {/* 60 FPS Live Event Stream Funnel Visualizer */}
+        <div className="bg-black border-2 border-black shadow-[3px_3px_0px_#000] p-2 space-y-1">
+          <div className="flex justify-between text-[10px] font-mono text-text-muted px-1">
+            <span>40 MHz Raw Beam Crossings →</span>
+            <span className="text-emerald-400 font-bold">Saved Signals ({baseHltRateHz} Hz)</span>
+          </div>
+          <canvas
+            ref={triggerCanvasRef}
+            width={600}
+            height={130}
+            className="w-full h-28 block bg-[#050811]"
+          />
         </div>
 
         {/* Pipeline Stage Blocks */}

@@ -18,6 +18,7 @@ import {
   Atom,
 } from 'lucide-react';
 import { Eli5Card } from '@/components/ui/Eli5Card';
+import { useGlobalStore } from '@/lib/store';
 
 export type BeamSpecies = 'proton' | 'carbon' | 'photon';
 
@@ -316,17 +317,18 @@ export const BraggPeakSimulator: React.FC<{ className?: string }> = ({ className
     };
   }, [hoveredDepth, simulationData, isSobpEnabled, species, tumorDepthCm, tumorMarginCm]);
 
-  // Render high-contrast Canvas Chart
+  // Render high-contrast 60 FPS Animated Canvas Chart & Beam Penetration Overlay
+  const reduceMotion = useGlobalStore((s) => s.reduceMotion);
+
   useEffect(() => {
     const canvas = canvasRef.current;
     if (!canvas) return;
     const ctx = canvas.getContext('2d');
     if (!ctx) return;
 
+    let rafId = 0;
     const width = canvas.width;
     const height = canvas.height;
-    ctx.clearRect(0, 0, width, height);
-
     const padLeft = 55;
     const padRight = 25;
     const padTop = 30;
@@ -334,201 +336,252 @@ export const BraggPeakSimulator: React.FC<{ className?: string }> = ({ className
     const plotW = width - padLeft - padRight;
     const plotH = height - padTop - padBottom;
 
-    // Helper coordinates
     const getX = (depth: number) => padLeft + (depth / maxDepthCm) * plotW;
     const getY = (dose: number) => padTop + plotH - (Math.min(120, Math.max(0, dose)) / 120) * plotH;
 
-    // Background grid
-    ctx.fillStyle = '#0a0d12';
-    ctx.fillRect(padLeft, padTop, plotW, plotH);
+    // Animated ion packet stream traveling along tissue depth
+    const packets = Array.from({ length: 14 }, (_, i) => ({
+      offset: i / 14,
+      laneOffset: ((i % 5) - 2) * 5,
+    }));
 
-    // Grid lines
-    ctx.strokeStyle = '#1e2633';
-    ctx.lineWidth = 1;
+    const drawFrame = (nowMs: number) => {
+      const tPhase = reduceMotion ? 0 : (nowMs / 1000) * 0.45;
+      ctx.clearRect(0, 0, width, height);
 
-    // Depth grid (vertical)
-    for (let d = 5; d <= 30; d += 5) {
-      const x = getX(d);
+      // Background grid
+      ctx.fillStyle = '#0a0d12';
+      ctx.fillRect(padLeft, padTop, plotW, plotH);
+
+      ctx.strokeStyle = '#1e2633';
+      ctx.lineWidth = 1;
+
+      for (let d = 5; d <= 30; d += 5) {
+        const x = getX(d);
+        ctx.beginPath();
+        ctx.moveTo(x, padTop);
+        ctx.lineTo(x, padTop + plotH);
+        ctx.stroke();
+
+        ctx.fillStyle = '#6b7280';
+        ctx.font = 'bold 10px monospace';
+        ctx.textAlign = 'center';
+        ctx.fillText(`${d} cm`, x, padTop + plotH + 18);
+      }
+
+      for (let dose = 20; dose <= 100; dose += 20) {
+        const y = getY(dose);
+        ctx.beginPath();
+        ctx.moveTo(padLeft, y);
+        ctx.lineTo(padLeft + plotW, y);
+        ctx.stroke();
+
+        ctx.fillStyle = '#6b7280';
+        ctx.font = 'bold 10px monospace';
+        ctx.textAlign = 'right';
+        ctx.fillText(`${dose}%`, padLeft - 8, y + 3);
+      }
+
+      const tumorStart = Math.max(0, tumorDepthCm - tumorMarginCm / 2);
+      const tumorEnd = Math.min(35, tumorDepthCm + tumorMarginCm / 2);
+      const xTumorStart = getX(tumorStart);
+      const xTumorEnd = getX(tumorEnd);
+
+      ctx.fillStyle = 'rgba(255, 230, 0, 0.12)';
+      ctx.fillRect(xTumorStart, padTop, xTumorEnd - xTumorStart, plotH);
+
+      ctx.strokeStyle = '#FFE600';
+      ctx.setLineDash([4, 4]);
+      ctx.lineWidth = 1.5;
       ctx.beginPath();
-      ctx.moveTo(x, padTop);
-      ctx.lineTo(x, padTop + plotH);
+      ctx.moveTo(xTumorStart, padTop);
+      ctx.lineTo(xTumorStart, padTop + plotH);
+      ctx.moveTo(xTumorEnd, padTop);
+      ctx.lineTo(xTumorEnd, padTop + plotH);
       ctx.stroke();
+      ctx.setLineDash([]);
 
-      ctx.fillStyle = '#6b7280';
+      ctx.fillStyle = '#FFE600';
+      ctx.font = 'bold 11px monospace';
+      ctx.textAlign = 'center';
+      ctx.fillText('TARGET TUMOR REGION', (xTumorStart + xTumorEnd) / 2, padTop + 18);
+
+      const distalCritStart = tumorEnd + 1.5;
+      const xCritStart = getX(distalCritStart);
+      const xCritEnd = getX(34);
+      ctx.fillStyle = 'rgba(255, 0, 85, 0.08)';
+      ctx.fillRect(xCritStart, padTop, xCritEnd - xCritStart, plotH);
+
+      ctx.fillStyle = '#ff6b8b';
       ctx.font = 'bold 10px monospace';
       ctx.textAlign = 'center';
-      ctx.fillText(`${d} cm`, x, padTop + plotH + 18);
-    }
+      ctx.fillText('CRITICAL ORGAN (BRAIN STEM / SPINAL CORD)', (xCritStart + xCritEnd) / 2, padTop + plotH - 12);
 
-    // Dose grid (horizontal)
-    for (let dose = 20; dose <= 100; dose += 20) {
-      const y = getY(dose);
+      // Animated Beam Ionization Channel at bottom track strip
+      const beamCenterY = padTop + plotH - 38;
+      if (!reduceMotion) {
+        const stopDepthCm = species === 'photon' ? maxDepthCm : isSobpEnabled ? tumorEnd : tumorDepthCm;
+        const beamCol = species === 'proton' ? '#00E5FF' : species === 'carbon' ? '#FF0055' : '#f97316';
+
+        // Bragg flare halo inside tumor
+        if (species !== 'photon') {
+          const flareX = isSobpEnabled ? (xTumorStart + xTumorEnd) / 2 : getX(tumorDepthCm);
+          const flareW = isSobpEnabled ? (xTumorEnd - xTumorStart) * 0.55 : 18;
+          const pulseAlpha = 0.25 + 0.15 * Math.sin(nowMs * 0.008);
+          const grad = ctx.createRadialGradient(flareX, beamCenterY, 2, flareX, beamCenterY, Math.max(20, flareW));
+          grad.addColorStop(0, species === 'proton' ? `rgba(0, 229, 255, ${pulseAlpha + 0.25})` : `rgba(255, 0, 85, ${pulseAlpha + 0.25})`);
+          grad.addColorStop(1, 'rgba(0,0,0,0)');
+          ctx.fillStyle = grad;
+          ctx.beginPath();
+          ctx.arc(flareX, beamCenterY, Math.max(20, flareW), 0, Math.PI * 2);
+          ctx.fill();
+        }
+
+        // Flying particle bunches
+        packets.forEach((pk, idx) => {
+          const prog = (tPhase + pk.offset) % 1;
+          // Hadrons slow down sharply near end-of-range (Bragg curve deceleration)
+          const eased = species === 'photon' ? prog : 1 - Math.pow(1 - prog, 1.85);
+          const targetStop = isSobpEnabled && species !== 'photon'
+            ? tumorStart + ((idx % 4) / 3) * (tumorEnd - tumorStart)
+            : stopDepthCm;
+          const depth = eased * targetStop;
+          const px = getX(depth);
+          const py = beamCenterY + pk.laneOffset;
+
+          // Particle glow escalates right at Bragg stop!
+          const isStopping = species !== 'photon' && prog > 0.72;
+          ctx.fillStyle = isStopping ? '#FFE600' : beamCol;
+          ctx.globalAlpha = species === 'photon' ? 0.65 * (1 - prog * 0.6) : isStopping ? 0.95 : 0.75;
+          ctx.beginPath();
+          ctx.arc(px, py, isStopping ? 4.5 : 2.6, 0, Math.PI * 2);
+          ctx.fill();
+        });
+        ctx.globalAlpha = 1;
+      }
+
+      // Draw 6 MV Conventional X-ray curve
       ctx.beginPath();
-      ctx.moveTo(padLeft, y);
-      ctx.lineTo(padLeft + plotW, y);
-      ctx.stroke();
-
-      ctx.fillStyle = '#6b7280';
-      ctx.font = 'bold 10px monospace';
-      ctx.textAlign = 'right';
-      ctx.fillText(`${dose}%`, padLeft - 8, y + 3);
-    }
-
-    // Tumor Target Region Shading
-    const tumorStart = Math.max(0, tumorDepthCm - tumorMarginCm / 2);
-    const tumorEnd = Math.min(35, tumorDepthCm + tumorMarginCm / 2);
-    const xTumorStart = getX(tumorStart);
-    const xTumorEnd = getX(tumorEnd);
-
-    ctx.fillStyle = 'rgba(255, 230, 0, 0.12)';
-    ctx.fillRect(xTumorStart, padTop, xTumorEnd - xTumorStart, plotH);
-
-    // Target boundaries
-    ctx.strokeStyle = '#FFE600';
-    ctx.setLineDash([4, 4]);
-    ctx.lineWidth = 1.5;
-    ctx.beginPath();
-    ctx.moveTo(xTumorStart, padTop);
-    ctx.lineTo(xTumorStart, padTop + plotH);
-    ctx.moveTo(xTumorEnd, padTop);
-    ctx.lineTo(xTumorEnd, padTop + plotH);
-    ctx.stroke();
-    ctx.setLineDash([]);
-
-    // Tumor label
-    ctx.fillStyle = '#FFE600';
-    ctx.font = 'bold 11px monospace';
-    ctx.textAlign = 'center';
-    ctx.fillText('TARGET TUMOR REGION', (xTumorStart + xTumorEnd) / 2, padTop + 18);
-
-    // Distal Critical Organ Zone Shading (e.g. Brainstem / Spinal Cord)
-    const distalCritStart = tumorEnd + 1.5;
-    const xCritStart = getX(distalCritStart);
-    const xCritEnd = getX(34);
-    ctx.fillStyle = 'rgba(255, 0, 85, 0.08)';
-    ctx.fillRect(xCritStart, padTop, xCritEnd - xCritStart, plotH);
-
-    ctx.fillStyle = '#ff6b8b';
-    ctx.font = 'bold 10px monospace';
-    ctx.textAlign = 'center';
-    ctx.fillText('CRITICAL ORGAN (BRAIN STEM / SPINAL CORD)', (xCritStart + xCritEnd) / 2, padTop + plotH - 12);
-
-    // Draw 6 MV Conventional X-ray curve (Dashed Amber/Orange)
-    ctx.beginPath();
-    ctx.strokeStyle = '#f97316';
-    ctx.lineWidth = 2.5;
-    ctx.setLineDash([6, 3]);
-    simulationData.forEach((p, idx) => {
-      const x = getX(p.depthCm);
-      const y = getY(p.photonDose);
-      if (idx === 0) ctx.moveTo(x, y);
-      else ctx.lineTo(x, y);
-    });
-    ctx.stroke();
-    ctx.setLineDash([]);
-
-    // Draw Active Hadron Curve
-    if (species !== 'photon') {
-      const activeCurveKey = isSobpEnabled ? 'sobpDose' : 'dose';
-      const strokeColor = species === 'proton' ? '#00E5FF' : '#FF0055';
-
-      // Fill area under curve
-      ctx.beginPath();
-      ctx.moveTo(getX(0), getY(0));
-      simulationData.forEach((p) => {
-        ctx.lineTo(getX(p.depthCm), getY(p[activeCurveKey]));
-      });
-      ctx.lineTo(getX(maxDepthCm), getY(0));
-      ctx.closePath();
-      ctx.fillStyle =
-        species === 'proton' ? 'rgba(0, 229, 255, 0.15)' : 'rgba(255, 0, 85, 0.15)';
-      ctx.fill();
-
-      // Main line stroke
-      ctx.beginPath();
-      ctx.strokeStyle = strokeColor;
-      ctx.lineWidth = 3.5;
+      ctx.strokeStyle = '#f97316';
+      ctx.lineWidth = 2.5;
+      ctx.setLineDash([6, 3]);
       simulationData.forEach((p, idx) => {
         const x = getX(p.depthCm);
-        const y = getY(p[activeCurveKey]);
+        const y = getY(p.photonDose);
         if (idx === 0) ctx.moveTo(x, y);
         else ctx.lineTo(x, y);
       });
       ctx.stroke();
+      ctx.setLineDash([]);
 
-      // If SOBP is active, also draw monoenergetic Bragg peak as faint dashed outline
-      if (isSobpEnabled) {
+      // Draw Active Hadron Curve
+      if (species !== 'photon') {
+        const activeCurveKey = isSobpEnabled ? 'sobpDose' : 'dose';
+        const strokeColor = species === 'proton' ? '#00E5FF' : '#FF0055';
+
         ctx.beginPath();
-        ctx.strokeStyle = 'rgba(255, 255, 255, 0.35)';
-        ctx.lineWidth = 1.5;
-        ctx.setLineDash([3, 3]);
+        ctx.moveTo(getX(0), getY(0));
+        simulationData.forEach((p) => {
+          ctx.lineTo(getX(p.depthCm), getY(p[activeCurveKey]));
+        });
+        ctx.lineTo(getX(maxDepthCm), getY(0));
+        ctx.closePath();
+        ctx.fillStyle =
+          species === 'proton' ? 'rgba(0, 229, 255, 0.15)' : 'rgba(255, 0, 85, 0.15)';
+        ctx.fill();
+
+        ctx.beginPath();
+        ctx.strokeStyle = strokeColor;
+        ctx.lineWidth = 3.5;
         simulationData.forEach((p, idx) => {
           const x = getX(p.depthCm);
-          const y = getY(p.dose);
+          const y = getY(p[activeCurveKey]);
           if (idx === 0) ctx.moveTo(x, y);
           else ctx.lineTo(x, y);
         });
         ctx.stroke();
+
+        if (isSobpEnabled) {
+          ctx.beginPath();
+          ctx.strokeStyle = 'rgba(255, 255, 255, 0.35)';
+          ctx.lineWidth = 1.5;
+          ctx.setLineDash([3, 3]);
+          simulationData.forEach((p, idx) => {
+            const x = getX(p.depthCm);
+            const y = getY(p.dose);
+            if (idx === 0) ctx.moveTo(x, y);
+            else ctx.lineTo(x, y);
+          });
+          ctx.stroke();
+          ctx.setLineDash([]);
+        }
+      }
+
+      if (hoveredDepth !== null) {
+        const xHover = getX(hoveredDepth);
+        ctx.strokeStyle = '#ffffff';
+        ctx.lineWidth = 1.5;
+        ctx.setLineDash([2, 2]);
+        ctx.beginPath();
+        ctx.moveTo(xHover, padTop);
+        ctx.lineTo(xHover, padTop + plotH);
+        ctx.stroke();
         ctx.setLineDash([]);
+
+        const idx = Math.min(simulationData.length - 1, Math.max(0, Math.round(hoveredDepth / stepCm)));
+        const pt = simulationData[idx];
+        if (pt) {
+          const hadronDoseVal = isSobpEnabled ? pt.sobpDose : pt.dose;
+          const text =
+            species !== 'photon'
+              ? `d=${hoveredDepth.toFixed(1)}cm | Hadron: ${hadronDoseVal.toFixed(0)}% | X-ray: ${pt.photonDose.toFixed(0)}%`
+              : `d=${hoveredDepth.toFixed(1)}cm | 6 MV X-ray: ${pt.photonDose.toFixed(0)}%`;
+
+          ctx.font = 'bold 11px monospace';
+          const textW = ctx.measureText(text).width;
+          const badgeX = Math.max(padLeft + 5, Math.min(width - padRight - textW - 15, xHover - textW / 2));
+          const badgeY = padTop + 35;
+
+          ctx.fillStyle = '#000000';
+          ctx.strokeStyle = '#00E5FF';
+          ctx.lineWidth = 2;
+          ctx.fillRect(badgeX - 6, badgeY - 14, textW + 12, 22);
+          ctx.strokeRect(badgeX - 6, badgeY - 14, textW + 12, 22);
+
+          ctx.fillStyle = '#ffffff';
+          ctx.textAlign = 'left';
+          ctx.fillText(text, badgeX, badgeY + 1);
+        }
       }
+
+      ctx.strokeStyle = '#000000';
+      ctx.lineWidth = 3;
+      ctx.strokeRect(padLeft, padTop, plotW, plotH);
+
+      ctx.fillStyle = '#ffffff';
+      ctx.font = 'bold 11px monospace';
+      ctx.textAlign = 'center';
+      ctx.fillText('PATIENT TISSUE PENETRATION DEPTH (cm)', padLeft + plotW / 2, height - 10);
+
+      ctx.save();
+      ctx.translate(16, padTop + plotH / 2);
+      ctx.rotate(-Math.PI / 2);
+      ctx.fillText('RELATIVE ABSORBED DOSE (%)', 0, 0);
+      ctx.restore();
+
+      if (!reduceMotion) {
+        rafId = requestAnimationFrame(drawFrame);
+      }
+    };
+
+    if (reduceMotion) {
+      drawFrame(0);
+    } else {
+      rafId = requestAnimationFrame(drawFrame);
     }
 
-    // Hover crosshair and in-canvas readout HUD
-    if (hoveredDepth !== null) {
-      const xHover = getX(hoveredDepth);
-      ctx.strokeStyle = '#ffffff';
-      ctx.lineWidth = 1.5;
-      ctx.setLineDash([2, 2]);
-      ctx.beginPath();
-      ctx.moveTo(xHover, padTop);
-      ctx.lineTo(xHover, padTop + plotH);
-      ctx.stroke();
-      ctx.setLineDash([]);
-
-      // In-canvas badge near top of crosshair
-      const idx = Math.min(simulationData.length - 1, Math.max(0, Math.round(hoveredDepth / stepCm)));
-      const pt = simulationData[idx];
-      if (pt) {
-        const hadronDoseVal = isSobpEnabled ? pt.sobpDose : pt.dose;
-        const text =
-          species !== 'photon'
-            ? `d=${hoveredDepth.toFixed(1)}cm | Hadron: ${hadronDoseVal.toFixed(0)}% | X-ray: ${pt.photonDose.toFixed(0)}%`
-            : `d=${hoveredDepth.toFixed(1)}cm | 6 MV X-ray: ${pt.photonDose.toFixed(0)}%`;
-
-        ctx.font = 'bold 11px monospace';
-        const textW = ctx.measureText(text).width;
-        const badgeX = Math.max(padLeft + 5, Math.min(width - padRight - textW - 15, xHover - textW / 2));
-        const badgeY = padTop + 35;
-
-        ctx.fillStyle = '#000000';
-        ctx.strokeStyle = '#00E5FF';
-        ctx.lineWidth = 2;
-        ctx.fillRect(badgeX - 6, badgeY - 14, textW + 12, 22);
-        ctx.strokeRect(badgeX - 6, badgeY - 14, textW + 12, 22);
-
-        ctx.fillStyle = '#ffffff';
-        ctx.textAlign = 'left';
-        ctx.fillText(text, badgeX, badgeY + 1);
-      }
-    }
-
-    // Plot Border
-    ctx.strokeStyle = '#000000';
-    ctx.lineWidth = 3;
-    ctx.strokeRect(padLeft, padTop, plotW, plotH);
-
-    // Axis labels
-    ctx.fillStyle = '#ffffff';
-    ctx.font = 'bold 11px monospace';
-    ctx.textAlign = 'center';
-    ctx.fillText('PATIENT TISSUE PENETRATION DEPTH (cm)', padLeft + plotW / 2, height - 10);
-
-    ctx.save();
-    ctx.translate(16, padTop + plotH / 2);
-    ctx.rotate(-Math.PI / 2);
-    ctx.fillText('RELATIVE ABSORBED DOSE (%)', 0, 0);
-    ctx.restore();
-  }, [simulationData, species, isSobpEnabled, tumorDepthCm, tumorMarginCm, hoveredDepth]);
+    return () => cancelAnimationFrame(rafId);
+  }, [simulationData, species, isSobpEnabled, tumorDepthCm, tumorMarginCm, hoveredDepth, reduceMotion]);
 
   // Handle pointer hover / touch interaction for depth inspection
   const handlePointerMove = (e: React.PointerEvent<HTMLCanvasElement>) => {

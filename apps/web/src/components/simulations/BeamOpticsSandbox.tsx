@@ -1,9 +1,10 @@
 'use client';
 
-import React, { useState, useMemo } from 'react';
+import React, { useState, useMemo, useRef, useEffect } from 'react';
 import { FidelityBadge } from '@/components/provenance/FidelityBadge';
 import { Value } from '@/components/provenance/Value';
 import { Eli5Card } from '@/components/ui/Eli5Card';
+import { useGlobalStore } from '@/lib/store';
 import { Download, RefreshCw, Zap, Info, AlertTriangle, CheckCircle } from 'lucide-react';
 
 export function BeamOpticsSandbox() {
@@ -103,6 +104,146 @@ export function BeamOpticsSandbox() {
       curvePoints,
     };
   }, [cellLength, focalLength, beamEnergyGev, emittanceNormUm]);
+
+  const reduceMotion = useGlobalStore((s) => s.reduceMotion);
+  const fodoCanvasRef = useRef<HTMLCanvasElement | null>(null);
+
+  useEffect(() => {
+    const canvas = fodoCanvasRef.current;
+    if (!canvas) return;
+    const ctx = canvas.getContext('2d');
+    if (!ctx) return;
+
+    let rafId = 0;
+    const protons = Array.from({ length: 18 }, (_, i) => ({
+      offset: i / 18,
+      phase0: (i * 1.37) % (Math.PI * 2),
+      amp: 0.35 + ((i * 7) % 6) * 0.11,
+    }));
+
+    const renderFrame = (nowMs: number) => {
+      const t = reduceMotion ? 0.3 : (nowMs / 1000) * 0.38;
+      const w = canvas.width;
+      const h = canvas.height;
+      ctx.clearRect(0, 0, w, h);
+
+      ctx.fillStyle = '#060911';
+      ctx.fillRect(0, 0, w, h);
+
+      // Center optical axis & grid
+      ctx.strokeStyle = '#1e293b';
+      ctx.lineWidth = 1;
+      for (const gx of [150, 300, 450]) {
+        ctx.beginPath();
+        ctx.moveTo(gx, 0);
+        ctx.lineTo(gx, h);
+        ctx.stroke();
+      }
+      ctx.strokeStyle = '#334155';
+      ctx.setLineDash([4, 4]);
+      ctx.beginPath();
+      ctx.moveTo(0, h / 2);
+      ctx.lineTo(w, h / 2);
+      ctx.stroke();
+      ctx.setLineDash([]);
+
+      // Quadrupole magnets
+      const drawQuad = (x: number, width: number, label: string, col: string) => {
+        ctx.fillStyle = col;
+        ctx.globalAlpha = 0.25;
+        ctx.fillRect(x, 18, width, h - 36);
+        ctx.globalAlpha = 1;
+        ctx.strokeStyle = col;
+        ctx.lineWidth = 2;
+        ctx.strokeRect(x, 18, width, h - 36);
+        ctx.fillStyle = col;
+        ctx.font = 'bold 10px monospace';
+        ctx.textAlign = 'center';
+        ctx.fillText(label, x + width / 2, 13);
+      };
+      drawQuad(0, 30, '1/2 QF', '#38bdf8');
+      drawQuad(285, 30, 'QD', '#f87171');
+      drawQuad(570, 30, '1/2 QF', '#38bdf8');
+
+      if (results.isStable) {
+        const maxSig = Math.max(1, results.sigmaMaxUm);
+        const pts = results.curvePoints;
+
+        // Envelope fill
+        ctx.beginPath();
+        pts.forEach((p, idx) => {
+          const x = (p.s / cellLength) * w;
+          const halfH = (p.sigma / maxSig) * 58;
+          if (idx === 0) ctx.moveTo(x, h / 2 - halfH);
+          else ctx.lineTo(x, h / 2 - halfH);
+        });
+        for (let i = pts.length - 1; i >= 0; i--) {
+          const p = pts[i];
+          const x = (p.s / cellLength) * w;
+          const halfH = (p.sigma / maxSig) * 58;
+          ctx.lineTo(x, h / 2 + halfH);
+        }
+        ctx.closePath();
+        ctx.fillStyle = 'rgba(0, 229, 255, 0.16)';
+        ctx.fill();
+
+        // Top & Bottom Envelope strokes
+        for (const sign of [-1, 1]) {
+          ctx.beginPath();
+          ctx.strokeStyle = '#00e5ff';
+          ctx.lineWidth = 2.5;
+          pts.forEach((p, idx) => {
+            const x = (p.s / cellLength) * w;
+            const y = h / 2 + sign * ((p.sigma / maxSig) * 58);
+            if (idx === 0) ctx.moveTo(x, y);
+            else ctx.lineTo(x, y);
+          });
+          ctx.stroke();
+        }
+
+        // Animated Betatron Protons weaving within envelope!
+        protons.forEach((pr) => {
+          const sNorm = (t + pr.offset) % 1;
+          const idx = Math.min(pts.length - 1, Math.floor(sNorm * (pts.length - 1)));
+          const envH = (pts[idx].sigma / maxSig) * 56;
+          const px = sNorm * w;
+          const py = h / 2 + pr.amp * envH * Math.sin(sNorm * results.muRad * 2.5 + pr.phase0);
+
+          ctx.fillStyle = '#FFE600';
+          ctx.beginPath();
+          ctx.arc(px, py, 3, 0, Math.PI * 2);
+          ctx.fill();
+        });
+      } else {
+        // Unstable blow-up trajectories hitting beam pipe
+        protons.forEach((pr) => {
+          const sNorm = (t + pr.offset) % 1;
+          const px = sNorm * w;
+          const blowUp = Math.exp(sNorm * 3.1) - 1;
+          const dir = pr.phase0 > Math.PI ? 1 : -1;
+          const py = Math.max(20, Math.min(h - 20, h / 2 + dir * blowUp * 8 * pr.amp));
+          ctx.fillStyle = '#ef4444';
+          ctx.beginPath();
+          ctx.arc(px, py, 3.5, 0, Math.PI * 2);
+          ctx.fill();
+        });
+
+        ctx.fillStyle = 'rgba(239, 68, 68, 0.9)';
+        ctx.font = 'bold 12px monospace';
+        ctx.textAlign = 'center';
+        ctx.fillText('UNSTABLE BEAM LOSS (f ≤ L/4): PROTONS COLLIDE WITH PIPE!', w / 2, h / 2 + 4);
+      }
+
+      if (!reduceMotion) {
+        rafId = requestAnimationFrame(renderFrame);
+      }
+    };
+
+    if (reduceMotion) renderFrame(0);
+    else rafId = requestAnimationFrame(renderFrame);
+
+    return () => cancelAnimationFrame(rafId);
+  }, [results, cellLength, reduceMotion]);
 
   // Export scenario JSON
   const exportJson = () => {
@@ -375,88 +516,29 @@ export function BeamOpticsSandbox() {
               </span>
             </div>
 
-            {results.isStable ? (
-              <div className="relative w-full h-48 bg-black border-2 border-black flex items-center justify-center overflow-hidden">
-                <svg className="w-full h-full" viewBox="0 0 600 180" preserveAspectRatio="none">
-                  {/* Grid Lines */}
-                  <line x1="0" y1="90" x2="600" y2="90" stroke="#334155" strokeDasharray="4,4" strokeWidth="1" />
-                  <line x1="150" y1="0" x2="150" y2="180" stroke="#1e293b" strokeWidth="1" />
-                  <line x1="300" y1="0" x2="300" y2="180" stroke="#1e293b" strokeWidth="1" />
-                  <line x1="450" y1="0" x2="450" y2="180" stroke="#1e293b" strokeWidth="1" />
-
-                  {/* Quadrupole Blocks */}
-                  {/* QF half at start */}
-                  <rect x="0" y="20" width="30" height="140" fill="#0284c7" fillOpacity="0.4" stroke="#38bdf8" strokeWidth="2" />
-                  <text x="15" y="15" fill="#38bdf8" fontSize="10" textAnchor="middle" fontFamily="monospace" fontWeight="bold">1/2 QF</text>
-
-                  {/* QD at center */}
-                  <rect x="285" y="20" width="30" height="140" fill="#ef4444" fillOpacity="0.4" stroke="#f87171" strokeWidth="2" />
-                  <text x="300" y="15" fill="#f87171" fontSize="10" textAnchor="middle" fontFamily="monospace" fontWeight="bold">QD</text>
-
-                  {/* QF half at end */}
-                  <rect x="570" y="20" width="30" height="140" fill="#0284c7" fillOpacity="0.4" stroke="#38bdf8" strokeWidth="2" />
-                  <text x="585" y="15" fill="#38bdf8" fontSize="10" textAnchor="middle" fontFamily="monospace" fontWeight="bold">1/2 QF</text>
-
-                  {/* Beam Envelope Path (Top and Bottom mirrored) */}
-                  {(() => {
-                    const maxSig = Math.max(1, results.sigmaMaxUm);
-                    let topPath = 'M ';
-                    let botPath = 'M ';
-                    results.curvePoints.forEach((p, idx) => {
-                      const x = (p.s / cellLength) * 600;
-                      const h = (p.sigma / maxSig) * 55;
-                      const yTop = 90 - h;
-                      const yBot = 90 + h;
-                      if (idx === 0) {
-                        topPath += `${x} ${yTop} `;
-                        botPath += `${x} ${yBot} `;
-                      } else {
-                        topPath += `L ${x} ${yTop} `;
-                        botPath += `L ${x} ${yBot} `;
-                      }
-                    });
-
-                    let polygonPath = topPath;
-                    for (let i = results.curvePoints.length - 1; i >= 0; i--) {
-                      const p = results.curvePoints[i];
-                      const x = (p.s / cellLength) * 600;
-                      const h = (p.sigma / maxSig) * 55;
-                      polygonPath += `L ${x} ${90 + h} `;
-                    }
-                    polygonPath += 'Z';
-
-                    return (
-                      <>
-                        <path d={polygonPath} fill="#06b6d4" fillOpacity="0.25" />
-                        <path d={topPath} fill="none" stroke="#00e5ff" strokeWidth="2.5" />
-                        <path d={botPath} fill="none" stroke="#00e5ff" strokeWidth="2.5" />
-                      </>
-                    );
-                  })()}
-                </svg>
-
-                {/* Legend Overlay */}
-                <div className="absolute bottom-2 left-3 flex items-center gap-4 text-[10px] font-mono bg-black/90 px-2.5 py-1 border-2 border-black shadow-[2px_2px_0px_#000]">
-                  <span className="flex items-center gap-1.5 text-cern-cyan font-bold">
-                    <span className="w-2.5 h-0.5 bg-cern-cyan inline-block"></span> Beam Envelope &plusmn;&sigma;(s)
-                  </span>
-                  <span className="flex items-center gap-1.5 text-sky-400 font-bold">
-                    <span className="w-2 h-2 bg-sky-500/60 border border-sky-400 inline-block"></span> Focusing (QF)
-                  </span>
-                  <span className="flex items-center gap-1.5 text-red-400 font-bold">
-                    <span className="w-2 h-2 bg-red-500/60 border border-red-400 inline-block"></span> Defocusing (QD)
-                  </span>
-                </div>
-              </div>
-            ) : (
-              <div className="h-48 bg-red-600 text-white border-3 border-black flex flex-col items-center justify-center text-xs font-mono space-y-1 p-4 shadow-[4px_4px_0px_#000]">
-                <AlertTriangle className="w-7 h-7 text-white" />
-                <span className="font-extrabold text-sm uppercase">UNSTABLE LATTICE GEOMETRY</span>
-                <span className="text-[11px] text-zinc-100 text-center max-w-md font-bold">
-                  Focal length f &le; L/4 causes unbounded exponential envelope growth (beam hits beam pipe).
+            <div className="relative w-full h-52 bg-black border-2 border-black flex items-center justify-center overflow-hidden">
+              <canvas
+                ref={fodoCanvasRef}
+                width={600}
+                height={190}
+                className="w-full h-full block"
+              />
+              {/* Legend Overlay */}
+              <div className="absolute bottom-2 left-3 flex items-center gap-4 text-[10px] font-mono bg-black/90 px-2.5 py-1 border-2 border-black shadow-[2px_2px_0px_#000]">
+                <span className="flex items-center gap-1.5 text-cern-cyan font-bold">
+                  <span className="w-2.5 h-0.5 bg-cern-cyan inline-block"></span> Beam Envelope &plusmn;&sigma;(s)
+                </span>
+                <span className="flex items-center gap-1.5 text-[#FFE600] font-bold">
+                  <span className="w-2 h-2 rounded-full bg-[#FFE600] inline-block"></span> Betatron Bunches
+                </span>
+                <span className="flex items-center gap-1.5 text-sky-400 font-bold">
+                  <span className="w-2 h-2 bg-sky-500/60 border border-sky-400 inline-block"></span> Focusing (QF)
+                </span>
+                <span className="flex items-center gap-1.5 text-red-400 font-bold">
+                  <span className="w-2 h-2 bg-red-500/60 border border-red-400 inline-block"></span> Defocusing (QD)
                 </span>
               </div>
-            )}
+            </div>
           </div>
         </div>
       </div>

@@ -9,11 +9,13 @@ import {
 } from '@cern-x/sim-core';
 import { FidelityBadge } from '@/components/provenance/FidelityBadge';
 import { Eli5Card } from '@/components/ui/Eli5Card';
+import { Higgs3DPotentialCanvas } from './Higgs3DPotentialCanvas';
 import { useGlobalStore } from '@/lib/store';
 import { Flame, Sparkles, Sliders, HelpCircle, Info } from 'lucide-react';
 
 export const HiggsMechanismSimulator: React.FC = () => {
   const userLevel = useGlobalStore((s) => s.userLevel);
+  const [viewMode, setViewMode] = useState<'3d' | '2d'>('3d');
   const [temperatureGev, setTemperatureGev] = useState<number>(0);
   const [customYukawa, setCustomYukawa] = useState<number>(0.5);
   const [quizGuess, setQuizGuess] = useState<number | null>(null);
@@ -134,17 +136,45 @@ export const HiggsMechanismSimulator: React.FC = () => {
               <span className="font-bold uppercase text-white">
                 Scalar Potential V(φ) = ½ μ²(T) φ² + ¼ λ φ⁴
               </span>
-              <span
-                className={`px-2 py-0.5 font-black border border-black ${
-                  phase.brokenSymmetry
-                    ? 'bg-cern-cyan text-black'
-                    : 'bg-orange-400 text-black animate-pulse'
-                }`}
-              >
-                {phase.brokenSymmetry ? 'SYMMETRY BROKEN (v > 0)' : 'SYMMETRIC PHASE (v = 0)'}
-              </span>
+              <div className="flex items-center gap-2">
+                <div className="flex border border-black bg-black text-[10px]">
+                  <button
+                    onClick={() => setViewMode('3d')}
+                    className={`px-2 py-0.5 font-bold uppercase cursor-pointer ${
+                      viewMode === '3d' ? 'bg-cern-cyan text-black' : 'text-zinc-400 hover:text-white'
+                    }`}
+                  >
+                    3D Hat
+                  </button>
+                  <button
+                    onClick={() => setViewMode('2d')}
+                    className={`px-2 py-0.5 font-bold uppercase cursor-pointer ${
+                      viewMode === '2d' ? 'bg-cern-cyan text-black' : 'text-zinc-400 hover:text-white'
+                    }`}
+                  >
+                    2D Slice
+                  </button>
+                </div>
+                <span
+                  className={`px-2 py-0.5 font-black border border-black ${
+                    phase.brokenSymmetry
+                      ? 'bg-cern-cyan text-black'
+                      : 'bg-orange-400 text-black animate-pulse'
+                  }`}
+                >
+                  {phase.brokenSymmetry ? 'SYMMETRY BROKEN (v > 0)' : 'SYMMETRIC PHASE (v = 0)'}
+                </span>
+              </div>
             </div>
 
+            {viewMode === '3d' ? (
+              <Higgs3DPotentialCanvas
+                muSqGev2={phase.muSqGev2}
+                lambdaQuartic={phase.lambdaQuartic}
+                vevGev={phase.vevGev}
+                brokenSymmetry={phase.brokenSymmetry}
+              />
+            ) : (
             <svg viewBox="0 0 460 235" className="w-full h-60 bg-[#04070D] border-2 border-zinc-800">
               {/* Zero potential axis */}
               <line x1="20" y1="158" x2="440" y2="158" stroke="#1E293B" strokeWidth="1" strokeDasharray="4 4" />
@@ -198,6 +228,7 @@ export const HiggsMechanismSimulator: React.FC = () => {
               />
               <circle cx={ballPos.x} cy={ballPos.y} r="3.5" fill="#FFFFFF" />
             </svg>
+            )}
 
             {/* Temperature Slider */}
             <div className="p-3 bg-canvas-sub border-2 border-black shadow-[3px_3px_0px_#000] space-y-2">

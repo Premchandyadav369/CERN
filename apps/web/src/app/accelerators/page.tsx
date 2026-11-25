@@ -5,6 +5,7 @@ import Link from 'next/link';
 import acceleratorsData from '../../../../../content/accelerators.json';
 import { LhcSimulator } from '@/components/simulations/LhcSimulator';
 import { BeamOpticsSandbox } from '@/components/simulations/BeamOpticsSandbox';
+import { Eli5Card } from '@/components/ui/Eli5Card';
 import { Value } from '@/components/provenance/Value';
 import { Zap, Play, ArrowRight, ExternalLink, Activity, Info, Orbit, HeartPulse } from 'lucide-react';
 
@@ -30,6 +31,19 @@ export default function AcceleratorsPage() {
           delivering them to specialized fixed-target experimental areas.
         </p>
       </div>
+
+      <Eli5Card
+        title="How Giant Electric Waves & Magnets Push Protons to 99.999999% Light Speed"
+        analogy="Think of an accelerator like a giant magnetic rollercoaster combined with timed microwave kicks! Because Einstein discovered that objects get dramatically heavier as they approach light speed, we can't just speed protons up in miles per hour—we pack colossal relativistic energy into them using 1,232 steering dipole magnets and 400 MHz RF cavities."
+        keyPoints={[
+          'Dipole Bending Magnets (B·ρ): Keep fast protons curving cleanly inside the 27-km circle instead of flying straight out!',
+          'Quadrupole Focusing (FODO Lattice): Act like optical glass lenses that squeeze stray protons tightly back toward the beam axis.',
+          'Click any simulator below to change magnetic fields, quadrupole gradients, or explore medical hadron therapy accelerators!',
+        ]}
+        whatToTry="Increase the Beam Energy slider inside the LHC Simulator below and watch how quickly required Dipole Magnetic Field climbs toward 8.33 Tesla!"
+        doi="10.5170/CERN-2004-003-V-1"
+        citationLabel="LHC Design Report Vol. 1: Accelerator Physics & Beam Optics"
+      />
 
       {/* LHC Simulator Section */}
       <section className="space-y-3">

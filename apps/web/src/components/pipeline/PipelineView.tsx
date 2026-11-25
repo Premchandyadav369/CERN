@@ -2,6 +2,7 @@
 
 import React, { useState } from 'react';
 import Link from 'next/link';
+import { Eli5Card } from '@/components/ui/Eli5Card';
 import { ArrowRight, Activity, Zap, Layers, Cpu, Server, BarChart3, Award, ExternalLink } from 'lucide-react';
 
 interface PipelineStage {
@@ -139,6 +140,19 @@ export const PipelineView: React.FC = () => {
           Click any phase to inspect details &amp; open simulation
         </span>
       </div>
+
+      <Eli5Card
+        title="How 40 Million Crashes/Sec Turn Into a Single Nobel Prize Graph"
+        analogy="Finding one Higgs boson inside LHC collisions is like listening to a roaring stadium of 40 million people yelling at once, filtering out 99.997% of the noise in 2.5 millionths of a second, mailing only the crispest snapshots around the planet, and counting exact echoes!"
+        keyPoints={[
+          'Stages 01–03 (Physical): Accelerate protons, smash them inside giant magnetic cameras, and measure ionization sparks.',
+          'Stages 04–06 (Digital): FPGAs reject dull background noise in microseconds before streaming data to 170+ world computing centers.',
+          'Stages 07–09 (Discovery): Machine learning + 5-sigma statistics prove a brand-new particle exists beyond reasonable doubt.',
+        ]}
+        whatToTry="Click through Stages 01 → 09 below to jump directly into the simulation or data lab for every single step!"
+        doi="10.1016/j.physletb.2012.08.020"
+        citationLabel="ATLAS & CMS (2012) Observation of a New Boson at 125 GeV"
+      />
 
       {/* Horizontal Interactive Pipeline Ribbon */}
       <div className="flex items-center gap-2.5 overflow-x-auto pb-3 pt-1 scrollbar-none">

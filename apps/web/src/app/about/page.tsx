@@ -1,5 +1,6 @@
 import React from 'react';
 import Link from 'next/link';
+import { Eli5Card } from '@/components/ui/Eli5Card';
 import { ShieldCheck, AlertTriangle, FileText, ExternalLink, GitBranch, Database } from 'lucide-react';
 
 export default function AboutPage() {
@@ -20,6 +21,19 @@ export default function AboutPage() {
           simulation fidelity, and ensures reproducible research.
         </p>
       </div>
+
+      <Eli5Card
+        title="Why Science Platforms Must Never Make Up Fake Numbers"
+        analogy="Think of scientific numbers like ingredients on a food label! Every chart and badge on this website wears a bright sticker telling you whether a number came straight from real CERN detectors ([REAL]), peer-reviewed physics books ([PUBLISHED]), or live equations running in your browser ([COMPUTED])."
+        keyPoints={[
+          'No Made-Up Demo Bars: Every slider recalculates exact relativistic equations rather than faking animations.',
+          'Fidelity Badges: Look for ANALYTIC (exact math), MONTE CARLO (seeded dice rolls), and TOY (simple mental model).',
+          'Independent Educational Hub: Built openly to honor CERN Open Science without claiming to be CERN’s official portal.',
+        ]}
+        whatToTry="Look for the provenance tags beside numbers across the site—clicking them opens the exact journal DOI and dataset citation!"
+        doi="10.17181/CERN.OPEN.SCIENCE"
+        citationLabel="CERN Open Science Policy & FAIR Data Standards"
+      />
 
       {/* Non-Affiliation Declaration Banner */}
       <div className="p-5 bg-[#FFE600] border-3 border-black text-black shadow-[6px_6px_0px_0px_#000000] space-y-2">

@@ -25,6 +25,12 @@ import {
   calculateCyclotronRadiusMeters,
   calculateVacuumMetrics,
 } from '../src/physics/feynman.js';
+import {
+  calculateElectroweakPhase,
+  calculatePrimakoffConversion,
+  HIGGS_VEV_GEV,
+  ELECTROWEAK_TC_GEV,
+} from '../src/physics/bsm.js';
 import { SeededRNG } from '../src/rng/prng.js';
 
 describe('Physics Validation Suite', () => {
@@ -203,6 +209,43 @@ describe('Physics Validation Suite', () => {
       expect(nominal.beamLifetimeHours).toBeGreaterThan(100);
       const degraded = calculateVacuumMetrics(1e-6, 1.9);
       expect(degraded.beamLifetimeHours).toBeLessThan(0.1);
+    });
+  });
+
+  describe('Electroweak Symmetry Breaking & CAST Axion Primakoff Physics', () => {
+    it('restores symmetry and sets W/Z/top masses to zero above T_c = 159.5 GeV', () => {
+      const hotUniverse = calculateElectroweakPhase(ELECTROWEAK_TC_GEV + 40);
+      expect(hotUniverse.brokenSymmetry).toBe(false);
+      expect(hotUniverse.vevGev).toBe(0);
+      expect(hotUniverse.massesGev.wBoson).toBe(0);
+      expect(hotUniverse.massesGev.topQuark).toBe(0);
+
+      const presentVacuum = calculateElectroweakPhase(0);
+      expect(presentVacuum.brokenSymmetry).toBe(true);
+      expect(presentVacuum.vevGev).toBeCloseTo(HIGGS_VEV_GEV, 2);
+      expect(presentVacuum.massesGev.wBoson).toBeCloseTo(80.377, 2);
+      expect(presentVacuum.massesGev.photon).toBe(0);
+    });
+
+    it('peaks Primakoff conversion coherence when plasma photon mass matches axion mass', () => {
+      const resonant = calculatePrimakoffConversion({
+        axionMassEv: 0.4,
+        photonPlasmaMassEv: 0.4,
+        axionEnergyKev: 4.2,
+        magneticFieldT: 9.0,
+        lengthMeters: 9.26,
+        couplingG10: 0.66,
+      });
+      const detuned = calculatePrimakoffConversion({
+        axionMassEv: 0.4,
+        photonPlasmaMassEv: 0.0,
+        axionEnergyKev: 4.2,
+        magneticFieldT: 9.0,
+        lengthMeters: 9.26,
+        couplingG10: 0.66,
+      });
+      expect(resonant.coherenceFactor).toBeCloseTo(1.0, 4);
+      expect(resonant.probability).toBeGreaterThan(detuned.probability * 10);
     });
   });
 });

@@ -26,9 +26,17 @@ const SEARCH_ITEMS: SearchItem[] = [
   { id: '10', title: 'Super Proton Synchrotron (SPS)', category: 'ACCELERATOR', path: '/accelerators?id=sps', description: '450 GeV final injector to LHC feeding North Area & AWAKE.' },
   { id: '11', title: 'Instantaneous Luminosity', category: 'LEARN', path: '/learn?term=luminosity', description: 'Analytical formula, units, and HL-LHC target parameters.' },
   { id: '12', title: 'Magnetic Rigidity (B*rho)', category: 'LEARN', path: '/learn?term=magnetic-rigidity', description: 'Relativistic momentum per charge and dipole requirements.' },
-  { id: '13', title: 'Antimatter Factory (AD/ELENA)', category: 'EXPERIMENT', path: '/experiments?id=antimatter-factory', description: 'Penning traps, laser spectroscopy, and CPT gravity tests.' },
-  { id: '14', title: 'ALICE Heavy Ions', category: 'EXPERIMENT', path: '/experiments?id=alice', description: 'Quark-Gluon Plasma, elliptic flow v2, and Pb-Pb collisions.' },
-  { id: '15', title: 'CERN Open Data Explorer', category: 'SIMULATION', path: '/open-data', description: 'Query metadata and preview public 13 TeV reconstructed collision runs.' },
+  { id: '13', title: 'Antimatter Factory (AD/ELENA)', category: 'EXPERIMENT', path: '/simulations?module=antimatter', description: 'Penning traps, laser spectroscopy, and ALPHA-g gravity drop simulation.' },
+  { id: '14', title: 'ALICE Heavy Ions (QGP Flow)', category: 'SIMULATION', path: '/simulations?module=alice', description: 'Quark-Gluon Plasma hydrodynamic flow v2 in Pb-Pb collisions.' },
+  { id: '15', title: 'CERN Open Data Explorer', category: 'SIMULATION', path: '/open-data', description: 'Query metadata, cutflows, and preview public 13 TeV collision runs.' },
+  { id: '16', title: 'Feynman S-Matrix & Conservation Lab', category: 'SIMULATION', path: '/simulations?module=feynman', description: 'Assemble particle reactions, test Q/B/L conservation, and inspect Z0 resonance.' },
+  { id: '17', title: 'Cloud Chamber & Lorentz Tracks', category: 'SIMULATION', path: '/simulations?module=cloud-chamber', description: '60 FPS vapor chamber with tunable B-field and particle detective mode.' },
+  { id: '18', title: 'Higgs "Mexican Hat" Symmetry Lab', category: 'SIMULATION', path: '/simulations?module=higgs-ewsb', description: 'Cool the early universe past Tc = 159.5 GeV to trigger mass generation.' },
+  { id: '19', title: 'Dark Matter CAST & Mono-Jet Lab', category: 'SIMULATION', path: '/simulations?module=dark-matter', description: 'Solar axion Primakoff resonance and LHC invisible recoil detection.' },
+  { id: '20', title: 'Hadron Therapy & Bragg Peak Sim', category: 'SIMULATION', path: '/simulations?module=bragg-peak', description: 'Bethe-Bloch proton & C-12 SOBP depth-dose profiles and CERN-MEDICIS.' },
+  { id: '21', title: '3D Detector Crystals & Nb3Sn Lattice', category: 'EXPERIMENT', path: '/detectors?tab=materials', description: 'Interactive 3D PbWO4 scintillator, LAr accordion, and 16T superconductors.' },
+  { id: '22', title: 'Engineering Cryo, Vacuum & RF Twin', category: 'ACCELERATOR', path: '/engineering', description: '1.9 K superfluid phase transition, UHV beam lifetime, and RF wave surfing.' },
+  { id: '23', title: 'Live arXiv HEP Preprints Feed', category: 'LEARN', path: '/simulations?module=literature', description: 'Real-time LHC Run 3 papers, search, and BibTeX citation export.' },
 ];
 
 export const CommandPalette: React.FC = () => {

@@ -4,6 +4,7 @@ import React, { useState } from 'react';
 import Link from 'next/link';
 import { Value } from '@/components/provenance/Value';
 import { FidelityBadge } from '@/components/provenance/FidelityBadge';
+import { Eli5Card } from '@/components/ui/Eli5Card';
 import { useGlobalStore } from '@/lib/store';
 import {
   Activity,
@@ -170,7 +171,20 @@ export const RingMap: React.FC = () => {
   const selectedMachine = MACHINES.find((m) => m.id === selectedId) || MACHINES[6];
 
   return (
-    <div className="w-full flex flex-col xl:flex-row gap-6 p-4 lg:p-6 bg-canvas-sub border-3 border-black shadow-[6px_6px_0px_0px_#000000]">
+    <div className="space-y-4">
+      <Eli5Card
+        title="Why Does CERN Use a Relay Race of 5 Rings Instead of 1 Giant Pipe?"
+        analogy="You wouldn't start a rocket engine inside a living room, and you can't shift a car straight from 0 mph to 200 mph in one gear! CERN uses smaller rings as giant 'gear shifts' to accelerate protons smoothly step by step before launching them into the 27-km LHC track."
+        keyPoints={[
+          'Linac4 pushes cold hydrogen gas from standing still up to half light-speed in a straight line.',
+          'PS Booster, PS, and SPS work like concentric slingshots—splitting off beams to feed Antimatter (AD) and AWAKE plasma labs along the way!',
+          'Click any glowing ring on the map to inspect its circumference, energy, and connected experiments.',
+        ]}
+        whatToTry="Click AD/ELENA (orange side-ring) or LHC (giant outer cyan ring) to compare energy amplification across the injector chain!"
+        doi="10.5170/CERN-2004-003-V-1"
+        citationLabel="CERN Accelerator Complex Schematic & Injector Chain"
+      />
+      <div className="w-full flex flex-col xl:flex-row gap-6 p-4 lg:p-6 bg-canvas-sub border-3 border-black shadow-[6px_6px_0px_0px_#000000]">
       {/* Interactive SVG Canvas Area */}
       <div className="flex-1 flex flex-col justify-between bg-canvas border-2 border-black shadow-[3px_3px_0px_#000] p-4 relative min-h-[460px]">
         {/* Canvas Header */}
@@ -411,6 +425,7 @@ export const RingMap: React.FC = () => {
           </Link>
         </div>
       </div>
+    </div>
     </div>
   );
 };

@@ -4,6 +4,7 @@ import React, { useState } from 'react';
 import triggerMindResults from '../../../../../research/benchmarks/triggermind_results.json';
 import { Value } from '@/components/provenance/Value';
 import { FidelityBadge } from '@/components/provenance/FidelityBadge';
+import { Eli5Card } from '@/components/ui/Eli5Card';
 import { Cpu, Zap, Activity, CheckCircle2, Sliders, ExternalLink, ShieldCheck, FileCode, ArrowRight, TrendingUp } from 'lucide-react';
 import { ShapExplainabilityLab } from './ShapExplainabilityLab';
 
@@ -58,7 +59,20 @@ export const AiLab: React.FC = () => {
 
       {/* View 1: Benchmark Matrix Sandbox */}
       {activeTab === 'benchmarks' ? (
-        <div className="w-full flex flex-col xl:flex-row gap-6 p-4 lg:p-6 bg-canvas-sub border-3 border-black shadow-[6px_6px_0px_0px_#000000]">
+        <div className="space-y-4">
+          <Eli5Card
+            title="Why Trigger AI Needs F1 Racecar Reflexes, Not Just Smart Brains"
+            analogy="Imagine trying to catch rare golden baseballs while someone blasts 40 million normal baseballs at you every single second! Even the smartest referee on Earth is useless if they take 1 full second to decide—because millions of balls flew past while they were thinking. LHC-TriggerMind measures BOTH smarts (AMS score) AND split-millisecond speed!"
+            keyPoints={[
+              'AMS (Approximate Median Significance): How accurately the AI separates hidden Higgs decays from noisy background.',
+              'Latency Budget (< 0.6 ms): Decision deadline before detector memory buffers overflow.',
+              'FPGA INT8 Quantization: Shrinking giant AI models to tiny integer math lets silicon chips run inside hardware triggers!',
+            ]}
+            whatToTry="Slide the Latency Budget constraint down toward 0.15 ms to watch slower heavy AI models fail timing budgets while ultra-fast INT8 MLPs stay green—or open the SHAP Lab tab to inspect inside the AI's mind!"
+            doi="10.7483/OPENDATA.ATLAS.Z2J9.7M2R"
+            citationLabel="ATLAS Higgs Boson ML Challenge Dataset (Open Data Record 328)"
+          />
+          <div className="w-full flex flex-col xl:flex-row gap-6 p-4 lg:p-6 bg-canvas-sub border-3 border-black shadow-[6px_6px_0px_0px_#000000]">
           {/* LEFT: Experiment & Constraint Configuration */}
           <div className="w-full xl:w-80 flex flex-col justify-between bg-canvas-surface border-2 border-black shadow-[4px_4px_0px_0px_#000000] p-4 space-y-4">
             <div className="space-y-4">
@@ -307,6 +321,7 @@ export const AiLab: React.FC = () => {
               <span>Licensing: CERN Open Hardware / Apache 2.0</span>
             </div>
           </div>
+        </div>
         </div>
       ) : (
         <ShapExplainabilityLab />

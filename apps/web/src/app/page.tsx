@@ -18,6 +18,9 @@ import {
   Server,
   Radio,
   ExternalLink,
+  GitBranch,
+  Crown,
+  EyeOff,
 } from 'lucide-react';
 
 export default function HomePage() {
@@ -325,6 +328,96 @@ export default function HomePage() {
             </div>
             <div className="text-xs font-mono text-sky-400 font-bold pt-2 border-t-2 border-black flex items-center justify-between">
               <span>PDG 2024 Verified Properties</span>
+              <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
+            </div>
+          </Link>
+
+          {/* Feynman S-Matrix & Cloud Chamber Card */}
+          <Link
+            href="/simulations?module=feynman"
+            className="p-5 bg-canvas-surface border-2 border-black shadow-[4px_4px_0px_#00FF66] hover:shadow-[6px_6px_0px_#00FF66] hover:-translate-x-0.5 hover:-translate-y-0.5 active:translate-x-[2px] active:translate-y-[2px] active:shadow-none transition-all space-y-3 group flex flex-col justify-between"
+          >
+            <div className="space-y-3">
+              <div className="flex items-center justify-between">
+                <div className="p-2.5 bg-black border-2 border-black text-emerald-400 shadow-[2px_2px_0px_#00FF66]">
+                  <GitBranch className="w-5 h-5" />
+                </div>
+                <span className="px-2 py-0.5 text-[10px] font-mono font-bold bg-emerald-400 text-black border-2 border-black uppercase shadow-[1px_1px_0px_#000]">
+                  S-Matrix + Tracks
+                </span>
+              </div>
+              <div>
+                <h3 className="text-lg font-display font-bold text-white group-hover:text-emerald-400 transition-colors">
+                  Feynman Lab &amp; Cloud Chamber
+                </h3>
+                <p className="text-xs text-text-secondary mt-1.5 leading-relaxed font-sans">
+                  Build Standard Model reactions with live conservation validation and fire live particles
+                  through a 60 FPS magnetic vapor chamber.
+                </p>
+              </div>
+            </div>
+            <div className="text-xs font-mono text-emerald-400 font-bold pt-2 border-t-2 border-black flex items-center justify-between">
+              <span>QED, Z⁰ Pole &amp; Cyclotron Tracks</span>
+              <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
+            </div>
+          </Link>
+
+          {/* Higgs Symmetry Breaking Card */}
+          <Link
+            href="/simulations?module=higgs-ewsb"
+            className="p-5 bg-canvas-surface border-2 border-black shadow-[4px_4px_0px_#FFE600] hover:shadow-[6px_6px_0px_#FFE600] hover:-translate-x-0.5 hover:-translate-y-0.5 active:translate-x-[2px] active:translate-y-[2px] active:shadow-none transition-all space-y-3 group flex flex-col justify-between"
+          >
+            <div className="space-y-3">
+              <div className="flex items-center justify-between">
+                <div className="p-2.5 bg-black border-2 border-black text-[#FFE600] shadow-[2px_2px_0px_#FFE600]">
+                  <Crown className="w-5 h-5" />
+                </div>
+                <span className="px-2 py-0.5 text-[10px] font-mono font-bold bg-[#FFE600] text-black border-2 border-black uppercase shadow-[1px_1px_0px_#000]">
+                  Origin of Mass
+                </span>
+              </div>
+              <div>
+                <h3 className="text-lg font-display font-bold text-white group-hover:text-[#FFE600] transition-colors">
+                  Higgs &quot;Mexican Hat&quot; Symmetry Lab
+                </h3>
+                <p className="text-xs text-text-secondary mt-1.5 leading-relaxed font-sans">
+                  Cool the Big Bang universe below 159.5 GeV to watch spontaneous electroweak symmetry breaking
+                  switch on particle masses.
+                </p>
+              </div>
+            </div>
+            <div className="text-xs font-mono text-[#FFE600] font-bold pt-2 border-t-2 border-black flex items-center justify-between">
+              <span>V(φ) Potential &amp; Yukawa Tuning</span>
+              <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
+            </div>
+          </Link>
+
+          {/* Dark Matter & Hadron Therapy Card */}
+          <Link
+            href="/simulations?module=dark-matter"
+            className="p-5 bg-canvas-surface border-2 border-black shadow-[4px_4px_0px_#C084FC] hover:shadow-[6px_6px_0px_#C084FC] hover:-translate-x-0.5 hover:-translate-y-0.5 active:translate-x-[2px] active:translate-y-[2px] active:shadow-none transition-all space-y-3 group flex flex-col justify-between"
+          >
+            <div className="space-y-3">
+              <div className="flex items-center justify-between">
+                <div className="p-2.5 bg-black border-2 border-black text-purple-400 shadow-[2px_2px_0px_#C084FC]">
+                  <EyeOff className="w-5 h-5" />
+                </div>
+                <span className="px-2 py-0.5 text-[10px] font-mono font-bold bg-purple-400 text-black border-2 border-black uppercase shadow-[1px_1px_0px_#000]">
+                  Frontier BSM
+                </span>
+              </div>
+              <div>
+                <h3 className="text-lg font-display font-bold text-white group-hover:text-purple-400 transition-colors">
+                  Dark Matter CAST &amp; Mono-Jet Lab
+                </h3>
+                <p className="text-xs text-text-secondary mt-1.5 leading-relaxed font-sans">
+                  Tune a 9-Tesla solar axion telescope via helium Primakoff resonance and reconstruct
+                  missing transverse energy dark matter recoils.
+                </p>
+              </div>
+            </div>
+            <div className="text-xs font-mono text-purple-400 font-bold pt-2 border-t-2 border-black flex items-center justify-between">
+              <span>Axions &amp; LHC Recoil Imbalance</span>
               <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
             </div>
           </Link>

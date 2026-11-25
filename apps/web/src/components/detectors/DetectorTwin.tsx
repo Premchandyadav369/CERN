@@ -5,6 +5,7 @@ import atlasEventsData from '../../../../../data/real_events/sample_atlas_events
 import cmsEventsData from '../../../../../data/real_events/sample_cms_events.json';
 import { Value } from '@/components/provenance/Value';
 import { FidelityBadge } from '@/components/provenance/FidelityBadge';
+import { Eli5Card } from '@/components/ui/Eli5Card';
 import { Layers, Eye, EyeOff, Info, Disc, Zap, Activity } from 'lucide-react';
 
 interface SubsystemToggle {
@@ -53,7 +54,20 @@ export const DetectorTwin: React.FC = () => {
   const selectedObject = activeEvent.physicsObjects.find((o) => o.id === selectedObjectId);
 
   return (
-    <div className="w-full flex flex-col xl:flex-row gap-6 p-4 lg:p-6 bg-canvas-sub border-3 border-black shadow-[6px_6px_0px_0px_#000000]">
+    <div className="space-y-4">
+      <Eli5Card
+        title="Why Giant Detectors Are Built Like 4-Layer Onions"
+        analogy="No single camera can photograph every kind of subatomic particle at once! So physicists wrap 4 cylindrical shells around the collision point like nested Russian dolls—each shell stops or measures a completely different family of particles."
+        keyPoints={[
+          'Inner Tracker (Yellow): Ultra-fine silicon cameras that record curved charged tracks without slowing them down.',
+          'ECAL (Green) & HCAL (Cyan): Heavy crystal & steel/brass walls that absorb electrons, photons, and quark jets to weigh their energy.',
+          'Muon Spectrometer (Pink): Heavy outer detectors catching penetrating muons—the only charged particles tough enough to punch clean through everything else!',
+        ]}
+        whatToTry="Uncheck 'ECAL' or 'Muon Spectrometer' on the left control deck to watch those exact particle signatures vanish from the real 13 TeV collision display!"
+        doi="10.7483/OPENDATA.ATLAS.2020.4LEPTON"
+        citationLabel="ATLAS & CMS Open Data 13 TeV Real Collision Samples"
+      />
+      <div className="w-full flex flex-col xl:flex-row gap-6 p-4 lg:p-6 bg-canvas-sub border-3 border-black shadow-[6px_6px_0px_0px_#000000]">
       {/* LEFT: Detector & Subsystem Control Deck */}
       <div className="w-full xl:w-80 flex flex-col justify-between bg-canvas-surface border-2 border-black shadow-[4px_4px_0px_#000] p-4 space-y-5">
         <div className="space-y-4">
@@ -372,6 +386,7 @@ export const DetectorTwin: React.FC = () => {
           <span>Source: CERN Open Data 13 TeV Records</span>
         </div>
       </div>
+    </div>
     </div>
   );
 };

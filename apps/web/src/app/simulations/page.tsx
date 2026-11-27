@@ -7,6 +7,7 @@ import { useSearchParams } from 'next/navigation';
 import { motion, AnimatePresence } from 'framer-motion';
 import { LabExportBar } from '@/components/ui/LabExportBar';
 import { TechnicalTermDeck } from '@/components/ui/TechTermInfo';
+import { PhysicsBetArena } from '@/components/simulations/PhysicsBetArena';
 import { useGlobalStore } from '@/lib/store';
 import {
   Zap,
@@ -289,6 +290,9 @@ function SimulationsContent() {
           })}
         </div>
       </div>
+
+      {/* Interactive ELI5 Breakdown + Physics Prediction Bet Arena */}
+      <PhysicsBetArena activeModule={activeTab} onSelectModule={handleTabChange} />
 
       {/* Dynamically Lazy-Loaded Active Simulator Viewport */}
       <AnimatePresence mode="wait">

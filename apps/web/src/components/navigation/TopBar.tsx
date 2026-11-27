@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { useGlobalStore, UserLevel, OPERATOR_MISSIONS } from '@/lib/store';
@@ -14,6 +14,7 @@ import {
   Sparkles,
   Activity,
   ChevronDown,
+  Zap,
 } from 'lucide-react';
 import { AppLogo } from '@/components/ui/AppLogo';
 import { playTemPadClick } from '@/lib/sonifier';
@@ -40,9 +41,15 @@ export const TopBar: React.FC = () => {
   const toggleTvaMode = useGlobalStore((s) => s.toggleTvaMode);
   const setMissionsOpen = useGlobalStore((s) => s.setMissionsOpen);
   const completedMissions = useGlobalStore((s) => s.completedMissions);
+  const betCredits = useGlobalStore((s) => s.betCredits);
+  const hydrateBets = useGlobalStore((s) => s.hydrateBets);
   const companionOpen = useGlobalStore((s) => s.companionOpen);
   const toggleCompanion = useGlobalStore((s) => s.toggleCompanion);
   const setCommandPaletteOpen = useGlobalStore((s) => s.setCommandPaletteOpen);
+
+  useEffect(() => {
+    hydrateBets();
+  }, [hydrateBets]);
 
   const [lhcStatusOpen, setLhcStatusOpen] = useState(false);
 
@@ -231,6 +238,16 @@ export const TopBar: React.FC = () => {
             <Sparkles className="w-3.5 h-3.5" />
             <span className="hidden md:inline text-[11px]">GUIDE</span>
           </button>
+
+          {/* Beam Credits Live Balance Pill */}
+          <Link
+            href="/simulations"
+            className="hidden sm:flex items-center gap-1 px-2 py-1 text-xs font-mono font-black border-2 border-black bg-black text-[#00FF66] shadow-[2px_2px_0px_#000] hover:bg-zinc-900"
+            title="Beam Credits earned from Interactive Physics Bets"
+          >
+            <Zap className="w-3.5 h-3.5 text-[#FFE600]" />
+            <span className="text-[11px]">{betCredits}⚡</span>
+          </Link>
 
           {/* Operator Missions Button */}
           <button

@@ -113,6 +113,34 @@ function loadSavedTvaMode(): boolean {
   }
 }
 
+export interface BetRecord {
+  picked: number;
+  won: boolean;
+  wager: number;
+}
+
+interface SavedBetState {
+  credits: number;
+  streak: number;
+  settled: Record<string, BetRecord>;
+}
+
+function loadSavedBets(): SavedBetState {
+  if (typeof window === 'undefined') return { credits: 100, streak: 0, settled: {} };
+  try {
+    const raw = window.localStorage.getItem('cernx_bets_v1');
+    if (!raw) return { credits: 100, streak: 0, settled: {} };
+    const parsed = JSON.parse(raw) as Partial<SavedBetState>;
+    return {
+      credits: typeof parsed.credits === 'number' ? parsed.credits : 100,
+      streak: typeof parsed.streak === 'number' ? parsed.streak : 0,
+      settled: parsed.settled && typeof parsed.settled === 'object' ? parsed.settled : {},
+    };
+  } catch {
+    return { credits: 100, streak: 0, settled: {} };
+  }
+}
+
 export interface GlobalState {
   userLevel: UserLevel;
   setUserLevel: (level: UserLevel) => void;
@@ -146,6 +174,12 @@ export interface GlobalState {
   completeMission: (id: string) => void;
   resetMissions: () => void;
   hydrateMissions: () => void;
+  betCredits: number;
+  betStreak: number;
+  settledBets: Record<string, BetRecord>;
+  placePhysicsBet: (id: string, picked: number, correctIndex: number, wager: number) => void;
+  resetBets: () => void;
+  hydrateBets: () => void;
 }
 
 export const useGlobalStore = create<GlobalState>((set) => ({
@@ -226,5 +260,37 @@ export const useGlobalStore = create<GlobalState>((set) => ({
       } catch {}
     }
     set({ completedMissions: [] });
+  },
+  betCredits: 100,
+  betStreak: 0,
+  settledBets: {},
+  hydrateBets: () => {
+    const saved = loadSavedBets();
+    set({ betCredits: saved.credits, betStreak: saved.streak, settledBets: saved.settled });
+  },
+  placePhysicsBet: (id, picked, correctIndex, wager) =>
+    set((state) => {
+      const cleanWager = Math.max(10, Math.min(wager, Math.max(10, state.betCredits)));
+      const won = picked === correctIndex;
+      const nextCredits = Math.max(25, state.betCredits + (won ? cleanWager : -cleanWager));
+      const nextStreak = won ? state.betStreak + 1 : 0;
+      const nextSettled = { ...state.settledBets, [id]: { picked, won, wager: cleanWager } };
+      if (typeof window !== 'undefined') {
+        try {
+          window.localStorage.setItem(
+            'cernx_bets_v1',
+            JSON.stringify({ credits: nextCredits, streak: nextStreak, settled: nextSettled })
+          );
+        } catch {}
+      }
+      return { betCredits: nextCredits, betStreak: nextStreak, settledBets: nextSettled };
+    }),
+  resetBets: () => {
+    if (typeof window !== 'undefined') {
+      try {
+        window.localStorage.removeItem('cernx_bets_v1');
+      } catch {}
+    }
+    set({ betCredits: 100, betStreak: 0, settledBets: {} });
   },
 }));

@@ -1,41 +1,137 @@
 'use client';
 
-import React, { useState, useMemo, useId } from 'react';
+import React, { useState, useMemo, useRef, useEffect, useId } from 'react';
 import { calculateDiracMonopoleMetrics } from '@cern-x/sim-core';
 import { FidelityBadge } from '@/components/provenance/FidelityBadge';
 import { Eli5Card } from '@/components/ui/Eli5Card';
 import { MathFormula } from '@/components/ui/MathFormula';
-import { Magnet } from 'lucide-react';
+import { useGlobalStore } from '@/lib/store';
+import { Magnet, Play, Pause } from 'lucide-react';
 
 export const MonopoleArenaSimulator: React.FC = () => {
   const sliderPrefix = useId();
+  const reduceMotion = useGlobalStore((s) => s.reduceMotion);
+
   const [diracUnits, setDiracUnits] = useState<number>(1);
   const [fieldT, setFieldT] = useState<number>(3.8);
   const [energyGev, setEnergyGev] = useState<number>(120);
+  const [isPlaying, setIsPlaying] = useState<boolean>(true);
+
+  const canvasRef = useRef<HTMLCanvasElement | null>(null);
+  const tRef = useRef<number>(0);
 
   const metrics = useMemo(
     () => calculateDiracMonopoleMetrics(diracUnits, fieldT, energyGev),
     [diracUnits, fieldT, energyGev]
   );
 
-  // Build trajectory curves: proton bends circularly in XY plane; Dirac monopole accelerates parabolically along B!
-  const paths = useMemo(() => {
-    const steps = 40;
-    const bendCoeff = Math.min(0.85, (fieldT * 12) / Math.max(15, energyGev));
-    const monoCoeff = Math.min(1.3, metrics.deflectionSlopeT * 0.45);
+  useEffect(() => {
+    const canvas = canvasRef.current;
+    if (!canvas) return;
+    const ctx = canvas.getContext('2d');
+    if (!ctx) return;
+    let animId = 0;
 
-    let protonD = 'M 30 120';
-    let monoD = 'M 30 120';
-    for (let i = 1; i <= steps; i++) {
-      const u = i / steps;
-      const px = 30 + u * 370;
-      const py = 120 - bendCoeff * 75 * u * u;
-      const my = 120 + monoCoeff * 95 * u * u;
-      protonD += ` L ${px.toFixed(1)} ${Math.max(18, py).toFixed(1)}`;
-      monoD += ` L ${px.toFixed(1)} ${Math.min(222, my).toFixed(1)}`;
-    }
-    return { protonD, monoD };
-  }, [fieldT, energyGev, metrics.deflectionSlopeT]);
+    const render = () => {
+      if (isPlaying && !reduceMotion) tRef.current = (tRef.current + 0.015) % 1;
+      const prog = reduceMotion ? 0.9 : tRef.current;
+      const w = canvas.width;
+      const h = canvas.height;
+      const cy = h / 2;
+
+      ctx.fillStyle = '#050814';
+      ctx.fillRect(0, 0, w, h);
+
+      // Magnetic Field Vector Grid (B_z crosses)
+      const bAlpha = Math.min(0.45, 0.1 + (fieldT / 10) * 0.3);
+      ctx.strokeStyle = `rgba(56, 189, 248, ${bAlpha})`;
+      ctx.lineWidth = 1.2;
+      for (let gx = 45; gx < w - 20; gx += 48) {
+        for (let gy = 30; gy < h - 25; gy += 45) {
+          ctx.beginPath();
+          ctx.arc(gx, gy, 7, 0, Math.PI * 2);
+          ctx.moveTo(gx - 4, gy - 4);
+          ctx.lineTo(gx + 4, gy + 4);
+          ctx.moveTo(gx + 4, gy - 4);
+          ctx.lineTo(gx - 4, gy + 4);
+          ctx.stroke();
+        }
+      }
+
+      const bendCoeff = Math.min(0.85, (fieldT * 12) / Math.max(15, energyGev));
+      const monoCoeff = Math.min(1.3, metrics.deflectionSlopeT * 0.45);
+
+      // 1. Standard Proton Lorentz Track (+e)
+      ctx.strokeStyle = '#00E5FF';
+      ctx.lineWidth = 3;
+      ctx.beginPath();
+      let pEndX = 30;
+      let pEndY = cy;
+      for (let i = 0; i <= 40; i++) {
+        const u = (i / 40) * Math.max(0.08, prog);
+        const px = 30 + u * (w - 60);
+        const py = Math.max(20, cy - bendCoeff * 85 * u * u);
+        if (i === 0) ctx.moveTo(px, py);
+        else ctx.lineTo(px, py);
+        pEndX = px;
+        pEndY = py;
+      }
+      ctx.stroke();
+
+      // Proton head
+      ctx.fillStyle = '#FFFFFF';
+      ctx.beginPath();
+      ctx.arc(pEndX, pEndY, 4.5, 0, Math.PI * 2);
+      ctx.fill();
+
+      // 2. Blazing Dirac Monopole Track (+n * g_D) with volumetric Delta-Ray ionization sheath!
+      const sheathWidth = Math.min(24, 9 + diracUnits * 3.5);
+      ctx.beginPath();
+      let mEndX = 30;
+      let mEndY = cy;
+      for (let i = 0; i <= 40; i++) {
+        const u = (i / 40) * Math.max(0.08, prog);
+        const mx = 30 + u * (w - 60);
+        const my = Math.min(h - 24, cy + monoCoeff * 95 * u * u);
+        if (i === 0) ctx.moveTo(mx, my);
+        else ctx.lineTo(mx, my);
+        mEndX = mx;
+        mEndY = my;
+      }
+      // Ionization glow halo
+      ctx.save();
+      ctx.strokeStyle = 'rgba(255, 176, 0, 0.25)';
+      ctx.lineWidth = sheathWidth;
+      ctx.lineCap = 'round';
+      ctx.stroke();
+      ctx.restore();
+
+      // Bright core monopole track
+      ctx.strokeStyle = '#FFE082';
+      ctx.lineWidth = 4;
+      ctx.stroke();
+
+      const mGlow = ctx.createRadialGradient(mEndX, mEndY, 2, mEndX, mEndY, 18);
+      mGlow.addColorStop(0, '#FFFFFF');
+      mGlow.addColorStop(0.5, '#FFB000');
+      mGlow.addColorStop(1, 'transparent');
+      ctx.fillStyle = mGlow;
+      ctx.beginPath();
+      ctx.arc(mEndX, mEndY, 18, 0, Math.PI * 2);
+      ctx.fill();
+
+      ctx.fillStyle = '#00E5FF';
+      ctx.font = 'bold 11px monospace';
+      ctx.fillText('Proton (+e · Lorentz v×B)', 210, 26);
+      ctx.fillStyle = '#FFE082';
+      ctx.fillText(`Dirac Monopole (+${diracUnits} g_D · ${metrics.ionizingLossRatioVsProton.toFixed(0)}× Brighter Ionization!)`, 145, h - 10);
+
+      if (isPlaying && !reduceMotion) animId = requestAnimationFrame(render);
+    };
+
+    render();
+    return () => cancelAnimationFrame(animId);
+  }, [diracUnits, fieldT, energyGev, metrics, isPlaying, reduceMotion]);
 
   return (
     <div className="space-y-5">
@@ -133,26 +229,30 @@ export const MonopoleArenaSimulator: React.FC = () => {
           />
         </div>
 
-        <div className="xl:col-span-7 bg-[#060913] border-3 border-black p-4 shadow-[5px_5px_0px_#000] space-y-2">
+        <div className="xl:col-span-7 bg-[#050814] border-3 border-black p-4 shadow-[5px_5px_0px_#000] space-y-2">
           <div className="flex items-center justify-between border-b border-zinc-800 pb-2 text-xs font-mono">
             <span className="font-bold text-white flex items-center gap-1.5">
-              <Magnet className="w-4 h-4 text-sky-400" /> Field Chamber Signature Comparison
+              <Magnet className="w-4 h-4 text-sky-400" /> Field Chamber Ionization &amp; Trajectory Signature
             </span>
-            <span className="text-text-muted">Cyan: Proton (+e) | Amber: Monopole (+{diracUnits} g_D)</span>
+            {!reduceMotion && (
+              <button
+                type="button"
+                onClick={() => setIsPlaying((p) => !p)}
+                className="px-2 py-0.5 bg-canvas-surface border border-black text-[10px] font-bold text-cern-cyan flex items-center gap-1 cursor-pointer"
+              >
+                {isPlaying ? <Pause className="w-3 h-3" /> : <Play className="w-3 h-3" />}
+                <span>{isPlaying ? 'Pause' : 'Play'}</span>
+              </button>
+            )}
           </div>
 
-          <svg viewBox="0 0 430 240" className="w-full h-60 bg-[#04060D] border border-zinc-800" aria-label="Proton versus Dirac magnetic monopole bending comparison">
-            <line x1="30" y1="120" x2="410" y2="120" stroke="#334155" strokeDasharray="4 4" />
-            <path d={paths.protonD} fill="none" stroke="#00E5FF" strokeWidth="3" />
-            <path d={paths.monoD} fill="none" stroke="#FFB000" strokeWidth="3.5" />
-            <circle cx="30" cy="120" r="6" fill="#FFFFFF" />
-            <text x="275" y="42" fill="#00E5FF" fontSize="10" fontFamily="monospace" fontWeight="bold">
-              Standard Proton (Lorentz v×B)
-            </text>
-            <text x="230" y="212" fill="#FFB000" fontSize="10" fontFamily="monospace" fontWeight="bold">
-              Dirac Monopole ({metrics.ionizingLossRatioVsProton.toFixed(0)}× Brighter)
-            </text>
-          </svg>
+          <canvas
+            ref={canvasRef}
+            width={580}
+            height={250}
+            aria-label="Animated Proton versus Dirac magnetic monopole ionization and trajectory comparison"
+            className="w-full h-60 border border-zinc-800 bg-[#050814]"
+          />
         </div>
       </div>
     </div>

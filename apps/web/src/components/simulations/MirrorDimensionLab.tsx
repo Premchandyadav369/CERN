@@ -7,7 +7,7 @@ import { FidelityBadge } from '@/components/provenance/FidelityBadge';
 import { Eli5Card } from '@/components/ui/Eli5Card';
 import { MathFormula } from '@/components/ui/MathFormula';
 import { useGlobalStore } from '@/lib/store';
-import { Orbit, Sparkles } from 'lucide-react';
+import { Orbit, Sparkles, Rotate3D } from 'lucide-react';
 
 export const MirrorDimensionLab: React.FC = () => {
   const sliderPrefix = useId();
@@ -18,6 +18,7 @@ export const MirrorDimensionLab: React.FC = () => {
   const [webglFailed, setWebglFailed] = useState(false);
 
   const containerRef = useRef<HTMLDivElement | null>(null);
+  const camRef = useRef({ az: 0.4, el: 0.35, dist: 6.2, dragging: false, lastX: 0, lastY: 0 });
   const res = useMemo(
     () => calculateExtraDimensionKaluzaKlein(extraDims, radiusMicrons),
     [extraDims, radiusMicrons]
@@ -41,45 +42,106 @@ export const MirrorDimensionLab: React.FC = () => {
     }
 
     const w = container.clientWidth || 540;
-    const h = container.clientHeight || 260;
+    const h = container.clientHeight || 280;
     renderer.setSize(w, h);
     renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, 2));
-    renderer.setClearColor(0x090414, 1);
+    renderer.setClearColor(0x070312, 1);
 
     container.innerHTML = '';
     container.appendChild(renderer.domElement);
 
     const scene = new THREE.Scene();
     const camera = new THREE.PerspectiveCamera(45, w / h, 0.1, 100);
-    camera.position.set(0, 1.8, 6.2);
-    camera.lookAt(0, 0, 0);
 
-    // Kaleidoscopic Mirror-Dimension nested Calabi-Yau wireframe manifolds
+    scene.add(new THREE.AmbientLight(0xd8b4fe, 0.7));
+    const goldLight = new THREE.PointLight(0xffb000, 3.0, 22);
+    goldLight.position.set(3, 3, 4);
+    scene.add(goldLight);
+    const cyanLight = new THREE.PointLight(0x00e5ff, 2.5, 22);
+    cyanLight.position.set(-4, -2, 3);
+    scene.add(cyanLight);
+
+    // Kaleidoscopic Mirror-Dimension Nested Calabi-Yau Manifolds (Solid Core + Wireframe Lattice)
     const p = 2 + (extraDims % 4);
     const q = 3 + ((extraDims + 1) % 5);
-    const outerKnot = new THREE.Mesh(
-      new THREE.TorusKnotGeometry(1.55, 0.32, 128, 20, p, q),
+    const knotGeom = new THREE.TorusKnotGeometry(1.42, 0.28, 140, 24, p, q);
+    const solidKnot = new THREE.Mesh(
+      knotGeom,
+      new THREE.MeshStandardMaterial({
+        color: 0x3b0764,
+        emissive: 0x4c1d95,
+        metalness: 0.88,
+        roughness: 0.18,
+      })
+    );
+    scene.add(solidKnot);
+
+    const wireKnot = new THREE.Mesh(
+      knotGeom,
       new THREE.MeshBasicMaterial({ color: 0xf59e0b, wireframe: true })
     );
-    scene.add(outerKnot);
+    wireKnot.scale.setScalar(1.015);
+    scene.add(wireKnot);
 
-    const innerKnot = new THREE.Mesh(
-      new THREE.TorusKnotGeometry(0.9, 0.18, 96, 14, q, p),
-      new THREE.MeshBasicMaterial({ color: 0x00e5ff, wireframe: true })
+    // Counter-rotating Golden Mirror Mandala Rings
+    const portalRings: THREE.Mesh[] = [];
+    for (let i = 0; i < 3; i++) {
+      const ring = new THREE.Mesh(
+        new THREE.TorusGeometry(2.15 + i * 0.28, 0.025, 10, 80),
+        new THREE.MeshBasicMaterial({ color: i % 2 === 0 ? 0x00e5ff : 0xfbbf24 })
+      );
+      ring.rotation.x = i * 0.7;
+      ring.rotation.y = i * 1.1;
+      portalRings.push(ring);
+      scene.add(ring);
+    }
+
+    // Orbiting Kaluza-Klein Graviton Particle Halo
+    const ptsCount = 160;
+    const positions = new Float32Array(ptsCount * 3);
+    for (let i = 0; i < ptsCount; i++) {
+      const th = Math.random() * Math.PI * 2;
+      const ph = Math.acos(2 * Math.random() - 1);
+      const r = 2.0 + Math.random() * 1.5;
+      positions[i * 3] = r * Math.sin(ph) * Math.cos(th);
+      positions[i * 3 + 1] = r * Math.sin(ph) * Math.sin(th);
+      positions[i * 3 + 2] = r * Math.cos(ph);
+    }
+    const pGeom = new THREE.BufferGeometry();
+    pGeom.setAttribute('position', new THREE.BufferAttribute(positions, 3));
+    const halo = new THREE.Points(
+      pGeom,
+      new THREE.PointsMaterial({ color: 0x38bdf8, size: 0.06, transparent: true, opacity: 0.85 })
     );
-    scene.add(innerKnot);
+    scene.add(halo);
 
     let animId = 0;
     let angle = 0;
     const renderLoop = () => {
       const { reduceMotion: rm, radiusMicrons: r } = stateRef.current;
-      if (!rm) angle += 0.012;
-      outerKnot.rotation.x = angle * 0.7;
-      outerKnot.rotation.y = angle;
-      innerKnot.rotation.y = -angle * 1.3;
-      innerKnot.rotation.z = angle * 0.5;
-      const scaleMod = 0.78 + Math.min(0.45, Math.log10(Math.max(1, r)) * 0.14);
-      outerKnot.scale.setScalar(scaleMod);
+      if (!rm) {
+        angle += 0.012;
+        camRef.current.az += 0.003;
+      }
+      solidKnot.rotation.x = angle * 0.6;
+      solidKnot.rotation.y = angle;
+      wireKnot.rotation.copy(solidKnot.rotation);
+      const scaleMod = 0.78 + Math.min(0.4, Math.log10(Math.max(1, r)) * 0.12);
+      solidKnot.scale.setScalar(scaleMod);
+      wireKnot.scale.setScalar(scaleMod * 1.015);
+      portalRings.forEach((ring, idx) => {
+        ring.rotation.z = angle * (idx % 2 === 0 ? 0.55 : -0.65);
+        ring.rotation.x += rm ? 0 : 0.004 * (idx + 1);
+      });
+      halo.rotation.y = -angle * 0.4;
+
+      const { az, el, dist } = camRef.current;
+      camera.position.set(
+        dist * Math.cos(el) * Math.sin(az),
+        dist * Math.sin(el),
+        dist * Math.cos(el) * Math.cos(az)
+      );
+      camera.lookAt(0, 0, 0);
       renderer.render(scene, camera);
       if (!rm) animId = requestAnimationFrame(renderLoop);
     };
@@ -188,13 +250,13 @@ export const MirrorDimensionLab: React.FC = () => {
           />
         </div>
 
-        <div className="xl:col-span-7 bg-[#090414] border-3 border-black p-4 shadow-[5px_5px_0px_#000] space-y-2">
+        <div className="xl:col-span-7 bg-[#070312] border-3 border-black p-4 shadow-[5px_5px_0px_#000] space-y-2">
           <div className="flex items-center justify-between border-b border-zinc-800 pb-2 text-xs font-mono">
             <span className="font-bold text-amber-300 uppercase flex items-center gap-1.5">
               <Orbit className="w-4 h-4" /> Calabi-Yau Compactification Manifold ({extraDims} Hidden Loops)
             </span>
             <span className="text-cern-cyan flex items-center gap-1">
-              <Sparkles className="w-3.5 h-3.5" /> Three.js Live Wireframe
+              <Rotate3D className="w-3.5 h-3.5" /> Drag to Orbit · 160 KK Gravitons
             </span>
           </div>
           {webglFailed ? (
@@ -202,8 +264,34 @@ export const MirrorDimensionLab: React.FC = () => {
               WebGL context unavailable—parametric ADD metrics remain active on the left.
             </div>
           ) : (
-            <div ref={containerRef} className="w-full h-64 border border-purple-900 bg-[#090414]" />
+            <div
+              ref={containerRef}
+              onPointerDown={(e) => {
+                camRef.current.dragging = true;
+                camRef.current.lastX = e.clientX;
+                camRef.current.lastY = e.clientY;
+              }}
+              onPointerMove={(e) => {
+                if (!camRef.current.dragging) return;
+                const dx = e.clientX - camRef.current.lastX;
+                const dy = e.clientY - camRef.current.lastY;
+                camRef.current.az -= dx * 0.01;
+                camRef.current.el = Math.max(-1.1, Math.min(1.1, camRef.current.el + dy * 0.01));
+                camRef.current.lastX = e.clientX;
+                camRef.current.lastY = e.clientY;
+              }}
+              onPointerUp={() => {
+                camRef.current.dragging = false;
+              }}
+              onPointerLeave={() => {
+                camRef.current.dragging = false;
+              }}
+              className="w-full h-64 border border-purple-900 bg-[#070312] cursor-grab active:cursor-grabbing"
+            />
           )}
+          <div className="text-[11px] font-mono text-purple-300 flex items-center gap-1.5">
+            <Sparkles className="w-3.5 h-3.5 text-amber-400" /> Inner metallic core + golden mandala rings scale dynamically with compact radius R
+          </div>
         </div>
       </div>
     </div>

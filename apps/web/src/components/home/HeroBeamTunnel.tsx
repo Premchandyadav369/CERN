@@ -255,8 +255,8 @@ export const HeroBeamTunnel: React.FC = () => {
             )}
             <div className="flex items-center gap-1.5 px-3 py-1.5 bg-canvas/90 border-2 border-black shadow-[3px_3px_0px_#000] text-xs font-mono font-bold text-cern-cyan">
               <ShieldCheck className="w-4 h-4" />
-              <span className="hidden sm:inline">12/12 PHYSICS TESTS</span>
-              <span className="sm:hidden">12/12</span>
+              <span className="hidden sm:inline">27/27 PHYSICS TESTS</span>
+              <span className="sm:hidden">27/27</span>
             </div>
             <button
               onClick={() => setShowControls(!showControls)}

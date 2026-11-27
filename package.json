@@ -16,11 +16,12 @@
   ],
   "scripts": {
     "dev": "npm run dev --workspace=apps/web",
-    "build": "npm run build --workspace=@cern-x/content-schema && npm run build --workspace=@cern-x/sim-core && npm run build --workspace=@cern-x/web",
+    "build:packages": "npm run build --workspace=@cern-x/content-schema && npm run build --workspace=@cern-x/sim-core",
+    "build": "npm run build:packages && npm run build --workspace=@cern-x/web",
     "start": "npm run start --workspace=@cern-x/web",
     "test": "npm run test --workspaces",
     "test:physics": "npm run test --workspace=packages/sim-core",
-    "typecheck": "npm run typecheck --workspace=@cern-x/content-schema && npm run typecheck --workspace=@cern-x/sim-core && npx --prefix apps/web tsc --noEmit -p apps/web/tsconfig.json",
+    "typecheck": "npm run build:packages && npm run typecheck --workspace=@cern-x/content-schema && npm run typecheck --workspace=@cern-x/sim-core && npx --prefix apps/web tsc --noEmit -p apps/web/tsconfig.json",
     "verify:manifest": "node scripts/verify_manifest.js",
     "verify:routes": "node scripts/verify_routes.js",
     "verify:all": "npm run verify:manifest && npm run test:physics && npm run typecheck && npm run build"

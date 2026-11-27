@@ -1,4 +1,4 @@
-name: CERN-X CI Verification
+name: CERN-X CI/CD Verification
 
 on:
   push:
@@ -7,7 +7,8 @@ on:
     branches: [main]
 
 jobs:
-  verify-and-build:
+  verify-web-and-physics:
+    name: TypeScript, Vitest Physics & Next.js Build
     runs-on: ubuntu-latest
     steps:
       - name: Checkout repository
@@ -24,3 +25,43 @@ jobs:
 
       - name: Validate manifest, physics unit tests, typecheck & build
         run: npm run verify:all
+
+      - name: Start server and smoke-check all 33 routes
+        run: |
+          npm run start > /tmp/next.log 2>&1 &
+          SERVER_PID=$!
+          for i in $(seq 1 30); do
+            if curl -sf http://127.0.0.1:3000/api/health > /dev/null; then
+              break
+            fi
+            sleep 1
+          done
+          npm run verify:routes
+          kill $SERVER_PID || true
+
+  verify-cpp-and-python:
+    name: C++17 Scientific Kernels & Python Solvers
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Compile and test C++17 trigger & RK4 physics kernels
+        run: |
+          mkdir -p /tmp/cernx_cpp_build
+          g++ -std=c++17 -O2 -Wall -Wextra -Werror research/cpp/l1_trigger_hls.cpp -o /tmp/cernx_cpp_build/l1_trigger_hls
+          g++ -std=c++17 -O2 -Wall -Wextra -Werror research/cpp/rk4_track_integrator.cpp -o /tmp/cernx_cpp_build/rk4_track_integrator
+          /tmp/cernx_cpp_build/l1_trigger_hls
+          /tmp/cernx_cpp_build/rk4_track_integrator
+
+      - name: Setup Python 3.11 and run physics solvers
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: Verify Python physics solvers (RGE, PMNS, Optics)
+        run: |
+          pip install --quiet numpy scipy
+          python research/scripts/electroweak_vacuum_rge.py --verify
+          python research/scripts/neutrino_pmns_mc.py --verify
+          python research/scripts/beam_optics.py

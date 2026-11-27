@@ -13,7 +13,11 @@ This workspace contains all reproducible offline scientific code, data ingestion
 
 ## 2. Directory Structure
 ```
-research/
+├── research/
+├── ├── cpp/                          # C++17 high-throughput L1 trigger & RK4 tracking kernels
+│   ├── l1_trigger_hls.cpp        # Fixed-threshold FPGA L1 dimuon/diphoton mass reconstructor
+│   ├── rk4_track_integrator.cpp  # 4th-order Runge-Kutta Lorentz + Dirac monopole integrator
+│   └── CMakeLists.txt            # Standard C++17 build & CTest configuration
 ├── benchmarks/
 │   ├── triggermind_results.json    # Committed metrics, CIs, latencies for TriggerMind
 │   ├── triggermind_model.json      # Model topology & normalization constants
@@ -23,7 +27,10 @@ research/
 │   ├── export_onnx.py              # Export model to ONNX & runtime verification
 │   ├── convert_open_data.py        # 4-vector kinematics & cutflow processor for Open Data
 │   ├── beam_optics.py              # FODO cell Courant-Snyder solver & LHC arc lattice validation
-│   └── evaluate_hepdata.py         # HEPData benchmark tables (ALICE R_AA, ATLAS H->yy) & pull fits
+│   ├── evaluate_hepdata.py         # HEPData benchmark tables (ALICE R_AA, ATLAS H->yy) & pull fits
+│   ├── electroweak_vacuum_rge.py   # Standard Model NNLO/RGE Higgs vacuum stability solver
+│   ├── neutrino_pmns_mc.py         # 3-flavor PMNS baseline transition & unitarity verifier
+│   └── generate_readme_visuals.py  # Publication figure generator for docs/assets/*.png
 ├── requirements.txt                # Python environment requirements
 └── README.md                       # This document
 ```

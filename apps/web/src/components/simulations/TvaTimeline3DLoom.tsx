@@ -118,6 +118,22 @@ export const TvaTimeline3DLoom: React.FC<TvaTimeline3DLoomProps> = ({
       branchGroup.add(new THREE.Mesh(geom, mat));
     }
 
+    // Flowing Temporal Energy Sparks along the Sacred Timeline axis
+    const sparkCount = 140;
+    const sparkPos = new Float32Array(sparkCount * 3);
+    for (let i = 0; i < sparkCount; i++) {
+      sparkPos[i * 3] = (Math.random() - 0.5) * 8.4;
+      sparkPos[i * 3 + 1] = (Math.random() - 0.5) * 0.65;
+      sparkPos[i * 3 + 2] = (Math.random() - 0.5) * 0.65;
+    }
+    const sparkGeom = new THREE.BufferGeometry();
+    sparkGeom.setAttribute('position', new THREE.BufferAttribute(sparkPos, 3));
+    const sparks = new THREE.Points(
+      sparkGeom,
+      new THREE.PointsMaterial({ color: 0xffe082, size: 0.075, transparent: true, opacity: 0.9 })
+    );
+    scene.add(sparks);
+
     let animId = 0;
     let clock = 0;
 
@@ -126,6 +142,13 @@ export const TvaTimeline3DLoom: React.FC<TvaTimeline3DLoomProps> = ({
       if (!rm) {
         clock += 0.015;
         camRef.current.azimuth += 0.004;
+        const posAttr = sparkGeom.getAttribute('position') as THREE.BufferAttribute;
+        for (let i = 0; i < sparkCount; i++) {
+          let sx = posAttr.getX(i) + 0.045;
+          if (sx > 4.2) sx = -4.2;
+          posAttr.setX(i, sx);
+        }
+        posAttr.needsUpdate = true;
       }
 
       loomRing.rotation.z = clock * 0.45;

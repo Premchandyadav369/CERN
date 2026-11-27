@@ -1,25 +1,140 @@
 'use client';
 
-import React, { useState, useMemo, useId } from 'react';
+import React, { useState, useMemo, useRef, useEffect, useId } from 'react';
 import { calculateDisplacedVertexDecay } from '@cern-x/sim-core';
 import { FidelityBadge } from '@/components/provenance/FidelityBadge';
 import { Eli5Card } from '@/components/ui/Eli5Card';
 import { MathFormula } from '@/components/ui/MathFormula';
-import { Activity } from 'lucide-react';
+import { useGlobalStore } from '@/lib/store';
+import { Activity, Play, Pause } from 'lucide-react';
 
 export const SpiderVertexLab: React.FC = () => {
   const sliderPrefix = useId();
+  const reduceMotion = useGlobalStore((s) => s.reduceMotion);
+
   const [lifetimePs, setLifetimePs] = useState<number>(3500);
   const [llpMassGev, setLlpMassGev] = useState<number>(12.0);
   const [llpEnergyGev, setLlpEnergyGev] = useState<number>(140.0);
+  const [isPlaying, setIsPlaying] = useState<boolean>(true);
+
+  const canvasRef = useRef<HTMLCanvasElement | null>(null);
+  const progRef = useRef<number>(0);
 
   const decay = useMemo(
     () => calculateDisplacedVertexDecay(lifetimePs, llpMassGev, llpEnergyGev),
     [lifetimePs, llpMassGev, llpEnergyGev]
   );
 
-  // Map 0 -> 14 m detector radius horizontally in SVG (x=40..440)
-  const decayBarPx = Math.min(395, (decay.boostedDecayLengthM / 14) * 395);
+  useEffect(() => {
+    const canvas = canvasRef.current;
+    if (!canvas) return;
+    const ctx = canvas.getContext('2d');
+    if (!ctx) return;
+    let animId = 0;
+
+    const render = () => {
+      if (isPlaying && !reduceMotion) progRef.current = (progRef.current + 0.016) % 1;
+      const prog = reduceMotion ? 0.92 : progRef.current;
+      const w = canvas.width;
+      const h = canvas.height;
+      const ipX = 48;
+      const cy = h / 2;
+
+      ctx.fillStyle = '#07040F';
+      ctx.fillRect(0, 0, w, h);
+
+      // Concentric / Radial Detector Shells (0..14m span -> x = 48..540)
+      const scalePx = (w - 80) / 14; // px per meter
+      const shells = [
+        { rStart: 0, rEnd: 1.2, label: 'Pixel Tracker', col: 'rgba(0, 229, 255, 0.14)', border: '#00E5FF' },
+        { rStart: 1.2, rEnd: 3.8, label: 'ECAL / HCAL', col: 'rgba(255, 230, 0, 0.10)', border: '#FFE600' },
+        { rStart: 3.8, rEnd: 12.0, label: 'Muon Spectrometer (4–12 m)', col: 'rgba(255, 0, 85, 0.10)', border: '#FF0055' },
+      ];
+
+      shells.forEach((sh) => {
+        const sx = ipX + sh.rStart * scalePx;
+        const sw = (sh.rEnd - sh.rStart) * scalePx;
+        ctx.fillStyle = sh.col;
+        ctx.fillRect(sx, 20, sw, h - 48);
+        ctx.strokeStyle = sh.border;
+        ctx.lineWidth = 1.5;
+        ctx.strokeRect(sx, 20, sw, h - 48);
+        ctx.fillStyle = sh.border;
+        ctx.font = 'bold 9px monospace';
+        ctx.fillText(sh.label, sx + 4, h - 12);
+      });
+
+      // Invisible LLP flight up to decay point
+      const vertexX = Math.min(w - 60, ipX + decay.boostedDecayLengthM * scalePx);
+      const flightFrac = Math.min(1, prog / 0.55);
+      const currX = ipX + (vertexX - ipX) * flightFrac;
+
+      ctx.save();
+      ctx.setLineDash([7, 5]);
+      ctx.strokeStyle = '#C084FC';
+      ctx.lineWidth = 2.5;
+      ctx.beginPath();
+      ctx.moveTo(ipX, cy);
+      ctx.lineTo(currX, cy);
+      ctx.stroke();
+      ctx.restore();
+
+      // IP glow
+      ctx.fillStyle = '#FFFFFF';
+      ctx.beginPath();
+      ctx.arc(ipX, cy, 5, 0, Math.PI * 2);
+      ctx.fill();
+
+      // Secondary Displaced Vertex Glitch Burst + Curved Daughter Tracks
+      if (prog >= 0.55) {
+        const burstProg = (prog - 0.55) / 0.45;
+        // Spider-Verse Chromatic Aberration Glitch rings
+        const jitter = isPlaying && !reduceMotion ? Math.sin(prog * 30) * 2.5 : 2;
+        ctx.fillStyle = 'rgba(0, 229, 255, 0.55)';
+        ctx.beginPath();
+        ctx.arc(vertexX + jitter + 2, cy + 1, 9, 0, Math.PI * 2);
+        ctx.fill();
+
+        ctx.fillStyle = 'rgba(255, 0, 85, 0.65)';
+        ctx.beginPath();
+        ctx.arc(vertexX - jitter - 2, cy - 1, 9, 0, Math.PI * 2);
+        ctx.fill();
+
+        ctx.fillStyle = '#FFE600';
+        ctx.beginPath();
+        ctx.arc(vertexX, cy, 5.5, 0, Math.PI * 2);
+        ctx.fill();
+
+        // Daughter lepton tracks
+        const trackLen = Math.min(95, 25 + burstProg * 75);
+        [
+          { dy: -1, col: '#00FF66' },
+          { dy: 1, col: '#FF0055' },
+        ].forEach((tr) => {
+          ctx.strokeStyle = tr.col;
+          ctx.lineWidth = 2.8;
+          ctx.beginPath();
+          ctx.moveTo(vertexX, cy);
+          ctx.quadraticCurveTo(
+            vertexX + trackLen * 0.5,
+            cy + tr.dy * trackLen * 0.25,
+            Math.min(w - 10, vertexX + trackLen),
+            cy + tr.dy * trackLen * 0.65
+          );
+          ctx.stroke();
+        });
+      }
+
+      ctx.fillStyle = '#CBD5E1';
+      ctx.font = 'bold 10px monospace';
+      ctx.fillText(`L_lab = ${decay.boostedDecayLengthM.toFixed(2)} m | Dashed: Invisible Neutral LLP`, 52, 14);
+
+      if (isPlaying && !reduceMotion) animId = requestAnimationFrame(render);
+    };
+
+    render();
+    return () => cancelAnimationFrame(animId);
+  }, [decay, isPlaying, reduceMotion]);
 
   return (
     <div className="space-y-5">
@@ -137,48 +252,30 @@ export const SpiderVertexLab: React.FC = () => {
             </div>
           </dl>
 
-          {/* Chromatic Glitch Radial Shell Visualizer */}
-          <div className="bg-[#070510] border-3 border-black p-4 shadow-[5px_5px_0px_#000] space-y-2">
+          <div className="bg-[#07040F] border-3 border-black p-4 shadow-[5px_5px_0px_#000] space-y-2">
             <div className="flex items-center justify-between text-xs font-mono border-b border-zinc-800 pb-2">
               <span className="font-bold text-white flex items-center gap-1.5">
                 <Activity className="w-4 h-4 text-cern-magenta" /> Radial Detector Cross-Section (0 m IP → 14 m Cavern Wall)
               </span>
-              <span className="text-cern-cyan">Dashed: Invisible LLP Flight</span>
+              {!reduceMotion && (
+                <button
+                  type="button"
+                  onClick={() => setIsPlaying((p) => !p)}
+                  className="px-2 py-0.5 bg-canvas-surface border border-black text-[10px] font-bold text-cern-cyan flex items-center gap-1 cursor-pointer"
+                >
+                  {isPlaying ? <Pause className="w-3 h-3" /> : <Play className="w-3 h-3" />}
+                  <span>{isPlaying ? 'Pause' : 'Play'}</span>
+                </button>
+              )}
             </div>
 
-            <svg viewBox="0 0 460 190" className="w-full h-52 bg-[#05030C] border border-zinc-800" aria-label="Displaced vertex radial shell flight diagram">
-              {/* Detector Shells */}
-              <rect x="40" y="25" width="34" height="130" fill="rgba(0,229,255,0.12)" stroke="#00E5FF" strokeWidth="1.5" />
-              <text x="57" y="172" textAnchor="middle" fill="#00E5FF" fontSize="9" fontFamily="monospace">Tracker</text>
-
-              <rect x="74" y="25" width="74" height="130" fill="rgba(255,230,0,0.09)" stroke="#FFE600" strokeWidth="1.5" />
-              <text x="111" y="172" textAnchor="middle" fill="#FFE600" fontSize="9" fontFamily="monospace">ECAL/HCAL</text>
-
-              <rect x="148" y="25" width="232" height="130" fill="rgba(255,0,85,0.08)" stroke="#FF0055" strokeWidth="1.5" />
-              <text x="264" y="172" textAnchor="middle" fill="#FF0055" fontSize="9" fontFamily="monospace">Muon Spectrometer (4m–12m)</text>
-
-              {/* IP center */}
-              <circle cx="40" cy="90" r="6" fill="#FFFFFF" />
-
-              {/* Invisible neutral LLP flight */}
-              <line
-                x1="40"
-                y1="90"
-                x2={40 + decayBarPx}
-                y2="90"
-                stroke="#A855F7"
-                strokeWidth="3"
-                strokeDasharray="6 5"
-              />
-
-              {/* Chromatic Spider-Glitch vertex burst & diverging tracks */}
-              <circle cx={40 + decayBarPx + 2} cy="91" r="8" fill="#00E5FF" opacity="0.5" />
-              <circle cx={40 + decayBarPx - 2} cy="89" r="8" fill="#FF0055" opacity="0.7" />
-              <circle cx={40 + decayBarPx} cy="90" r="6" fill="#FFE600" />
-
-              <line x1={40 + decayBarPx} y1="90" x2={Math.min(450, 40 + decayBarPx + 75)} y2="42" stroke="#00FF66" strokeWidth="2.5" />
-              <line x1={40 + decayBarPx} y1="90" x2={Math.min(450, 40 + decayBarPx + 75)} y2="138" stroke="#00FF66" strokeWidth="2.5" />
-            </svg>
+            <canvas
+              ref={canvasRef}
+              width={600}
+              height={230}
+              aria-label={`Animated displaced vertex decay canvas showing flight length ${decay.boostedDecayLengthM.toFixed(2)} meters.`}
+              className="w-full h-56 border border-zinc-800 bg-[#07040F]"
+            />
           </div>
         </div>
       </div>

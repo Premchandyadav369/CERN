@@ -1,6 +1,7 @@
 'use client';
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
+import Link from 'next/link';
 import atlasEventsData from '../../../../../data/real_events/sample_atlas_events.json';
 import cmsEventsData from '../../../../../data/real_events/sample_cms_events.json';
 import { HepdataOverlay } from '@/components/open-data/HepdataOverlay';
@@ -8,7 +9,17 @@ import { DimuonSpectrumExplorer } from '@/components/open-data/DimuonSpectrumExp
 import { Eli5Card } from '@/components/ui/Eli5Card';
 import { TechnicalTermDeck } from '@/components/ui/TechTermInfo';
 import { Value } from '@/components/provenance/Value';
-import { Database, ExternalLink, Download, Filter, Search, Play, CheckCircle2, Layers } from 'lucide-react';
+import { Database, ExternalLink, Download, Filter, Play, Layers, Box } from 'lucide-react';
+
+interface CernLiveRecord {
+  id: string;
+  title: string;
+  experiment: string;
+  doi: string;
+  year: string;
+  url: string;
+  source: 'LIVE_API' | 'CACHED_FALLBACK';
+}
 
 export default function OpenDataPage() {
   const [activeTab, setActiveTab] = useState<'atlas' | 'cms'>('atlas');
@@ -16,6 +27,25 @@ export default function OpenDataPage() {
   const [maxEta, setMaxEta] = useState<number>(2.5);
   const [massMin, setMassMin] = useState<number>(60);
   const [massMax, setMassMax] = useState<number>(140);
+  const [liveRecords, setLiveRecords] = useState<CernLiveRecord[]>([]);
+  const [liveStatus, setLiveStatus] = useState<'loading' | 'live' | 'cached'>('loading');
+
+  useEffect(() => {
+    let active = true;
+    fetch('/api/cern-live')
+      .then((r) => r.json())
+      .then((d: { status?: 'live' | 'cached'; records?: CernLiveRecord[] }) => {
+        if (!active) return;
+        setLiveRecords(d.records ?? []);
+        setLiveStatus(d.status === 'live' ? 'live' : 'cached');
+      })
+      .catch(() => {
+        if (active) setLiveStatus('cached');
+      });
+    return () => {
+      active = false;
+    };
+  }, []);
 
   const currentDataset = activeTab === 'atlas' ? atlasEventsData : cmsEventsData;
 
@@ -292,6 +322,7 @@ export default function OpenDataPage() {
                   <th className="p-2">Physics Process</th>
                   <th className="p-2">Objects</th>
                   <th className="p-2">Reconstructed Mass</th>
+                  <th className="p-2 text-right">3D Display</th>
                 </tr>
               </thead>
               <tbody className="divide-y-2 divide-black">
@@ -307,11 +338,20 @@ export default function OpenDataPage() {
                       <td className="p-2.5 text-emerald-400 font-bold">
                         {evt.reconstructedMassGev} GeV
                       </td>
+                      <td className="p-2.5 text-right">
+                        <Link
+                          href={`/detectors?detector=${activeTab}&eventId=${encodeURIComponent(evt.id)}`}
+                          className="inline-flex items-center gap-1 px-2 py-1 bg-cern-blue hover:bg-cern-accent text-white font-bold border border-black text-[10px]"
+                        >
+                          <Box className="w-3 h-3 text-cern-cyan" />
+                          <span>Inspect 3D</span>
+                        </Link>
+                      </td>
                     </tr>
                   ))
                 ) : (
                   <tr>
-                    <td colSpan={5} className="py-8 text-center text-text-muted font-mono font-bold">
+                    <td colSpan={6} className="py-8 text-center text-text-muted font-mono font-bold">
                       No events survived the kinematic cuts. Try broadening the p_T or mass window.
                     </td>
                   </tr>
@@ -319,6 +359,55 @@ export default function OpenDataPage() {
               </tbody>
             </table>
           </div>
+        </div>
+      </section>
+
+      {/* Live CERN Open Data Portal Records Bridge */}
+      <section className="p-5 bg-canvas-sub border-3 border-black shadow-[6px_6px_0px_#000] space-y-4">
+        <div className="flex flex-wrap items-center justify-between gap-2 border-b-2 border-black pb-3">
+          <div>
+            <h2 className="text-lg font-display font-black text-white flex items-center gap-2">
+              <Database className="w-4 h-4 text-cern-cyan" /> CERN Open Data Portal Records Feed (opendata.cern.ch)
+            </h2>
+            <p className="text-xs font-mono text-text-muted">
+              Direct REST query via /api/cern-live with verified DOI archival fallback
+            </p>
+          </div>
+          <span
+            className={`px-2 py-0.5 text-[10px] font-mono font-black border-2 border-black ${
+              liveStatus === 'live'
+                ? 'bg-emerald-400 text-black'
+                : 'bg-cern-cyan text-black'
+            }`}
+          >
+            {liveStatus === 'live' ? 'LIVE PORTAL STREAM' : liveStatus === 'cached' ? 'VERIFIED ARCHIVE SNAPSHOT' : 'QUERYING...'}
+          </span>
+        </div>
+
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3">
+          {liveRecords.map((rec) => (
+            <a
+              key={rec.id}
+              href={rec.url}
+              target="_blank"
+              rel="noreferrer"
+              className="p-3.5 bg-canvas-surface hover:bg-canvas-raised border-2 border-black shadow-[3px_3px_0px_#000] flex flex-col justify-between gap-2 transition-colors"
+            >
+              <div className="space-y-1">
+                <div className="flex items-center justify-between text-[10px] font-mono">
+                  <span className="px-1.5 py-0.5 bg-black text-cern-cyan font-bold">
+                    {rec.experiment}
+                  </span>
+                  <span className="text-text-muted">{rec.year} · #{rec.id}</span>
+                </div>
+                <div className="text-xs font-bold text-white line-clamp-2">{rec.title}</div>
+              </div>
+              <div className="flex items-center justify-between text-[10px] font-mono text-emerald-400 pt-1 border-t border-black/50">
+                <span className="truncate max-w-[190px]">{rec.doi}</span>
+                <ExternalLink className="w-3 h-3 shrink-0" />
+              </div>
+            </a>
+          ))}
         </div>
       </section>
 

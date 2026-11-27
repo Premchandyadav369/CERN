@@ -3,7 +3,7 @@
 import React, { useEffect } from 'react';
 import Link from 'next/link';
 import { useGlobalStore, OPERATOR_MISSIONS } from '@/lib/store';
-import { Award, CheckCircle2, Circle, X, ArrowRight, RotateCcw } from 'lucide-react';
+import { Award, CheckCircle2, Circle, X, ArrowRight, RotateCcw, Radio } from 'lucide-react';
 import { playDiscoveryChime } from '@/lib/sonifier';
 
 export const MissionsDrawer: React.FC = () => {
@@ -19,13 +19,24 @@ export const MissionsDrawer: React.FC = () => {
     hydrateMissions();
   }, [hydrateMissions]);
 
+  useEffect(() => {
+    if (!isOpen) return;
+    const onKey = (e: KeyboardEvent) => {
+      if (e.key === 'Escape') setIsOpen(false);
+    };
+    window.addEventListener('keydown', onKey);
+    return () => window.removeEventListener('keydown', onKey);
+  }, [isOpen, setIsOpen]);
+
   if (!isOpen) return null;
 
   const pct = Math.round((completedMissions.length / OPERATOR_MISSIONS.length) * 100);
+  // Statistical significance calibration analog Z_0 = 5.0 * completionRatio + bonus on all 10
+  const sigmaEquiv = ((completedMissions.length / OPERATOR_MISSIONS.length) * 5.2).toFixed(2);
   const rank =
     completedMissions.length === OPERATOR_MISSIONS.length
-      ? 'CHIEF CERN PHYSICIST'
-      : completedMissions.length >= 3
+      ? 'CHIEF CERN PHYSICIST (5σ+)'
+      : completedMissions.length >= 4
       ? 'RUN-3 SHIFT LEADER'
       : 'JUNIOR BEAM OPERATOR';
 
@@ -35,6 +46,8 @@ export const MissionsDrawer: React.FC = () => {
       onClick={() => setIsOpen(false)}
     >
       <div
+        role="dialog"
+        aria-label="CERN Operator Missions"
         className="w-full max-w-md h-full bg-canvas-surface border-l-3 border-black shadow-[-6px_0px_0px_#000] flex flex-col justify-between p-5 overflow-y-auto"
         onClick={(e) => e.stopPropagation()}
       >
@@ -48,15 +61,17 @@ export const MissionsDrawer: React.FC = () => {
               </h2>
             </div>
             <button
+              type="button"
+              aria-label="Close missions drawer"
               onClick={() => setIsOpen(false)}
-              className="p-1 bg-black border-2 border-black text-white hover:bg-zinc-800"
+              className="p-1 bg-black border-2 border-black text-white hover:bg-zinc-800 cursor-pointer"
             >
               <X className="w-4 h-4" />
             </button>
           </div>
 
-          {/* Rank & Progress Card */}
-          <div className="p-4 bg-canvas-sub border-2 border-black shadow-[4px_4px_0px_#FFE600] space-y-2">
+          {/* Rank & Discovery Significance Progress Card */}
+          <div className="p-4 bg-canvas-sub border-2 border-black shadow-[4px_4px_0px_#FFE600] space-y-2.5">
             <div className="flex items-center justify-between text-xs font-mono font-bold">
               <span className="text-text-muted uppercase">Clearance Rank:</span>
               <span className="text-[#FFE600]">{rank}</span>
@@ -68,8 +83,10 @@ export const MissionsDrawer: React.FC = () => {
               />
             </div>
             <div className="flex justify-between text-[11px] font-mono text-text-muted">
-              <span>{completedMissions.length} / {OPERATOR_MISSIONS.length} Missions Verified</span>
-              <span className="text-emerald-400 font-bold">{pct}%</span>
+              <span>{completedMissions.length} / {OPERATOR_MISSIONS.length} Challenges Complete</span>
+              <span className="text-emerald-400 font-bold flex items-center gap-1">
+                <Radio className="w-3 h-3" /> Z₀ ≈ {sigmaEquiv} σ
+              </span>
             </div>
           </div>
 
@@ -89,12 +106,14 @@ export const MissionsDrawer: React.FC = () => {
                   <div className="flex items-start justify-between gap-2">
                     <div className="flex items-start gap-2">
                       <button
+                        type="button"
                         onClick={() => {
                           completeMission(m.id);
                           playDiscoveryChime();
                         }}
-                        className="mt-0.5 shrink-0"
-                        title="Mark mission verified"
+                        className="mt-0.5 shrink-0 cursor-pointer"
+                        title="Verify mission completion"
+                        aria-label={`Mark ${m.title} verified`}
                       >
                         {done ? (
                           <CheckCircle2 className="w-4 h-4 text-emerald-400" />
@@ -114,7 +133,7 @@ export const MissionsDrawer: React.FC = () => {
                   </div>
 
                   <p className="text-xs text-text-secondary font-sans leading-relaxed">
-                    {eli5Mode ? `👶 ${m.eli5Hint}` : m.instruction}
+                    {eli5Mode ? m.eli5Hint : m.instruction}
                   </p>
 
                   <div className="flex justify-end">
@@ -135,8 +154,9 @@ export const MissionsDrawer: React.FC = () => {
 
         <div className="pt-4 mt-4 border-t-2 border-black flex items-center justify-between text-xs font-mono">
           <button
+            type="button"
             onClick={resetMissions}
-            className="text-text-muted hover:text-red-400 flex items-center gap-1 font-bold"
+            className="text-text-muted hover:text-red-400 flex items-center gap-1 font-bold cursor-pointer"
           >
             <RotateCcw className="w-3.5 h-3.5" />
             <span>Reset Progress</span>

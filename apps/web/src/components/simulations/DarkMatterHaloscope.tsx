@@ -160,44 +160,70 @@ export const DarkMatterHaloscope: React.FC = () => {
               </span>
             </div>
 
-            {/* Live Animated CAST Dipole Magnet Bore Conversion Tube */}
-            <svg viewBox="0 0 440 72" className="w-full h-18 bg-[#04070D] border-2 border-zinc-800">
-              <rect x="82" y="10" width="270" height="52" fill="#0c1526" stroke="#38bdf8" strokeWidth="2" />
-              <text x="217" y="22" fill="#38bdf8" fontSize="9" fontFamily="monospace" fontWeight="bold" textAnchor="middle">
-                CAST 9.26m SUPERCONDUCTING DIPOLE ({bFieldT.toFixed(1)} T · ⁴He m_γ={plasmaMassEv.toFixed(2)}eV)
+            {/* Live Animated CAST Dipole Magnet Bore Conversion Tube with Neon SVG Bloom */}
+            <svg viewBox="0 0 440 78" className="w-full h-20 bg-[#04070D] border-2 border-zinc-800">
+              <defs>
+                <filter id="castGlow" x="-30%" y="-30%" width="160%" height="160%">
+                  <feGaussianBlur stdDeviation="2.5" result="blur" />
+                  <feMerge>
+                    <feMergeNode in="blur" />
+                    <feMergeNode in="SourceGraphic" />
+                  </feMerge>
+                </filter>
+                <linearGradient id="boreGrad" x1="0" y1="0" x2="1" y2="0">
+                  <stop offset="0%" stopColor="#081529" />
+                  <stop offset="50%" stopColor="#0f294a" />
+                  <stop offset="100%" stopColor="#081529" />
+                </linearGradient>
+              </defs>
+              <rect x="82" y="12" width="270" height="54" fill="url(#boreGrad)" stroke="#38bdf8" strokeWidth="2" />
+              <line x1="82" y1="39" x2="352" y2="39" stroke="rgba(56,189,248,0.22)" strokeWidth="1" strokeDasharray="4 4" />
+              <text x="217" y="24" fill="#7dd3fc" fontSize="9" fontFamily="monospace" fontWeight="bold" textAnchor="middle">
+                CAST 9.26m SUPERCONDUCTING DIPOLE ({bFieldT.toFixed(1)} T · ⁴He m_γ={plasmaMassEv.toFixed(2)} eV)
               </text>
-              <text x="40" y="40" fill="#FACC15" fontSize="10" fontFamily="monospace" fontWeight="bold" textAnchor="middle">
-                ☀️ AXIONS
+              <text x="40" y="42" fill="#FACC15" fontSize="10" fontFamily="monospace" fontWeight="bold" textAnchor="middle">
+                ☀ AXIONS
               </text>
-              <text x="398" y="40" fill="#00E5FF" fontSize="10" fontFamily="monospace" fontWeight="bold" textAnchor="middle">
+              <text x="398" y="42" fill="#00E5FF" fontSize="10" fontFamily="monospace" fontWeight="bold" textAnchor="middle">
                 X-RAY DET
               </text>
-              {/* Traveling Solar Axions & Primakoff Photons */}
-              {Array.from({ length: 6 }, (_, i) => {
-                const prog = (animPhase * 0.45 + i / 6) % 1;
+              {Array.from({ length: 7 }, (_, i) => {
+                const prog = (animPhase * 0.45 + i / 7) % 1;
                 const px = 65 + prog * 310;
                 const insideMagnet = px >= 85 && px <= 350;
                 const converted = prog > 0.48 && primakoff.coherenceFactor > 0.15;
-                const cy = 42 + Math.sin(prog * 18 + i) * 7;
+                const cy = 44 + Math.sin(prog * 18 + i) * 7;
                 return (
-                  <circle
-                    key={i}
-                    cx={px}
-                    cy={cy}
-                    r={converted ? 4 + primakoff.coherenceFactor * 2 : 3}
-                    fill={converted ? '#00E5FF' : '#FACC15'}
-                    opacity={insideMagnet || converted ? 0.95 : 0.65}
-                  />
+                  <g key={i} filter="url(#castGlow)">
+                    <circle
+                      cx={px}
+                      cy={cy}
+                      r={converted ? 4.2 + primakoff.coherenceFactor * 2 : 3.2}
+                      fill={converted ? '#00E5FF' : '#FACC15'}
+                      opacity={insideMagnet || converted ? 0.95 : 0.65}
+                    />
+                  </g>
                 );
               })}
             </svg>
 
             <svg viewBox="0 0 440 165" className="w-full h-44 bg-[#04070D] border-2 border-zinc-800">
+              <defs>
+                <linearGradient id="resFill" x1="0" y1="0" x2="0" y2="1">
+                  <stop offset="0%" stopColor="rgba(250, 204, 21, 0.32)" />
+                  <stop offset="100%" stopColor="rgba(250, 204, 21, 0.0)" />
+                </linearGradient>
+              </defs>
               <line x1="35" y1="135" x2="415" y2="135" stroke="#334155" strokeWidth="1.5" />
+              <polygon
+                fill="url(#resFill)"
+                points={`35,135 ${scanCurve.map((p) => `${p.x.toFixed(1)},${p.y.toFixed(1)}`).join(' ')} 415,135`}
+              />
               <polyline
                 fill="none"
                 stroke="#FACC15"
                 strokeWidth="3"
+                filter="url(#castGlow)"
                 points={scanCurve.map((p) => `${p.x.toFixed(1)},${p.y.toFixed(1)}`).join(' ')}
               />
               {/* Tuned helium mass marker */}
@@ -315,10 +341,19 @@ export const DarkMatterHaloscope: React.FC = () => {
             </div>
 
             <svg viewBox="0 0 320 240" className="w-full h-60 bg-[#04070D] border-2 border-zinc-800">
+              <defs>
+                <filter id="jetGlow" x="-40%" y="-40%" width="180%" height="180%">
+                  <feGaussianBlur stdDeviation="2.8" result="blur" />
+                  <feMerge>
+                    <feMergeNode in="blur" />
+                    <feMergeNode in="SourceGraphic" />
+                  </feMerge>
+                </filter>
+              </defs>
               {/* Concentric Detector Rings (Tracker, ECAL, HCAL) */}
               <circle cx="160" cy="120" r="105" fill="none" stroke="#1E293B" strokeWidth="14" />
               <circle cx="160" cy="120" r="72" fill="none" stroke="#0F172A" strokeWidth="12" />
-              <circle cx="160" cy="120" r="40" fill="none" stroke="#1E293B" strokeWidth="1.5" strokeDasharray="3 3" />
+              <circle cx="160" cy="120" r="40" fill="none" stroke="rgba(56,189,248,0.28)" strokeWidth="1.5" strokeDasharray="3 3" />
 
               {/* Visible Jet Spray Cone + Animated Particles */}
               {[-10, -4, 0, 4, 10].map((offset, idx) => {
@@ -326,7 +361,7 @@ export const DarkMatterHaloscope: React.FC = () => {
                 const pulseFrac = (animPhase * 0.8 + idx * 0.18) % 1;
                 const dotDist = 12 + pulseFrac * (vectorLen - 12);
                 return (
-                  <g key={offset}>
+                  <g key={offset} filter="url(#jetGlow)">
                     <line
                       x1="160"
                       y1="120"
@@ -350,19 +385,21 @@ export const DarkMatterHaloscope: React.FC = () => {
               })}
 
               {/* Recoiling Missing Transverse Energy (Invisible WIMP pair) */}
-              <line
-                x1="160"
-                y1="120"
-                x2={metX}
-                y2={metY}
-                stroke="#FF0055"
-                strokeWidth="3.5"
-                strokeDasharray="6 4"
-                strokeDashoffset={-animPhase * 18}
-              />
-              <circle cx={metX} cy={metY} r="5" fill="#FF0055" stroke="#000" strokeWidth="1.5" />
-              <circle cx={jetX} cy={jetY} r="5" fill="#00FF66" stroke="#000" strokeWidth="1.5" />
-              <circle cx="160" cy="120" r="4" fill="#FFFFFF" />
+              <g filter="url(#jetGlow)">
+                <line
+                  x1="160"
+                  y1="120"
+                  x2={metX}
+                  y2={metY}
+                  stroke="#FF0055"
+                  strokeWidth="3.5"
+                  strokeDasharray="6 4"
+                  strokeDashoffset={-animPhase * 18}
+                />
+                <circle cx={metX} cy={metY} r="5.5" fill="#FF0055" stroke="#000" strokeWidth="1.5" />
+                <circle cx={jetX} cy={jetY} r="5.5" fill="#00FF66" stroke="#000" strokeWidth="1.5" />
+                <circle cx="160" cy="120" r="4.5" fill="#FFFFFF" />
+              </g>
 
               <text x="14" y="20" fill="#00FF66" fontSize="10" fontFamily="monospace" fontWeight="bold">
                 Visible Quark/Gluon Jet: {jetPtGev} GeV

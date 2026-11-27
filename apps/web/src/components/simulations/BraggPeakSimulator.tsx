@@ -20,6 +20,13 @@ import {
 import { Eli5Card } from '@/components/ui/Eli5Card';
 import { MathFormula } from '@/components/ui/MathFormula';
 import { useGlobalStore } from '@/lib/store';
+import {
+  drawAdditiveGlowDot,
+  drawCernGridBackdrop,
+  drawPhosphorCurve,
+  observeOffscreenVisibility,
+  setupHiDpiCanvas,
+} from '@/lib/cernVisuals';
 
 export type BeamSpecies = 'proton' | 'carbon' | 'photon';
 
@@ -324,35 +331,42 @@ export const BraggPeakSimulator: React.FC<{ className?: string }> = ({ className
   useEffect(() => {
     const canvas = canvasRef.current;
     if (!canvas) return;
-    const ctx = canvas.getContext('2d');
-    if (!ctx) return;
+    let isVisible = true;
+    const cleanupVis = observeOffscreenVisibility(canvas, (v) => {
+      isVisible = v;
+    });
 
     let rafId = 0;
-    const width = canvas.width;
-    const height = canvas.height;
-    const padLeft = 55;
-    const padRight = 25;
-    const padTop = 30;
-    const padBottom = 45;
-    const plotW = width - padLeft - padRight;
-    const plotH = height - padTop - padBottom;
-
-    const getX = (depth: number) => padLeft + (depth / maxDepthCm) * plotW;
-    const getY = (dose: number) => padTop + plotH - (Math.min(120, Math.max(0, dose)) / 120) * plotH;
-
-    // Animated ion packet stream traveling along tissue depth
     const packets = Array.from({ length: 14 }, (_, i) => ({
       offset: i / 14,
       laneOffset: ((i % 5) - 2) * 5,
     }));
 
     const drawFrame = (nowMs: number) => {
-      const tPhase = reduceMotion ? 0 : (nowMs / 1000) * 0.45;
-      ctx.clearRect(0, 0, width, height);
+      const vp = setupHiDpiCanvas(canvas, 680, 340);
+      if (!vp || !isVisible) {
+        if (!reduceMotion) rafId = requestAnimationFrame(drawFrame);
+        return;
+      }
+      const { ctx, width, height } = vp;
+      const padLeft = 55;
+      const padRight = 25;
+      const padTop = 30;
+      const padBottom = 45;
+      const plotW = width - padLeft - padRight;
+      const plotH = height - padTop - padBottom;
 
-      // Background grid
-      ctx.fillStyle = '#0a0d12';
-      ctx.fillRect(padLeft, padTop, plotW, plotH);
+      const getX = (depth: number) => padLeft + (depth / maxDepthCm) * plotW;
+      const getY = (dose: number) => padTop + plotH - (Math.min(120, Math.max(0, dose)) / 120) * plotH;
+
+      const tPhase = reduceMotion ? 0 : (nowMs / 1000) * 0.45;
+      drawCernGridBackdrop(ctx, width, height, {
+        accentColor: 'rgba(0, 229, 255, 0.06)',
+        bgInner: '#09111E',
+        bgOuter: '#04060B',
+        gridStep: 28,
+        showScanlines: true,
+      });
 
       ctx.strokeStyle = '#1e2633';
       ctx.lineWidth = 1;
@@ -364,7 +378,7 @@ export const BraggPeakSimulator: React.FC<{ className?: string }> = ({ className
         ctx.lineTo(x, padTop + plotH);
         ctx.stroke();
 
-        ctx.fillStyle = '#6b7280';
+        ctx.fillStyle = '#94a3b8';
         ctx.font = 'bold 10px monospace';
         ctx.textAlign = 'center';
         ctx.fillText(`${d} cm`, x, padTop + plotH + 18);
@@ -377,7 +391,7 @@ export const BraggPeakSimulator: React.FC<{ className?: string }> = ({ className
         ctx.lineTo(padLeft + plotW, y);
         ctx.stroke();
 
-        ctx.fillStyle = '#6b7280';
+        ctx.fillStyle = '#94a3b8';
         ctx.font = 'bold 10px monospace';
         ctx.textAlign = 'right';
         ctx.fillText(`${dose}%`, padLeft - 8, y + 3);
@@ -416,32 +430,22 @@ export const BraggPeakSimulator: React.FC<{ className?: string }> = ({ className
       ctx.fillStyle = '#ff6b8b';
       ctx.font = 'bold 10px monospace';
       ctx.textAlign = 'center';
-      ctx.fillText('CRITICAL ORGAN (BRAIN STEM / SPINAL CORD)', (xCritStart + xCritEnd) / 2, padTop + plotH - 12);
+      ctx.fillText('CRITICAL ORGAN (SPINAL CORD)', (xCritStart + xCritEnd) / 2, padTop + plotH - 12);
 
-      // Animated Beam Ionization Channel at bottom track strip
+      // Volumetric Additive Bragg Ionization Channel at bottom track strip
       const beamCenterY = padTop + plotH - 38;
       if (!reduceMotion) {
         const stopDepthCm = species === 'photon' ? maxDepthCm : isSobpEnabled ? tumorEnd : tumorDepthCm;
-        const beamCol = species === 'proton' ? '#00E5FF' : species === 'carbon' ? '#FF0055' : '#f97316';
+        const beamRgb = species === 'proton' ? '0, 229, 255' : species === 'carbon' ? '255, 0, 85' : '249, 115, 22';
 
-        // Bragg flare halo inside tumor
         if (species !== 'photon') {
           const flareX = isSobpEnabled ? (xTumorStart + xTumorEnd) / 2 : getX(tumorDepthCm);
-          const flareW = isSobpEnabled ? (xTumorEnd - xTumorStart) * 0.55 : 18;
-          const pulseAlpha = 0.25 + 0.15 * Math.sin(nowMs * 0.008);
-          const grad = ctx.createRadialGradient(flareX, beamCenterY, 2, flareX, beamCenterY, Math.max(20, flareW));
-          grad.addColorStop(0, species === 'proton' ? `rgba(0, 229, 255, ${pulseAlpha + 0.25})` : `rgba(255, 0, 85, ${pulseAlpha + 0.25})`);
-          grad.addColorStop(1, 'rgba(0,0,0,0)');
-          ctx.fillStyle = grad;
-          ctx.beginPath();
-          ctx.arc(flareX, beamCenterY, Math.max(20, flareW), 0, Math.PI * 2);
-          ctx.fill();
+          const flareW = isSobpEnabled ? (xTumorEnd - xTumorStart) * 0.6 : 22;
+          drawAdditiveGlowDot(ctx, flareX, beamCenterY, Math.max(22, flareW), beamRgb, 0.72);
         }
 
-        // Flying particle bunches
         packets.forEach((pk, idx) => {
           const prog = (tPhase + pk.offset) % 1;
-          // Hadrons slow down sharply near end-of-range (Bragg curve deceleration)
           const eased = species === 'photon' ? prog : 1 - Math.pow(1 - prog, 1.85);
           const targetStop = isSobpEnabled && species !== 'photon'
             ? tumorStart + ((idx % 4) / 3) * (tumorEnd - tumorStart)
@@ -449,33 +453,28 @@ export const BraggPeakSimulator: React.FC<{ className?: string }> = ({ className
           const depth = eased * targetStop;
           const px = getX(depth);
           const py = beamCenterY + pk.laneOffset;
-
-          // Particle glow escalates right at Bragg stop!
           const isStopping = species !== 'photon' && prog > 0.72;
-          ctx.fillStyle = isStopping ? '#FFE600' : beamCol;
-          ctx.globalAlpha = species === 'photon' ? 0.65 * (1 - prog * 0.6) : isStopping ? 0.95 : 0.75;
-          ctx.beginPath();
-          ctx.arc(px, py, isStopping ? 4.5 : 2.6, 0, Math.PI * 2);
-          ctx.fill();
+          drawAdditiveGlowDot(
+            ctx,
+            px,
+            py,
+            isStopping ? 10 : 6,
+            isStopping ? '255, 230, 0' : beamRgb,
+            species === 'photon' ? 0.65 * (1 - prog * 0.6) : 0.9
+          );
         });
-        ctx.globalAlpha = 1;
       }
 
-      // Draw 6 MV Conventional X-ray curve
-      ctx.beginPath();
-      ctx.strokeStyle = '#f97316';
-      ctx.lineWidth = 2.5;
-      ctx.setLineDash([6, 3]);
-      simulationData.forEach((p, idx) => {
-        const x = getX(p.depthCm);
-        const y = getY(p.photonDose);
-        if (idx === 0) ctx.moveTo(x, y);
-        else ctx.lineTo(x, y);
-      });
-      ctx.stroke();
-      ctx.setLineDash([]);
+      // Draw 6 MV Conventional X-ray phosphor comparison curve
+      drawPhosphorCurve(
+        ctx,
+        simulationData.map((p) => ({ x: getX(p.depthCm), y: getY(p.photonDose) })),
+        '#f97316',
+        1.7,
+        0.78
+      );
 
-      // Draw Active Hadron Curve
+      // Draw Active Hadron Bragg Phosphor Curve
       if (species !== 'photon') {
         const activeCurveKey = isSobpEnabled ? 'sobpDose' : 'dose';
         const strokeColor = species === 'proton' ? '#00E5FF' : '#FF0055';
@@ -488,24 +487,21 @@ export const BraggPeakSimulator: React.FC<{ className?: string }> = ({ className
         ctx.lineTo(getX(maxDepthCm), getY(0));
         ctx.closePath();
         ctx.fillStyle =
-          species === 'proton' ? 'rgba(0, 229, 255, 0.15)' : 'rgba(255, 0, 85, 0.15)';
+          species === 'proton' ? 'rgba(0, 229, 255, 0.14)' : 'rgba(255, 0, 85, 0.14)';
         ctx.fill();
 
-        ctx.beginPath();
-        ctx.strokeStyle = strokeColor;
-        ctx.lineWidth = 3.5;
-        simulationData.forEach((p, idx) => {
-          const x = getX(p.depthCm);
-          const y = getY(p[activeCurveKey]);
-          if (idx === 0) ctx.moveTo(x, y);
-          else ctx.lineTo(x, y);
-        });
-        ctx.stroke();
+        drawPhosphorCurve(
+          ctx,
+          simulationData.map((p) => ({ x: getX(p.depthCm), y: getY(p[activeCurveKey]) })),
+          strokeColor,
+          2.4,
+          1.0
+        );
 
         if (isSobpEnabled) {
           ctx.beginPath();
           ctx.strokeStyle = 'rgba(255, 255, 255, 0.35)';
-          ctx.lineWidth = 1.5;
+          ctx.lineWidth = 1.4;
           ctx.setLineDash([3, 3]);
           simulationData.forEach((p, idx) => {
             const x = getX(p.depthCm);
@@ -581,20 +577,22 @@ export const BraggPeakSimulator: React.FC<{ className?: string }> = ({ className
       rafId = requestAnimationFrame(drawFrame);
     }
 
-    return () => cancelAnimationFrame(rafId);
+    return () => {
+      cancelAnimationFrame(rafId);
+      cleanupVis();
+    };
   }, [simulationData, species, isSobpEnabled, tumorDepthCm, tumorMarginCm, hoveredDepth, reduceMotion]);
 
-  // Handle pointer hover / touch interaction for depth inspection
+  // Handle pointer hover / touch interaction for depth inspection (CSS-pixel synchronized for HiDPI)
   const handlePointerMove = (e: React.PointerEvent<HTMLCanvasElement>) => {
     const canvas = canvasRef.current;
     if (!canvas) return;
     const rect = canvas.getBoundingClientRect();
-    const scaleX = canvas.width / rect.width;
-    const mouseX = (e.clientX - rect.left) * scaleX;
+    const mouseX = e.clientX - rect.left;
 
     const padLeft = 55;
     const padRight = 25;
-    const plotW = canvas.width - padLeft - padRight;
+    const plotW = Math.max(10, rect.width - padLeft - padRight);
 
     if (mouseX >= padLeft && mouseX <= padLeft + plotW) {
       const depth = ((mouseX - padLeft) / plotW) * maxDepthCm;

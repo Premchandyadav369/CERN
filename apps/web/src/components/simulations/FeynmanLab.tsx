@@ -458,12 +458,19 @@ export const FeynmanLab: React.FC = () => {
               </div>
             </div>
 
-            {/* Interactive SVG Diagram */}
+            {/* Interactive SVG Diagram with Volumetric Neon Propagator Glow */}
             <svg viewBox="0 0 480 240" className="w-full h-56 sm:h-64 select-none">
               <defs>
                 <pattern id="feynmanGrid" width="24" height="24" patternUnits="userSpaceOnUse">
                   <path d="M 24 0 L 0 0 0 24" fill="none" stroke="#131C2B" strokeWidth="1" />
                 </pattern>
+                <filter id="feynmanGlow" x="-40%" y="-40%" width="180%" height="180%">
+                  <feGaussianBlur stdDeviation="2.6" result="blur" />
+                  <feMerge>
+                    <feMergeNode in="blur" />
+                    <feMergeNode in="SourceGraphic" />
+                  </feMerge>
+                </filter>
               </defs>
               <rect width="480" height="240" fill="url(#feynmanGrid)" />
 
@@ -657,23 +664,25 @@ export const FeynmanLab: React.FC = () => {
                       );
                     })}
 
-                    {/* Vertices */}
-                    <circle
-                      cx={v1x}
-                      cy={v1y}
-                      r={!reduceMotion && isAnimating && conservation.valid && pulsePhase >= 0.3 && pulsePhase <= 0.44 ? 10 : 7}
-                      fill="#FFE600"
-                      stroke="#000"
-                      strokeWidth="2.5"
-                    />
-                    <circle
-                      cx={v2x}
-                      cy={v2y}
-                      r={!reduceMotion && isAnimating && conservation.valid && pulsePhase >= 0.6 && pulsePhase <= 0.74 ? 10 : 7}
-                      fill={conservation.valid ? '#00E5FF' : '#EF4444'}
-                      stroke="#000"
-                      strokeWidth="2.5"
-                    />
+                    {/* Glowing Interaction Vertices */}
+                    <g filter="url(#feynmanGlow)">
+                      <circle
+                        cx={v1x}
+                        cy={v1y}
+                        r={!reduceMotion && isAnimating && conservation.valid && pulsePhase >= 0.3 && pulsePhase <= 0.44 ? 11 : 7}
+                        fill="#FFE600"
+                        stroke="#000"
+                        strokeWidth="2.5"
+                      />
+                      <circle
+                        cx={v2x}
+                        cy={v2y}
+                        r={!reduceMotion && isAnimating && conservation.valid && pulsePhase >= 0.6 && pulsePhase <= 0.74 ? 11 : 7}
+                        fill={conservation.valid ? '#00E5FF' : '#EF4444'}
+                        stroke="#000"
+                        strokeWidth="2.5"
+                      />
+                    </g>
 
                     {/* Living Quantum Amplitude Packets along incoming -> mediator -> outgoing legs */}
                     {!reduceMotion && isAnimating && conservation.valid && (

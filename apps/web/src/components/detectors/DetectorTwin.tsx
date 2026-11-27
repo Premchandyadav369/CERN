@@ -29,8 +29,15 @@ export const DetectorTwin: React.FC = () => {
   useEffect(() => {
     if (typeof window === 'undefined') return;
     const params = new URLSearchParams(window.location.search);
-    const det = params.get('detector');
-    if (det === 'cms' || det === 'atlas') setDetector(det);
+    const detParam = params.get('detector');
+    const resolvedDet: 'atlas' | 'cms' = detParam === 'cms' ? 'cms' : 'atlas';
+    if (detParam === 'cms' || detParam === 'atlas') setDetector(resolvedDet);
+    const evId = params.get('eventId');
+    if (evId) {
+      const list = resolvedDet === 'cms' ? cmsEventsData.events : atlasEventsData.events;
+      const idx = list.findIndex((e) => e.id === evId);
+      if (idx >= 0) setSelectedEventIndex(idx);
+    }
     const dId = params.get('dimuonId');
     if (dId) setDimuonOverrideId(dId);
   }, []);

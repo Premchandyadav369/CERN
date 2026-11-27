@@ -32,14 +32,20 @@ const ROUTES = [
   '/simulations?module=rich-medipix',
   '/simulations?module=cosmic',
   '/simulations?module=antimatter',
+  '/simulations?module=bragg-peak',
+  '/simulations?module=dark-matter',
+  '/simulations?module=alice',
+  '/simulations?module=cloud-chamber',
   '/computing',
   '/engineering',
   '/ai-lab',
   '/open-data',
+  '/detectors?detector=cms',
   '/learn',
   '/methodology',
   '/about',
   '/api/health',
+  '/api/cern-live',
 ];
 
 function checkRoute(path) {
@@ -52,7 +58,9 @@ function checkRoute(path) {
           const isApi = path.startsWith('/api/');
           const ok =
             res.statusCode === 200 &&
-            (isApi ? body.includes('"status":"ok"') : body.length > 500 && !body.includes('Application error'));
+            (isApi
+              ? body.includes('"status":"ok"') || body.includes('"records"')
+              : body.length > 500 && !body.includes('Application error') && !body.includes('__next_error__'));
           resolve({ path, status: res.statusCode, bytes: body.length, ok });
         });
       })

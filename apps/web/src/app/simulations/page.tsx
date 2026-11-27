@@ -1,42 +1,10 @@
 'use client';
 
 import React, { useState, useEffect, useRef, Suspense } from 'react';
+import dynamic from 'next/dynamic';
 import Link from 'next/link';
 import { useSearchParams } from 'next/navigation';
 import { motion, AnimatePresence } from 'framer-motion';
-import { LhcSimulator } from '@/components/simulations/LhcSimulator';
-import { TriggerLab } from '@/components/simulations/TriggerLab';
-import { DiscoveryExercise } from '@/components/simulations/DiscoveryExercise';
-import { BeamOpticsSandbox } from '@/components/simulations/BeamOpticsSandbox';
-import { AntimatterSimulator } from '@/components/simulations/AntimatterSimulator';
-import { AwakeSimulator } from '@/components/simulations/AwakeSimulator';
-import { AliceFlowSimulator } from '@/components/simulations/AliceFlowSimulator';
-import { LhcbDecaySimulator } from '@/components/simulations/LhcbDecaySimulator';
-import { CrabCavitySimulator } from '@/components/simulations/CrabCavitySimulator';
-import { FccSimulator } from '@/components/simulations/FccSimulator';
-import { BraggPeakSimulator } from '@/components/simulations/BraggPeakSimulator';
-import { FeynmanLab } from '@/components/simulations/FeynmanLab';
-import { CloudChamberSimulator } from '@/components/simulations/CloudChamberSimulator';
-import { HiggsMechanismSimulator } from '@/components/simulations/HiggsMechanismSimulator';
-import { DarkMatterHaloscope } from '@/components/simulations/DarkMatterHaloscope';
-import { StandardModelLab } from '@/components/simulations/StandardModelLab';
-import { IsoldeSimulator } from '@/components/simulations/IsoldeSimulator';
-import { MedipixRichSimulator } from '@/components/simulations/MedipixRichSimulator';
-import { CosmicHistoryLab } from '@/components/simulations/CosmicHistoryLab';
-import { LiveCollisionDirector } from '@/components/simulations/LiveCollisionDirector';
-import { ParticleRaceSimulator } from '@/components/simulations/ParticleRaceSimulator';
-import { NeutrinoOscillationSimulator } from '@/components/simulations/NeutrinoOscillationSimulator';
-import { LhcFillCockpitSimulator } from '@/components/simulations/LhcFillCockpitSimulator';
-import { TvaTimelineSimulator } from '@/components/simulations/TvaTimelineSimulator';
-import { TvaIntakeDeskSimulator } from '@/components/simulations/TvaIntakeDeskSimulator';
-import { ArcMagnetSimulator } from '@/components/simulations/ArcMagnetSimulator';
-import { QuantumScaleZoomSimulator } from '@/components/simulations/QuantumScaleZoomSimulator';
-import { MirrorDimensionLab } from '@/components/simulations/MirrorDimensionLab';
-import { SpiderVertexLab } from '@/components/simulations/SpiderVertexLab';
-import { MonopoleArenaSimulator } from '@/components/simulations/MonopoleArenaSimulator';
-import { BifrostHeavyIonSimulator } from '@/components/simulations/BifrostHeavyIonSimulator';
-import { DetectorMaterialViewer } from '@/components/detectors/DetectorMaterialViewer';
-import { ScienceLiteratureBridge } from '@/components/knowledge/ScienceLiteratureBridge';
 import { LabExportBar } from '@/components/ui/LabExportBar';
 import { TechnicalTermDeck } from '@/components/ui/TechTermInfo';
 import { useGlobalStore } from '@/lib/store';
@@ -67,6 +35,47 @@ import {
   Info,
   ShieldCheck,
 } from 'lucide-react';
+
+const SimLoading = () => (
+  <div className="w-full h-72 bg-canvas-sub border-3 border-black shadow-[6px_6px_0px_#000] flex flex-col items-center justify-center gap-2 font-mono text-xs text-cern-cyan">
+    <div className="w-6 h-6 border-2 border-cern-cyan border-t-transparent rounded-full animate-spin" />
+    <span>INITIALIZING INSTRUMENT CHUNK...</span>
+  </div>
+);
+
+const LhcSimulator = dynamic(() => import('@/components/simulations/LhcSimulator').then((m) => m.LhcSimulator), { loading: SimLoading });
+const TriggerLab = dynamic(() => import('@/components/simulations/TriggerLab').then((m) => m.TriggerLab), { loading: SimLoading });
+const DiscoveryExercise = dynamic(() => import('@/components/simulations/DiscoveryExercise').then((m) => m.DiscoveryExercise), { loading: SimLoading });
+const BeamOpticsSandbox = dynamic(() => import('@/components/simulations/BeamOpticsSandbox').then((m) => m.BeamOpticsSandbox), { loading: SimLoading });
+const AntimatterSimulator = dynamic(() => import('@/components/simulations/AntimatterSimulator').then((m) => m.AntimatterSimulator), { loading: SimLoading });
+const AwakeSimulator = dynamic(() => import('@/components/simulations/AwakeSimulator').then((m) => m.AwakeSimulator), { loading: SimLoading });
+const AliceFlowSimulator = dynamic(() => import('@/components/simulations/AliceFlowSimulator').then((m) => m.AliceFlowSimulator), { loading: SimLoading });
+const LhcbDecaySimulator = dynamic(() => import('@/components/simulations/LhcbDecaySimulator').then((m) => m.LhcbDecaySimulator), { loading: SimLoading });
+const CrabCavitySimulator = dynamic(() => import('@/components/simulations/CrabCavitySimulator').then((m) => m.CrabCavitySimulator), { loading: SimLoading });
+const FccSimulator = dynamic(() => import('@/components/simulations/FccSimulator').then((m) => m.FccSimulator), { loading: SimLoading });
+const BraggPeakSimulator = dynamic(() => import('@/components/simulations/BraggPeakSimulator').then((m) => m.BraggPeakSimulator), { loading: SimLoading });
+const FeynmanLab = dynamic(() => import('@/components/simulations/FeynmanLab').then((m) => m.FeynmanLab), { loading: SimLoading });
+const CloudChamberSimulator = dynamic(() => import('@/components/simulations/CloudChamberSimulator').then((m) => m.CloudChamberSimulator), { loading: SimLoading });
+const HiggsMechanismSimulator = dynamic(() => import('@/components/simulations/HiggsMechanismSimulator').then((m) => m.HiggsMechanismSimulator), { loading: SimLoading });
+const DarkMatterHaloscope = dynamic(() => import('@/components/simulations/DarkMatterHaloscope').then((m) => m.DarkMatterHaloscope), { loading: SimLoading });
+const StandardModelLab = dynamic(() => import('@/components/simulations/StandardModelLab').then((m) => m.StandardModelLab), { loading: SimLoading });
+const IsoldeSimulator = dynamic(() => import('@/components/simulations/IsoldeSimulator').then((m) => m.IsoldeSimulator), { loading: SimLoading });
+const MedipixRichSimulator = dynamic(() => import('@/components/simulations/MedipixRichSimulator').then((m) => m.MedipixRichSimulator), { loading: SimLoading });
+const CosmicHistoryLab = dynamic(() => import('@/components/simulations/CosmicHistoryLab').then((m) => m.CosmicHistoryLab), { loading: SimLoading });
+const LiveCollisionDirector = dynamic(() => import('@/components/simulations/LiveCollisionDirector').then((m) => m.LiveCollisionDirector), { loading: SimLoading });
+const ParticleRaceSimulator = dynamic(() => import('@/components/simulations/ParticleRaceSimulator').then((m) => m.ParticleRaceSimulator), { loading: SimLoading });
+const NeutrinoOscillationSimulator = dynamic(() => import('@/components/simulations/NeutrinoOscillationSimulator').then((m) => m.NeutrinoOscillationSimulator), { loading: SimLoading });
+const LhcFillCockpitSimulator = dynamic(() => import('@/components/simulations/LhcFillCockpitSimulator').then((m) => m.LhcFillCockpitSimulator), { loading: SimLoading });
+const TvaTimelineSimulator = dynamic(() => import('@/components/simulations/TvaTimelineSimulator').then((m) => m.TvaTimelineSimulator), { loading: SimLoading });
+const TvaIntakeDeskSimulator = dynamic(() => import('@/components/simulations/TvaIntakeDeskSimulator').then((m) => m.TvaIntakeDeskSimulator), { loading: SimLoading });
+const ArcMagnetSimulator = dynamic(() => import('@/components/simulations/ArcMagnetSimulator').then((m) => m.ArcMagnetSimulator), { loading: SimLoading });
+const QuantumScaleZoomSimulator = dynamic(() => import('@/components/simulations/QuantumScaleZoomSimulator').then((m) => m.QuantumScaleZoomSimulator), { loading: SimLoading });
+const MirrorDimensionLab = dynamic(() => import('@/components/simulations/MirrorDimensionLab').then((m) => m.MirrorDimensionLab), { loading: SimLoading });
+const SpiderVertexLab = dynamic(() => import('@/components/simulations/SpiderVertexLab').then((m) => m.SpiderVertexLab), { loading: SimLoading });
+const MonopoleArenaSimulator = dynamic(() => import('@/components/simulations/MonopoleArenaSimulator').then((m) => m.MonopoleArenaSimulator), { loading: SimLoading });
+const BifrostHeavyIonSimulator = dynamic(() => import('@/components/simulations/BifrostHeavyIonSimulator').then((m) => m.BifrostHeavyIonSimulator), { loading: SimLoading });
+const DetectorMaterialViewer = dynamic(() => import('@/components/detectors/DetectorMaterialViewer').then((m) => m.DetectorMaterialViewer), { loading: SimLoading });
+const ScienceLiteratureBridge = dynamic(() => import('@/components/knowledge/ScienceLiteratureBridge').then((m) => m.ScienceLiteratureBridge), { loading: SimLoading });
 
 type SimCategory = 'all' | 'marvel' | 'colliders' | 'detectors' | 'quantum' | 'data';
 
@@ -216,7 +225,7 @@ function SimulationsContent() {
         </p>
       </div>
 
-      {/* Domain Category Filters (kept separate above single-row tablist) */}
+      {/* Domain Category Filters */}
       <div className="space-y-3">
         <div className="flex flex-wrap items-center gap-2">
           <span className="text-[11px] font-mono font-bold uppercase text-text-muted mr-1">
@@ -281,7 +290,7 @@ function SimulationsContent() {
         </div>
       </div>
 
-      {/* Animated Tab Viewport */}
+      {/* Dynamically Lazy-Loaded Active Simulator Viewport */}
       <AnimatePresence mode="wait">
         <motion.div
           key={activeTab}

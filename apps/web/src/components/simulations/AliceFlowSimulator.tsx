@@ -3,6 +3,14 @@
 import React, { useState, useEffect, useRef, useMemo } from 'react';
 import { FidelityBadge } from '@/components/provenance/FidelityBadge';
 import { Eli5Card } from '@/components/ui/Eli5Card';
+import { useGlobalStore } from '@/lib/store';
+import {
+  drawAdditiveGlowDot,
+  drawCernGridBackdrop,
+  drawPhosphorCurve,
+  observeOffscreenVisibility,
+  setupHiDpiCanvas,
+} from '@/lib/cernVisuals';
 import {
   Activity,
   Sliders,
@@ -124,25 +132,34 @@ export function AliceFlowSimulator() {
     particlesRef.current = [];
   };
 
-  // Canvas 1: 60fps Transverse Overlap Geometry & Expanding Fireball
+  const reduceMotion = useGlobalStore((s) => s.reduceMotion);
+
+  // Canvas 1: 60fps Transverse Overlap Geometry & Expanding QGP Fireball
   useEffect(() => {
     const canvas = canvasRef.current;
     if (!canvas) return;
-    const ctx = canvas.getContext('2d');
-    if (!ctx) return;
+    let isVisible = true;
+    const cleanupVis = observeOffscreenVisibility(canvas, (v) => {
+      isVisible = v;
+    });
 
     let animId: number;
     let spawnTimer = 0;
 
     const render = () => {
-      const cx = canvas.width / 2;
-      const cy = canvas.height / 2;
-      const scale = 8.5; // pixels per fermi
+      const vp = setupHiDpiCanvas(canvas, 340, 260);
+      if (!vp || !isVisible) {
+        if (isPlaying && !reduceMotion) animId = requestAnimationFrame(render);
+        return;
+      }
+      const { ctx, width: w, height: h } = vp;
+      const cx = w / 2;
+      const cy = h / 2;
+      const scale = 8.5;
 
-      if (isPlaying) {
+      if (isPlaying && !reduceMotion) {
         spawnTimer++;
         if (spawnTimer % 3 === 0) {
-          // Generate new particle batch with elliptic flow modulation
           const count = Math.min(8, Math.max(3, Math.floor(physics.N_part / 35)));
           for (let i = 0; i < count; i++) {
             let phi = Math.random() * Math.PI * 2;
@@ -187,47 +204,34 @@ export function AliceFlowSimulator() {
           }
         }
 
-        // Advance particles
         particlesRef.current.forEach((p) => {
           p.r += p.speed;
         });
         particlesRef.current = particlesRef.current.filter((p) => p.r < 135).slice(-180);
       }
 
-      ctx.clearRect(0, 0, canvas.width, canvas.height);
+      drawCernGridBackdrop(ctx, w, h, {
+        accentColor: 'rgba(255, 176, 0, 0.08)',
+        bgInner: '#140C1E',
+        bgOuter: '#03050C',
+        gridStep: 24,
+        showScanlines: true,
+        showCrosshair: true,
+      });
 
-      // Background
-      ctx.fillStyle = '#060B14';
-      ctx.fillRect(0, 0, canvas.width, canvas.height);
-
-      // Grid coordinates
-      ctx.strokeStyle = '#1E293B';
-      ctx.lineWidth = 1;
-      ctx.beginPath();
-      ctx.moveTo(cx, 0);
-      ctx.lineTo(cx, canvas.height);
-      ctx.moveTo(0, cy);
-      ctx.lineTo(canvas.width, cy);
-      ctx.stroke();
-
-      // Nucleus A (displaced by -b/2 on x-axis)
       const b_px = (impactParameter_fm * scale) / 2;
       const r_px = physics.R_Pb * scale;
 
-      // Nucleus A outline
-      ctx.strokeStyle = '#38BDF8';
-      ctx.lineWidth = 2;
-      ctx.beginPath();
-      ctx.arc(cx - b_px, cy, r_px, 0, Math.PI * 2);
-      ctx.stroke();
+      const makeCirclePts = (x0: number) =>
+        Array.from({ length: 49 }, (_, i) => {
+          const a = (i / 48) * Math.PI * 2;
+          return { x: x0 + Math.cos(a) * r_px, y: cy + Math.sin(a) * r_px };
+        });
 
-      // Nucleus B outline (displaced by +b/2 on x-axis)
-      ctx.strokeStyle = '#FB7185';
-      ctx.beginPath();
-      ctx.arc(cx + b_px, cy, r_px, 0, Math.PI * 2);
-      ctx.stroke();
+      drawPhosphorCurve(ctx, makeCirclePts(cx - b_px), '#38BDF8', 1.5, 0.85);
+      drawPhosphorCurve(ctx, makeCirclePts(cx + b_px), '#FB7185', 1.5, 0.85);
 
-      // Draw Overlap Almond (QGP Fireball)
+      // Overlap Almond QGP Fireball with additive bloom
       if (impactParameter_fm < 2 * physics.R_Pb) {
         ctx.save();
         ctx.beginPath();
@@ -237,40 +241,30 @@ export function AliceFlowSimulator() {
         ctx.arc(cx + b_px, cy, r_px, 0, Math.PI * 2);
         ctx.clip();
 
-        // Glowing fireball gradient
-        const fireGrad = ctx.createRadialGradient(cx, cy, 2, cx, cy, r_px);
-        fireGrad.addColorStop(0, '#FFE600');
-        fireGrad.addColorStop(0.5, '#FF5C5C');
-        fireGrad.addColorStop(1, '#FF0055');
-        ctx.fillStyle = fireGrad;
-        ctx.fillRect(0, 0, canvas.width, canvas.height);
+        drawAdditiveGlowDot(ctx, cx, cy, r_px * 1.15, '255, 190, 40', 0.95);
+        drawAdditiveGlowDot(ctx, cx, cy, r_px * 0.65, '255, 0, 85', 0.75);
         ctx.restore();
       }
 
-      // Reaction plane axes label: x (in-plane), y (out-of-plane)
-      ctx.fillStyle = '#64748B';
-      ctx.font = '10px monospace';
+      ctx.fillStyle = '#94A3B8';
+      ctx.font = 'bold 9.5px monospace';
       ctx.textAlign = 'right';
-      ctx.fillText('x (in-plane, Ψ=0)', canvas.width - 10, cy - 8);
+      ctx.fillText('x (in-plane, Ψ=0)', w - 12, cy - 8);
       ctx.textAlign = 'center';
-      ctx.fillText('y (out-of-plane)', cx + 55, 18);
+      ctx.fillText('y (out-of-plane)', cx + 52, 18);
 
-      // Draw Expanding Hadron Particles
+      // Additive volumetric emitted hadrons
       particlesRef.current.forEach((p) => {
         const px = cx + Math.cos(p.phi) * p.r;
         const py = cy + Math.sin(p.phi) * p.r;
-        ctx.fillStyle = p.color;
-        ctx.beginPath();
-        ctx.arc(px, py, 2.5, 0, Math.PI * 2);
-        ctx.fill();
+        const rgb = p.species === 'proton' ? '255, 0, 85' : p.species === 'kaon' ? '0, 229, 255' : '0, 255, 102';
+        drawAdditiveGlowDot(ctx, px, py, 6.5, rgb, 0.88);
       });
 
-      // Eccentricity axes visual guide
       if (impactParameter_fm < 2 * physics.R_Pb && impactParameter_fm > 0) {
         ctx.strokeStyle = '#FFE600';
         ctx.lineWidth = 1.5;
         ctx.setLineDash([2, 2]);
-        // Minor axis (x)
         const minorR = (physics.R_Pb - impactParameter_fm / 2) * scale;
         ctx.beginPath();
         ctx.moveTo(cx - minorR, cy);
@@ -279,12 +273,17 @@ export function AliceFlowSimulator() {
         ctx.setLineDash([]);
       }
 
-      animId = requestAnimationFrame(render);
+      if (isPlaying && !reduceMotion) {
+        animId = requestAnimationFrame(render);
+      }
     };
 
     animId = requestAnimationFrame(render);
-    return () => cancelAnimationFrame(animId);
-  }, [isPlaying, impactParameter_fm, physics, selectedSpecies]);
+    return () => {
+      cancelAnimationFrame(animId);
+      cleanupVis();
+    };
+  }, [isPlaying, reduceMotion, impactParameter_fm, physics, selectedSpecies]);
 
   // Canvas 2: Live Polar Plot of Azimuthal Yield dN/dphi = 1 + 2*v2*cos(2*phi)
   useEffect(() => {

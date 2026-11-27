@@ -139,6 +139,9 @@ export interface GlobalState {
   setActiveManifestId: (id: string | null) => void;
   missionsOpen: boolean;
   setMissionsOpen: (open: boolean) => void;
+  companionOpen: boolean;
+  setCompanionOpen: (open: boolean) => void;
+  toggleCompanion: () => void;
   completedMissions: string[];
   completeMission: (id: string) => void;
   resetMissions: () => void;
@@ -200,6 +203,9 @@ export const useGlobalStore = create<GlobalState>((set) => ({
   setActiveManifestId: (id) => set({ activeManifestId: id, citationDrawerOpen: id !== null }),
   missionsOpen: false,
   setMissionsOpen: (open) => set({ missionsOpen: open }),
+  companionOpen: false,
+  setCompanionOpen: (open) => set({ companionOpen: open }),
+  toggleCompanion: () => set((state) => ({ companionOpen: !state.companionOpen })),
   completedMissions: [],
   hydrateMissions: () => set({ completedMissions: loadSavedMissions() }),
   completeMission: (id) =>

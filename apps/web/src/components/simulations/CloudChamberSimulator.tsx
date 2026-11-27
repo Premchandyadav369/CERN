@@ -6,6 +6,13 @@ import { FidelityBadge } from '@/components/provenance/FidelityBadge';
 import { Eli5Card } from '@/components/ui/Eli5Card';
 import { useGlobalStore } from '@/lib/store';
 import {
+  drawAdditiveGlowDot,
+  drawCernGridBackdrop,
+  drawPhosphorCurve,
+  observeOffscreenVisibility,
+  setupHiDpiCanvas,
+} from '@/lib/cernVisuals';
+import {
   Sparkles,
   Magnet,
   Play,
@@ -234,36 +241,34 @@ export const CloudChamberSimulator: React.FC = () => {
     return () => clearInterval(interval);
   }, [running, source, magneticFieldT, momentumGev, spawnParticleTrack]);
 
-  // 60 FPS Cloud Chamber dark-field renderer
+  // 60 FPS Cloud Chamber dark-field renderer with HiDPI vapor phosphor trails
   useEffect(() => {
+    const canvas = canvasRef.current;
+    if (!canvas) return;
+    let isVisible = true;
+    const cleanupVis = observeOffscreenVisibility(canvas, (v) => {
+      isVisible = v;
+    });
+
     let raf: number;
     const render = () => {
-      const canvas = canvasRef.current;
-      if (!canvas) return;
-      const ctx = canvas.getContext('2d');
-      if (!ctx) return;
+      raf = requestAnimationFrame(render);
+      const vp = setupHiDpiCanvas(canvas, 620, 320);
+      if (!vp || !isVisible) return;
+      const { ctx, width: w, height: h } = vp;
 
-      // Supersaturated dark chamber backdrop
-      ctx.fillStyle = '#06090F';
-      ctx.fillRect(0, 0, canvas.width, canvas.height);
+      drawCernGridBackdrop(ctx, w, h, {
+        accentColor: 'rgba(148, 163, 184, 0.08)',
+        bgInner: '#09101C',
+        bgOuter: '#030509',
+        gridStep: 32,
+        showScanlines: true,
+        showCrosshair: false,
+      });
 
-      // Subtle cooling grid lines
-      ctx.strokeStyle = '#111827';
-      ctx.lineWidth = 1;
-      for (let gx = 40; gx < canvas.width; gx += 40) {
-        ctx.beginPath();
-        ctx.moveTo(gx, 0);
-        ctx.lineTo(gx, canvas.height);
-        ctx.stroke();
-      }
-      for (let gy = 40; gy < canvas.height; gy += 40) {
-        ctx.beginPath();
-        ctx.moveTo(0, gy);
-        ctx.lineTo(canvas.width, gy);
-        ctx.stroke();
-      }
+      const scaleX = w / 640;
+      const scaleY = h / 320;
 
-      // Draw tracks with vapor diffusion halo
       const updated: ChamberTrack[] = [];
       for (const tr of tracksRef.current) {
         const nextProgress = Math.min(1, tr.progress + (reduceMotion ? 1 : 0.075));
@@ -272,42 +277,26 @@ export const CloudChamberSimulator: React.FC = () => {
 
         const drawPath = (pts: { x: number; y: number }[], strokeCol: string) => {
           const maxIdx = Math.max(2, Math.floor(pts.length * nextProgress));
-          ctx.save();
-          ctx.globalAlpha = nextAlpha;
-          // Vapor glow outer aura
-          ctx.strokeStyle = strokeCol;
-          ctx.lineWidth = tr.width + 4;
-          ctx.lineCap = 'round';
-          ctx.lineJoin = 'round';
-          ctx.globalAlpha = nextAlpha * 0.28;
-          ctx.beginPath();
-          ctx.moveTo(pts[0].x, pts[0].y);
-          for (let i = 1; i < maxIdx; i++) ctx.lineTo(pts[i].x, pts[i].y);
-          ctx.stroke();
-
-          // Bright condensation core
-          ctx.globalAlpha = nextAlpha;
-          ctx.strokeStyle = '#FFFFFF';
-          ctx.lineWidth = Math.max(1.2, tr.width * 0.55);
-          ctx.beginPath();
-          ctx.moveTo(pts[0].x, pts[0].y);
-          for (let i = 1; i < maxIdx; i++) ctx.lineTo(pts[i].x, pts[i].y);
-          ctx.stroke();
-          ctx.restore();
+          const sliced = pts.slice(0, maxIdx).map((p) => ({ x: p.x * scaleX, y: p.y * scaleY }));
+          drawPhosphorCurve(ctx, sliced, strokeCol, Math.max(1.2, tr.width * 0.48), nextAlpha);
+          const head = sliced[sliced.length - 1];
+          if (head && nextProgress < 0.99) {
+            drawAdditiveGlowDot(ctx, head.x, head.y, 10, '255, 255, 255', nextAlpha);
+          }
         };
 
-        // If pair production, draw faint dashed incoming photon line first
         if (tr.kind === 'pair' && tr.points.length > 0) {
           ctx.save();
-          ctx.globalAlpha = nextAlpha * 0.5;
+          ctx.globalAlpha = nextAlpha * 0.55;
           ctx.strokeStyle = '#FACC15';
           ctx.setLineDash([4, 6]);
           ctx.lineWidth = 1.5;
           ctx.beginPath();
-          ctx.moveTo(10, tr.points[0].y);
-          ctx.lineTo(tr.points[0].x, tr.points[0].y);
+          ctx.moveTo(10, tr.points[0].y * scaleY);
+          ctx.lineTo(tr.points[0].x * scaleX, tr.points[0].y * scaleY);
           ctx.stroke();
           ctx.restore();
+          drawAdditiveGlowDot(ctx, tr.points[0].x * scaleX, tr.points[0].y * scaleY, 12, '250, 204, 21', nextAlpha);
         }
 
         drawPath(tr.points, tr.color);
@@ -318,11 +307,12 @@ export const CloudChamberSimulator: React.FC = () => {
         updated.push({ ...tr, progress: nextProgress, alpha: nextAlpha });
       }
       tracksRef.current = updated;
-
-      raf = requestAnimationFrame(render);
     };
     raf = requestAnimationFrame(render);
-    return () => cancelAnimationFrame(raf);
+    return () => {
+      cancelAnimationFrame(raf);
+      cleanupVis();
+    };
   }, [reduceMotion]);
 
   const currentRadiusMeters = calculateCyclotronRadiusMeters(

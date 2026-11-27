@@ -3,6 +3,11 @@
 import React, { useEffect, useRef, useState } from 'react';
 import * as THREE from 'three';
 import { useGlobalStore } from '@/lib/store';
+import {
+  createPlasmaWaveShaderMaterial,
+  createThreeGlowTexture,
+  observeOffscreenVisibility,
+} from '@/lib/cernVisuals';
 import { Rotate3D } from 'lucide-react';
 
 interface StandardModel3DCanvasProps {
@@ -68,19 +73,27 @@ export const StandardModel3DCanvas: React.FC<StandardModel3DCanvasProps> = ({
     scene.add(pointLight);
 
     const disposables: Array<{ dispose: () => void }> = [];
+    const glowTex = createThreeGlowTexture(64);
+    if (glowTex) disposables.push(glowTex);
 
-    // Higgs Vacuum Field Coupling Grid (intensity scales with log-mass)
+    let isVisible = true;
+    const cleanupVis = observeOffscreenVisibility(container, (v) => {
+      isVisible = v;
+    });
+
+    // Higgs Vacuum Field Coupling Grid (GLSL luminous rings scaling with log-mass)
     const hasHiggs = interactions.includes('Higgs');
     const logMassNorm = massGev > 0.0001 ? Math.min(1.0, Math.max(0.15, (Math.log10(massGev) + 4) / 6.3)) : 0.0;
 
     const ringCount = hasHiggs ? 5 : 2;
     const higgsRings: THREE.Mesh[] = [];
     for (let i = 0; i < ringCount; i++) {
-      const rGeo = new THREE.TorusGeometry(1.1 + i * 0.45, 0.015, 8, 48);
+      const rGeo = new THREE.TorusGeometry(1.15 + i * 0.44, 0.018, 10, 64);
       const rMat = new THREE.MeshBasicMaterial({
-        color: hasHiggs ? 0xffe600 : 0x334155,
+        color: hasHiggs ? 0xffe600 : 0x38bdf8,
         transparent: true,
-        opacity: hasHiggs ? 0.18 + logMassNorm * 0.45 : 0.15,
+        opacity: hasHiggs ? 0.28 + logMassNorm * 0.55 : 0.2,
+        blending: THREE.AdditiveBlending,
       });
       const ring = new THREE.Mesh(rGeo, rMat);
       ring.rotation.x = Math.PI / 2;
@@ -89,9 +102,42 @@ export const StandardModel3DCanvas: React.FC<StandardModel3DCanvasProps> = ({
       disposables.push(rGeo, rMat);
     }
 
-    // Core Particle Quantum Geometry by Family
+    // Surrounding Quantum Vacuum Virtual Fluctuations Halo (glow sprites)
+    const qCloudCount = 72;
+    const qPos = new Float32Array(qCloudCount * 3);
+    for (let i = 0; i < qCloudCount; i++) {
+      const th = Math.random() * Math.PI * 2;
+      const ph = Math.acos(2 * Math.random() - 1);
+      const rr = 1.5 + Math.random() * 1.1;
+      qPos[i * 3] = rr * Math.sin(ph) * Math.cos(th);
+      qPos[i * 3 + 1] = rr * Math.sin(ph) * Math.sin(th);
+      qPos[i * 3 + 2] = rr * Math.cos(ph);
+    }
+    const qCloudGeo = new THREE.BufferGeometry();
+    qCloudGeo.setAttribute('position', new THREE.BufferAttribute(qPos, 3));
+    const qCloudMat = new THREE.PointsMaterial({
+      color: hasHiggs ? 0xffe600 : 0x00e5ff,
+      size: 0.18,
+      map: glowTex ?? undefined,
+      transparent: true,
+      opacity: 0.65,
+      blending: THREE.AdditiveBlending,
+      depthWrite: false,
+    });
+    const qCloud = new THREE.Points(qCloudGeo, qCloudMat);
+    scene.add(qCloud);
+    disposables.push(qCloudGeo, qCloudMat);
+
+    // Core Particle Quantum Geometry with GLSL Plasma Aura
     const coreGroup = new THREE.Group();
     scene.add(coreGroup);
+    const auraGeo = new THREE.SphereGeometry(1.08, 28, 20);
+    const auraMat = createPlasmaWaveShaderMaterial(
+      family === 'GAUGE_BOSON' ? 0xffe600 : 0x00e5ff,
+      family === 'QUARK' ? 0xff0055 : 0xa855f7
+    );
+    coreGroup.add(new THREE.Mesh(auraGeo, auraMat));
+    disposables.push(auraGeo, auraMat);
 
     if (family === 'QUARK' || family === 'HADRON') {
       // Three SU(3) RGB color-charged sub-nodes orbiting inside strong gluon flux knot
@@ -210,6 +256,7 @@ export const StandardModel3DCanvas: React.FC<StandardModel3DCanvasProps> = ({
       renderer.setSize(nw, nh);
       camera.aspect = nw / nh;
       camera.updateProjectionMatrix();
+      renderer.render(scene, camera);
     });
     ro.observe(container);
 
@@ -217,12 +264,14 @@ export const StandardModel3DCanvas: React.FC<StandardModel3DCanvasProps> = ({
     let phase = 0;
     const animate = () => {
       animId = requestAnimationFrame(animate);
+      if (!isVisible) return;
       if (!reduceRef.current) {
         // Heavier particles oscillate faster in Compton/Yukawa quantum phase
         const omega = 0.018 + logMassNorm * 0.04;
         phase += omega;
         coreGroup.rotation.y += 0.012 + logMassNorm * 0.025;
         coreGroup.rotation.x = Math.sin(phase * 0.6) * 0.3;
+        qCloud.rotation.y -= 0.004;
 
         higgsRings.forEach((ring, i) => {
           ring.rotation.z = phase * (i % 2 === 0 ? 0.5 : -0.4);
@@ -230,6 +279,9 @@ export const StandardModel3DCanvas: React.FC<StandardModel3DCanvasProps> = ({
           ring.scale.set(s, s, 1);
         });
       }
+
+      auraMat.uniforms.uTime.value = phase * 1.5;
+      auraMat.uniforms.uIntensity.value = 0.45 + logMassNorm * 0.55;
 
       const dist = 5.4;
       camera.position.x = dist * Math.cos(camRef.current.elevation) * Math.sin(camRef.current.azimuth);
@@ -243,6 +295,7 @@ export const StandardModel3DCanvas: React.FC<StandardModel3DCanvasProps> = ({
 
     return () => {
       cancelAnimationFrame(animId);
+      cleanupVis();
       ro.disconnect();
       domEl.removeEventListener('pointerdown', onDown);
       window.removeEventListener('pointermove', onMove);

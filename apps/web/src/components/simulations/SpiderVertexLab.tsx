@@ -6,6 +6,13 @@ import { FidelityBadge } from '@/components/provenance/FidelityBadge';
 import { Eli5Card } from '@/components/ui/Eli5Card';
 import { MathFormula } from '@/components/ui/MathFormula';
 import { useGlobalStore } from '@/lib/store';
+import {
+  drawAdditiveGlowDot,
+  drawCernGridBackdrop,
+  drawPhosphorCurve,
+  observeOffscreenVisibility,
+  setupHiDpiCanvas,
+} from '@/lib/cernVisuals';
 import { Activity, Play, Pause } from 'lucide-react';
 
 export const SpiderVertexLab: React.FC = () => {
@@ -28,112 +35,130 @@ export const SpiderVertexLab: React.FC = () => {
   useEffect(() => {
     const canvas = canvasRef.current;
     if (!canvas) return;
-    const ctx = canvas.getContext('2d');
-    if (!ctx) return;
+    let isVisible = true;
+    const cleanupVis = observeOffscreenVisibility(canvas, (v) => {
+      isVisible = v;
+    });
     let animId = 0;
 
     const render = () => {
-      if (isPlaying && !reduceMotion) progRef.current = (progRef.current + 0.016) % 1;
+      if (isPlaying && !reduceMotion && isVisible) progRef.current = (progRef.current + 0.015) % 1;
+      const vp = setupHiDpiCanvas(canvas, 580, 260);
+      if (!vp || !isVisible) {
+        if (isPlaying && !reduceMotion) animId = requestAnimationFrame(render);
+        return;
+      }
+      const { ctx, width: w, height: h } = vp;
       const prog = reduceMotion ? 0.92 : progRef.current;
-      const w = canvas.width;
-      const h = canvas.height;
       const ipX = 48;
       const cy = h / 2;
 
-      ctx.fillStyle = '#07040F';
-      ctx.fillRect(0, 0, w, h);
+      drawCernGridBackdrop(ctx, w, h, {
+        accentColor: 'rgba(192, 132, 252, 0.08)',
+        bgInner: '#120826',
+        bgOuter: '#04030A',
+        gridStep: 24,
+        showScanlines: true,
+        showCrosshair: false,
+      });
 
-      // Concentric / Radial Detector Shells (0..14m span -> x = 48..540)
-      const scalePx = (w - 80) / 14; // px per meter
+      // Radial ATLAS/CMS/VELO Detector Shells (0..14m span)
+      const scalePx = (w - 82) / 14;
       const shells = [
-        { rStart: 0, rEnd: 1.2, label: 'Pixel Tracker', col: 'rgba(0, 229, 255, 0.14)', border: '#00E5FF' },
-        { rStart: 1.2, rEnd: 3.8, label: 'ECAL / HCAL', col: 'rgba(255, 230, 0, 0.10)', border: '#FFE600' },
-        { rStart: 3.8, rEnd: 12.0, label: 'Muon Spectrometer (4–12 m)', col: 'rgba(255, 0, 85, 0.10)', border: '#FF0055' },
+        { rStart: 0, rEnd: 1.2, label: 'Silicon VELO', col: 'rgba(0, 229, 255, 0.09)', border: '#00E5FF' },
+        { rStart: 1.2, rEnd: 3.8, label: 'ECAL / HCAL', col: 'rgba(255, 230, 0, 0.07)', border: '#FFE600' },
+        { rStart: 3.8, rEnd: 12.0, label: 'Muon Spectrometer (4–12 m)', col: 'rgba(255, 0, 85, 0.07)', border: '#FF0055' },
       ];
 
       shells.forEach((sh) => {
         const sx = ipX + sh.rStart * scalePx;
         const sw = (sh.rEnd - sh.rStart) * scalePx;
         ctx.fillStyle = sh.col;
-        ctx.fillRect(sx, 20, sw, h - 48);
+        ctx.fillRect(sx, 22, sw, h - 50);
         ctx.strokeStyle = sh.border;
-        ctx.lineWidth = 1.5;
-        ctx.strokeRect(sx, 20, sw, h - 48);
+        ctx.globalAlpha = 0.55;
+        ctx.lineWidth = 1.25;
+        ctx.strokeRect(sx, 22, sw, h - 50);
+        ctx.globalAlpha = 1;
         ctx.fillStyle = sh.border;
         ctx.font = 'bold 9px monospace';
-        ctx.fillText(sh.label, sx + 4, h - 12);
+        ctx.fillText(sh.label, sx + 5, h - 12);
       });
 
-      // Invisible LLP flight up to decay point
-      const vertexX = Math.min(w - 60, ipX + decay.boostedDecayLengthM * scalePx);
+      // Primary Vertex background prompt jets
+      for (let p = -2; p <= 2; p++) {
+        if (p === 0) continue;
+        drawPhosphorCurve(
+          ctx,
+          [{ x: ipX, y: cy }, { x: ipX + 42, y: cy + p * 26 }],
+          '#38BDF8',
+          1.0,
+          0.35
+        );
+      }
+
+      // Neutral Invisible Long-Lived Particle flight vector
+      const vertexX = Math.min(w - 64, ipX + decay.boostedDecayLengthM * scalePx);
       const flightFrac = Math.min(1, prog / 0.55);
       const currX = ipX + (vertexX - ipX) * flightFrac;
 
       ctx.save();
-      ctx.setLineDash([7, 5]);
+      ctx.setLineDash([6, 5]);
       ctx.strokeStyle = '#C084FC';
-      ctx.lineWidth = 2.5;
+      ctx.lineWidth = 2.0;
       ctx.beginPath();
       ctx.moveTo(ipX, cy);
       ctx.lineTo(currX, cy);
       ctx.stroke();
       ctx.restore();
 
-      // IP glow
-      ctx.fillStyle = '#FFFFFF';
-      ctx.beginPath();
-      ctx.arc(ipX, cy, 5, 0, Math.PI * 2);
-      ctx.fill();
+      // Primary Interaction Point Glow + Head-end LLP pulse
+      drawAdditiveGlowDot(ctx, ipX, cy, 16, '0, 229, 255', 0.9);
+      drawAdditiveGlowDot(ctx, currX, cy, 10, '192, 132, 252', 0.85);
 
-      // Secondary Displaced Vertex Glitch Burst + Curved Daughter Tracks
+      // Displaced Secondary Vertex Chromatic Explosion + Curving Daughter Tracks
       if (prog >= 0.55) {
         const burstProg = (prog - 0.55) / 0.45;
-        // Spider-Verse Chromatic Aberration Glitch rings
         const jitter = isPlaying && !reduceMotion ? Math.sin(prog * 30) * 2.5 : 2;
-        ctx.fillStyle = 'rgba(0, 229, 255, 0.55)';
-        ctx.beginPath();
-        ctx.arc(vertexX + jitter + 2, cy + 1, 9, 0, Math.PI * 2);
-        ctx.fill();
+        drawAdditiveGlowDot(ctx, vertexX + jitter + 2, cy + 1, 20, '0, 229, 255', 0.65);
+        drawAdditiveGlowDot(ctx, vertexX - jitter - 2, cy - 1, 20, '255, 0, 85', 0.65);
+        drawAdditiveGlowDot(ctx, vertexX, cy, 14, '255, 230, 0', 1.0);
 
-        ctx.fillStyle = 'rgba(255, 0, 85, 0.65)';
+        // Covariance vertex crosshair
+        ctx.strokeStyle = 'rgba(255, 230, 0, 0.7)';
+        ctx.lineWidth = 1;
         ctx.beginPath();
-        ctx.arc(vertexX - jitter - 2, cy - 1, 9, 0, Math.PI * 2);
-        ctx.fill();
+        ctx.arc(vertexX, cy, 12 + burstProg * 14, 0, Math.PI * 2);
+        ctx.stroke();
 
-        ctx.fillStyle = '#FFE600';
-        ctx.beginPath();
-        ctx.arc(vertexX, cy, 5.5, 0, Math.PI * 2);
-        ctx.fill();
-
-        // Daughter lepton tracks
-        const trackLen = Math.min(95, 25 + burstProg * 75);
+        const trackLen = Math.min(105, 25 + burstProg * 80);
         [
           { dy: -1, col: '#00FF66' },
           { dy: 1, col: '#FF0055' },
         ].forEach((tr) => {
-          ctx.strokeStyle = tr.col;
-          ctx.lineWidth = 2.8;
-          ctx.beginPath();
-          ctx.moveTo(vertexX, cy);
-          ctx.quadraticCurveTo(
-            vertexX + trackLen * 0.5,
-            cy + tr.dy * trackLen * 0.25,
-            Math.min(w - 10, vertexX + trackLen),
-            cy + tr.dy * trackLen * 0.65
-          );
-          ctx.stroke();
+          const tPts: { x: number; y: number }[] = [];
+          for (let s = 0; s <= 18; s++) {
+            const u = s / 18;
+            const px = Math.min(w - 10, vertexX + u * trackLen);
+            const py = cy + tr.dy * trackLen * (0.28 * u + 0.42 * u * u);
+            tPts.push({ x: px, y: py });
+          }
+          drawPhosphorCurve(ctx, tPts, tr.col, 2.0, 0.95);
         });
       }
 
-      ctx.fillStyle = '#CBD5E1';
+      ctx.fillStyle = '#E2E8F0';
       ctx.font = 'bold 10px monospace';
-      ctx.fillText(`L_lab = ${decay.boostedDecayLengthM.toFixed(2)} m | Dashed: Invisible Neutral LLP`, 52, 14);
+      ctx.fillText(`L_lab = ${decay.boostedDecayLengthM.toFixed(2)} m · DISPLACED VERTEX RECONSTRUCTION`, 48, 15);
 
       if (isPlaying && !reduceMotion) animId = requestAnimationFrame(render);
     };
 
     render();
-    return () => cancelAnimationFrame(animId);
+    return () => {
+      cancelAnimationFrame(animId);
+      cleanupVis();
+    };
   }, [decay, isPlaying, reduceMotion]);
 
   return (

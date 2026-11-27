@@ -6,6 +6,13 @@ import { FidelityBadge } from '@/components/provenance/FidelityBadge';
 import { Eli5Card } from '@/components/ui/Eli5Card';
 import { MathFormula } from '@/components/ui/MathFormula';
 import { useGlobalStore } from '@/lib/store';
+import {
+  drawAdditiveGlowDot,
+  drawCernGridBackdrop,
+  drawPhosphorCurve,
+  observeOffscreenVisibility,
+  setupHiDpiCanvas,
+} from '@/lib/cernVisuals';
 import { Sparkles, Play, Pause, RefreshCw } from 'lucide-react';
 
 export const BifrostHeavyIonSimulator: React.FC = () => {
@@ -38,61 +45,75 @@ export const BifrostHeavyIonSimulator: React.FC = () => {
   useEffect(() => {
     const canvas = canvasRef.current;
     if (!canvas) return;
-    const ctx = canvas.getContext('2d');
-    if (!ctx) return;
+    let isVisible = true;
+    const cleanupVis = observeOffscreenVisibility(canvas, (v) => {
+      isVisible = v;
+    });
     let animId = 0;
 
     const render = () => {
-      if (isPlaying && !reduceMotion) {
-        phaseRef.current = (phaseRef.current + 0.014) % 1;
+      if (isPlaying && !reduceMotion && isVisible) {
+        phaseRef.current = (phaseRef.current + 0.013) % 1;
       }
+      const vp = setupHiDpiCanvas(canvas, 560, 270);
+      if (!vp || !isVisible) {
+        if (isPlaying && !reduceMotion) animId = requestAnimationFrame(render);
+        return;
+      }
+      const { ctx, width: w, height: h } = vp;
       const prog = reduceMotion ? 0.85 : phaseRef.current;
-      const w = canvas.width;
-      const h = canvas.height;
       const cx = w / 2;
       const cy = h / 2;
 
-      ctx.fillStyle = '#05060E';
-      ctx.fillRect(0, 0, w, h);
-
-      // Central fireball QGP glow
-      const fireballR = 14 + (100 - centralityPct) * 0.25;
-      const grad = ctx.createRadialGradient(cx, cy, 2, cx, cy, fireballR * 2.2);
-      grad.addColorStop(0, 'rgba(255, 255, 255, 0.9)');
-      grad.addColorStop(0.4, 'rgba(255, 176, 0, 0.5)');
-      grad.addColorStop(1, 'rgba(0, 229, 255, 0)');
-      ctx.fillStyle = grad;
-      ctx.beginPath();
-      ctx.arc(cx, cy, fireballR * 2.2, 0, Math.PI * 2);
-      ctx.fill();
-
-      // Concentric ALICE TPC ring outline
-      ctx.strokeStyle = 'rgba(148,163,184,0.22)';
-      ctx.lineWidth = 1.5;
-      ctx.beginPath();
-      ctx.arc(cx, cy, 108, 0, Math.PI * 2);
-      ctx.stroke();
-
-      tracks.forEach((tr) => {
-        const dist = prog * 120 * Math.min(1.15, tr.speed);
-        const ex = cx + Math.cos(tr.angle) * dist;
-        const ey = cy + Math.sin(tr.angle) * dist;
-        ctx.strokeStyle = `hsl(${tr.hue}, 92%, 62%)`;
-        ctx.lineWidth = 1.8;
-        ctx.beginPath();
-        ctx.moveTo(cx, cy);
-        ctx.lineTo(ex, ey);
-        ctx.stroke();
-
-        ctx.fillStyle = `hsl(${tr.hue}, 98%, 75%)`;
-        ctx.beginPath();
-        ctx.arc(ex, ey, 2.4, 0, Math.PI * 2);
-        ctx.fill();
+      drawCernGridBackdrop(ctx, w, h, {
+        accentColor: 'rgba(255, 176, 0, 0.08)',
+        bgInner: '#130D1E',
+        bgOuter: '#03050C',
+        gridStep: 24,
+        showScanlines: true,
+        showCrosshair: true,
       });
 
-      ctx.fillStyle = '#CBD5E1';
+      // ALICE Time Projection Chamber (TPC) concentric pad-row readout rings
+      [42, 76, 110].forEach((r, idx) => {
+        ctx.strokeStyle = idx === 2 ? 'rgba(56, 189, 248, 0.35)' : 'rgba(148, 163, 184, 0.16)';
+        ctx.lineWidth = idx === 2 ? 1.8 : 1;
+        ctx.beginPath();
+        ctx.arc(cx, cy, r, 0, Math.PI * 2);
+        ctx.stroke();
+      });
+
+      // Central QGP Fireball Additive Core
+      const fireballR = 14 + (100 - centralityPct) * 0.25;
+      drawAdditiveGlowDot(ctx, cx, cy, fireballR * 2.3, '255, 176, 0', 0.85);
+      drawAdditiveGlowDot(ctx, cx, cy, fireballR * 1.1, '0, 229, 255', 0.6);
+
+      // Prismatic Curved ALICE TPC Tracks conserving Σ p_T = 0
+      tracks.forEach((tr) => {
+        const maxDist = 114 * Math.min(1.18, tr.speed);
+        const dist = prog * maxDist;
+        const curveSign = tr.angle % 2 > 1 ? 1 : -1;
+        const curvature = (0.14 / Math.max(0.4, tr.speed)) * curveSign;
+        const pts: { x: number; y: number }[] = [];
+        for (let s = 0; s <= 10; s++) {
+          const u = s / 10;
+          const r = dist * u;
+          const a = tr.angle + curvature * u;
+          pts.push({ x: cx + Math.cos(a) * r, y: cy + Math.sin(a) * r });
+        }
+        const col = `hsl(${tr.hue}, 95%, 62%)`;
+        drawPhosphorCurve(ctx, pts, col, 1.35, 0.88);
+        const tip = pts[pts.length - 1];
+        drawAdditiveGlowDot(ctx, tip.x, tip.y, 6, '255, 255, 255', 0.55);
+      });
+
+      ctx.fillStyle = '#E2E8F0';
       ctx.font = 'bold 10px monospace';
-      ctx.fillText(`Tracks: ${tracks.length} | Momentum Balance Σp_T = 0.00 GeV/c | √s_NN = ${energyTev.toFixed(2)} TeV`, 12, h - 10);
+      ctx.fillText(
+        `ALICE TPC TRACKS: ${tracks.length} · Σp_T = 0.00 GeV/c · √s_NN = ${energyTev.toFixed(2)} TeV`,
+        14,
+        h - 10
+      );
 
       if (isPlaying && !reduceMotion) {
         animId = requestAnimationFrame(render);
@@ -100,7 +121,10 @@ export const BifrostHeavyIonSimulator: React.FC = () => {
     };
 
     render();
-    return () => cancelAnimationFrame(animId);
+    return () => {
+      cancelAnimationFrame(animId);
+      cleanupVis();
+    };
   }, [tracks, centralityPct, energyTev, isPlaying, reduceMotion]);
 
   return (

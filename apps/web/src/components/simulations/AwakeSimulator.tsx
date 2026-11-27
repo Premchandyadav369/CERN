@@ -3,6 +3,14 @@
 import React, { useState, useEffect, useRef, useMemo } from 'react';
 import { FidelityBadge } from '@/components/provenance/FidelityBadge';
 import { Eli5Card } from '@/components/ui/Eli5Card';
+import { useGlobalStore } from '@/lib/store';
+import {
+  drawAdditiveGlowDot,
+  drawCernGridBackdrop,
+  drawPhosphorCurve,
+  observeOffscreenVisibility,
+  setupHiDpiCanvas,
+} from '@/lib/cernVisuals';
 import {
   Zap,
   Sliders,
@@ -122,24 +130,27 @@ export function AwakeSimulator() {
     setCurrentEnergyMeV(18.8);
   };
 
+  const reduceMotion = useGlobalStore((s) => s.reduceMotion);
+
   // Canvas Rendering & Simulation Loop: 60fps Wakefield & Witness Bunch Acceleration
   useEffect(() => {
     const canvas = canvasRef.current;
     if (!canvas) return;
-    const ctx = canvas.getContext('2d');
-    if (!ctx) return;
+    let isVisible = true;
+    const cleanupVis = observeOffscreenVisibility(canvas, (v) => {
+      isVisible = v;
+    });
 
     let renderId: number;
 
     const render = () => {
-      if (isPlaying) {
+      if (isPlaying && !reduceMotion && isVisible) {
         animTimeRef.current += 0.05;
         witnessZRef.current += 0.08;
         if (witnessZRef.current > 10.0) {
           witnessZRef.current = 0;
         }
 
-        // Throttle React state updates to avoid component re-render overhead (~8 Hz)
         frameCountRef.current++;
         if (frameCountRef.current % 8 === 0) {
           const currentZ = witnessZRef.current;
@@ -154,6 +165,13 @@ export function AwakeSimulator() {
         }
       }
 
+      const vp = setupHiDpiCanvas(canvas, 620, 195);
+      if (!vp || !isVisible) {
+        if (isPlaying && !reduceMotion) renderId = requestAnimationFrame(render);
+        return;
+      }
+      const { ctx, width: w, height: h } = vp;
+
       const activeZ = witnessZRef.current;
       const liveE =
         witnessInitialEnergyMeV +
@@ -162,109 +180,71 @@ export function AwakeSimulator() {
           physics.effectiveGradient_GV_m * 1000 * activeZ
         );
 
-      ctx.clearRect(0, 0, canvas.width, canvas.height);
-      const w = canvas.width;
-      const h = canvas.height;
+      drawCernGridBackdrop(ctx, w, h, {
+        accentColor: 'rgba(147, 51, 234, 0.09)',
+        bgInner: '#110B28',
+        bgOuter: '#03050B',
+        gridStep: 24,
+        showScanlines: true,
+      });
 
-      // 1. Background Cryogenic Vapor Cell Enclosure
-      ctx.fillStyle = '#060B14';
-      ctx.fillRect(0, 0, w, h);
-
-      // Rubidium plasma column (horizontal tube from x = 40 to x = w - 70)
       const cellStartX = 40;
-      const cellEndX = w - 80;
+      const cellEndX = w - 82;
       const cellW = cellEndX - cellStartX;
-      const cellCenterY = 90;
-      const cellHalfH = 38;
+      const cellCenterY = h * 0.48;
+      const cellHalfH = 40;
 
-      // Outer cell vacuum jacket
-      ctx.fillStyle = '#0F1A2E';
+      // Rubidium Vapor Cell Vacuum Enclosure
+      ctx.fillStyle = 'rgba(15, 26, 46, 0.85)';
       ctx.strokeStyle = '#00E5FF';
       ctx.lineWidth = 2;
       ctx.fillRect(cellStartX, cellCenterY - cellHalfH, cellW, cellHalfH * 2);
       ctx.strokeRect(cellStartX, cellCenterY - cellHalfH, cellW, cellHalfH * 2);
 
-      // Plasma ionization glow (rubidium vapor laser-ionized)
+      // Laser-ionized rubidium plasma core gradient
       const plasmaGrad = ctx.createLinearGradient(0, cellCenterY - cellHalfH, 0, cellCenterY + cellHalfH);
-      plasmaGrad.addColorStop(0, 'rgba(147, 51, 234, 0.15)');
-      plasmaGrad.addColorStop(0.5, 'rgba(0, 229, 255, 0.25)');
-      plasmaGrad.addColorStop(1, 'rgba(147, 51, 234, 0.15)');
+      plasmaGrad.addColorStop(0, 'rgba(147, 51, 234, 0.2)');
+      plasmaGrad.addColorStop(0.5, 'rgba(0, 229, 255, 0.34)');
+      plasmaGrad.addColorStop(1, 'rgba(147, 51, 234, 0.2)');
       ctx.fillStyle = plasmaGrad;
       ctx.fillRect(cellStartX + 2, cellCenterY - cellHalfH + 2, cellW - 4, cellHalfH * 2 - 4);
 
-      // 2. Self-Modulation Proton Microbunches (Entering from Left)
       const t = animTimeRef.current;
-      const waveK = (2 * Math.PI) / 35; // Visual wave spatial frequency
+      const waveK = (2 * Math.PI) / 36;
 
-      // Draw modulated proton train (yellow glowing dots)
-      ctx.fillStyle = '#FFE600';
+      // Self-Modulation Proton Microbunch Train with additive volumetric bloom
       const numMicrobunches = 18;
       for (let i = 0; i < numMicrobunches; i++) {
-        const bunchX = cellStartX + ((i * 35 - t * 40) % cellW);
-        if (bunchX >= cellStartX && bunchX <= cellEndX) {
-          // Pinching effect: bunch envelope narrows along the cell
-          const progress = (bunchX - cellStartX) / cellW;
-          const bunchRad = 4 - progress * 1.5;
-          ctx.beginPath();
-          ctx.arc(bunchX, cellCenterY, bunchRad, 0, Math.PI * 2);
-          ctx.fill();
-
-          // Speed blur
-          ctx.strokeStyle = 'rgba(255, 230, 0, 0.4)';
-          ctx.lineWidth = 1;
-          ctx.beginPath();
-          ctx.moveTo(bunchX - 10, cellCenterY);
-          ctx.lineTo(bunchX + 6, cellCenterY);
-          ctx.stroke();
-        }
+        const bunchX = cellStartX + ((i * 36 - t * 38) % cellW + cellW) % cellW;
+        const progress = (bunchX - cellStartX) / cellW;
+        const bunchRad = Math.max(4, 10 - progress * 3);
+        drawAdditiveGlowDot(ctx, bunchX, cellCenterY, bunchRad, '255, 230, 0', 0.88);
       }
 
-      // 3. Plasma Density Perturbation & Wakefield Undulation Waves
-      ctx.strokeStyle = '#00E5FF';
-      ctx.lineWidth = 2;
-      ctx.beginPath();
-      for (let x = cellStartX; x <= cellEndX; x += 3) {
+      // Dual-wave Phosphor Plasma Wakefield Boundaries
+      const upperPts: { x: number; y: number }[] = [];
+      const lowerPts: { x: number; y: number }[] = [];
+      for (let x = cellStartX; x <= cellEndX; x += 4) {
         const progress = (x - cellStartX) / cellW;
-        // SMI wave amplitude grows along the cell, then saturates
-        const amp = Math.min(22, progress * 26) * (physics.peakAcceleratingField_GV_m / 2.5);
-        const y = cellCenterY + Math.sin(x * waveK - t * 4) * amp;
-        if (x === cellStartX) ctx.moveTo(x, y);
-        else ctx.lineTo(x, y);
+        const amp = Math.min(24, progress * 28) * (physics.peakAcceleratingField_GV_m / 2.5);
+        const osc = Math.sin(x * waveK - t * 4) * amp;
+        upperPts.push({ x, y: cellCenterY + osc });
+        lowerPts.push({ x, y: cellCenterY - osc });
       }
-      ctx.stroke();
+      drawPhosphorCurve(ctx, upperPts, '#00E5FF', 1.7, 0.92);
+      drawPhosphorCurve(ctx, lowerPts, '#FF0055', 1.7, 0.92);
 
-      // Mirror wave (lower boundary)
-      ctx.strokeStyle = '#FF0055';
-      ctx.beginPath();
-      for (let x = cellStartX; x <= cellEndX; x += 3) {
-        const progress = (x - cellStartX) / cellW;
-        const amp = Math.min(22, progress * 26) * (physics.peakAcceleratingField_GV_m / 2.5);
-        const y = cellCenterY - Math.sin(x * waveK - t * 4) * amp;
-        if (x === cellStartX) ctx.moveTo(x, y);
-        else ctx.lineTo(x, y);
-      }
-      ctx.stroke();
-
-      // 4. Injected Witness Electron Bunch
+      // Injected Witness Electron Bunch surfing wake
       const witnessX = cellStartX + (activeZ / 10.0) * cellW;
       if (witnessX >= cellStartX && witnessX <= cellEndX) {
-        // Electron bunch (bright electric blue with halo)
-        ctx.fillStyle = '#00FF66';
-        ctx.shadowColor = '#00FF66';
-        ctx.shadowBlur = 10;
-        ctx.beginPath();
-        ctx.arc(witnessX, cellCenterY, 5, 0, Math.PI * 2);
-        ctx.fill();
-        ctx.shadowBlur = 0;
-
-        // Label above bunch
+        drawAdditiveGlowDot(ctx, witnessX, cellCenterY, 16, '0, 255, 102', 1.0);
         ctx.fillStyle = '#FFFFFF';
         ctx.font = 'bold 9px monospace';
         ctx.textAlign = 'center';
         ctx.fillText(`e⁻ [${(liveE / 1000).toFixed(2)} GeV]`, witnessX, cellCenterY - 14);
       }
 
-      // 5. Downstream Electron Spectrometer Dipole (Right Exit)
+      // Downstream Electron Spectrometer Dipole
       const specX = cellEndX + 10;
       const specW = 45;
       const specH = 60;
@@ -280,28 +260,28 @@ export function AwakeSimulator() {
       ctx.fillText('DIPOLE', specX + specW / 2, cellCenterY - 8);
       ctx.fillText('B-FIELD', specX + specW / 2, cellCenterY + 4);
 
-      // Trajectory bending into spectrometer screen:
-      // Higher energy bends LESS (rigid momentum p = q*B*rho)
       const deflectionY =
         liveE > 50
           ? cellCenterY + Math.min(25, 400 / Math.max(10, liveE))
           : cellCenterY + 28;
 
-      ctx.strokeStyle = '#00FF66';
-      ctx.lineWidth = 1.5;
-      ctx.setLineDash([2, 2]);
-      ctx.beginPath();
-      ctx.moveTo(cellEndX, cellCenterY);
-      ctx.quadraticCurveTo(specX + specW / 2, cellCenterY, specX + specW + 12, deflectionY);
-      ctx.stroke();
-      ctx.setLineDash([]);
+      drawPhosphorCurve(
+        ctx,
+        [
+          { x: cellEndX, y: cellCenterY },
+          { x: specX + specW * 0.5, y: cellCenterY + (deflectionY - cellCenterY) * 0.35 },
+          { x: specX + specW + 14, y: deflectionY },
+        ],
+        '#00FF66',
+        1.5,
+        0.95
+      );
+      drawAdditiveGlowDot(ctx, specX + specW + 14, deflectionY, 11, '0, 255, 102', 0.95);
 
-      // Phosphor detection screen
       ctx.fillStyle = '#00FF66';
       ctx.fillRect(specX + specW + 12, cellCenterY - 30, 4, 60);
 
-      // 6. Longitudinal Scale Marks (0 to 10 meters)
-      ctx.fillStyle = '#64748B';
+      ctx.fillStyle = '#94A3B8';
       ctx.font = '9px monospace';
       ctx.textAlign = 'center';
       for (let m = 0; m <= 10; m += 2) {
@@ -310,12 +290,17 @@ export function AwakeSimulator() {
         ctx.fillRect(mx - 0.5, cellCenterY + cellHalfH, 1, 4);
       }
 
-      renderId = requestAnimationFrame(render);
+      if (isPlaying && !reduceMotion) {
+        renderId = requestAnimationFrame(render);
+      }
     };
 
     renderId = requestAnimationFrame(render);
-    return () => cancelAnimationFrame(renderId);
-  }, [isPlaying, physics, witnessInitialEnergyMeV]);
+    return () => {
+      cancelAnimationFrame(renderId);
+      cleanupVis();
+    };
+  }, [isPlaying, reduceMotion, physics, witnessInitialEnergyMeV]);
 
   // Export JSON Scenario
   const exportJson = () => {

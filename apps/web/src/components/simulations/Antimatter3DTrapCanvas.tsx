@@ -3,6 +3,11 @@
 import React, { useEffect, useRef, useState } from 'react';
 import * as THREE from 'three';
 import { useGlobalStore } from '@/lib/store';
+import {
+  createPlasmaWaveShaderMaterial,
+  createThreeGlowTexture,
+  observeOffscreenVisibility,
+} from '@/lib/cernVisuals';
 import { Rotate3D } from 'lucide-react';
 
 interface Antimatter3DTrapCanvasProps {
@@ -72,23 +77,25 @@ export const Antimatter3DTrapCanvas: React.FC<Antimatter3DTrapCanvasProps> = ({
     scene.add(keyLight);
 
     const disposables: Array<{ dispose: () => void }> = [];
+    const glowTex = createThreeGlowTexture(64);
+    if (glowTex) disposables.push(glowTex);
 
-    // Vertical Penning-Malmberg Cryostat Cylinder Shell (transparent)
-    const wallGeo = new THREE.CylinderGeometry(1.15, 1.15, 4.4, 24, 1, true);
-    const wallMat = new THREE.MeshStandardMaterial({
-      color: 0x00e5ff,
-      wireframe: true,
-      transparent: true,
-      opacity: 0.22,
+    let isVisible = true;
+    const cleanupVis = observeOffscreenVisibility(container, (v) => {
+      isVisible = v;
     });
+
+    // Vertical Penning-Malmberg Cryostat Cylinder Shell with GLSL Magnetic Bottle Containment Aura
+    const wallGeo = new THREE.CylinderGeometry(1.15, 1.15, 4.4, 32, 4, true);
+    const wallMat = createPlasmaWaveShaderMaterial(0x00e5ff, 0xa855f7);
     scene.add(new THREE.Mesh(wallGeo, wallMat));
     disposables.push(wallGeo, wallMat);
 
     // Upper & Lower Mirror Magnetic Pinch Coils (Y = +1.45 and -1.45)
-    const coilGeo = new THREE.TorusGeometry(1.18, 0.08, 12, 36);
+    const coilGeo = new THREE.TorusGeometry(1.18, 0.08, 12, 48);
     coilGeo.rotateX(Math.PI / 2);
-    const topCoilMat = new THREE.MeshStandardMaterial({ color: 0x38bdf8, emissive: 0x0369a1 });
-    const botCoilMat = new THREE.MeshStandardMaterial({ color: 0xffe600, emissive: 0x854d0e });
+    const topCoilMat = new THREE.MeshStandardMaterial({ color: 0x38bdf8, emissive: 0x0369a1, metalness: 0.8 });
+    const botCoilMat = new THREE.MeshStandardMaterial({ color: 0xffe600, emissive: 0x854d0e, metalness: 0.8 });
     const topCoil = new THREE.Mesh(coilGeo, topCoilMat);
     const botCoil = new THREE.Mesh(coilGeo, botCoilMat);
     topCoil.position.y = 1.45;
@@ -97,7 +104,12 @@ export const Antimatter3DTrapCanvas: React.FC<Antimatter3DTrapCanvasProps> = ({
 
     // 8 Vertical Octupole Magnetic Bottle Bars
     const barGeo = new THREE.CylinderGeometry(0.03, 0.03, 3.2, 8);
-    const barMat = new THREE.MeshBasicMaterial({ color: 0x4c7dff, transparent: true, opacity: 0.65 });
+    const barMat = new THREE.MeshBasicMaterial({
+      color: 0x4c7dff,
+      transparent: true,
+      opacity: 0.65,
+      blending: THREE.AdditiveBlending,
+    });
     for (let i = 0; i < 8; i++) {
       const a = (i / 8) * Math.PI * 2;
       const bar = new THREE.Mesh(barGeo, barMat);
@@ -106,15 +118,24 @@ export const Antimatter3DTrapCanvas: React.FC<Antimatter3DTrapCanvasProps> = ({
     }
     disposables.push(coilGeo, topCoilMat, botCoilMat, barGeo, barMat);
 
-    // 24 Cold Antihydrogen Atoms Inside Trap
-    const atomGeo = new THREE.SphereGeometry(0.065, 10, 10);
-    const atomMat = new THREE.MeshBasicMaterial({ color: 0xff0055 });
-    const atoms: { mesh: THREE.Mesh; seed: number; dirSign: number }[] = [];
-    for (let i = 0; i < 24; i++) {
-      const m = new THREE.Mesh(atomGeo, atomMat);
-      scene.add(m);
-      atoms.push({ mesh: m, seed: i * 1.73, dirSign: i / 24 });
-    }
+    // 32 Cold Antihydrogen Atoms Inside Trap using soft additive glow sprites
+    const atomCount = 32;
+    const atomPos = new Float32Array(atomCount * 3);
+    const atomMeta = Array.from({ length: atomCount }, (_, i) => ({
+      seed: i * 1.73,
+      dirSign: i / atomCount,
+    }));
+    const atomGeo = new THREE.BufferGeometry();
+    atomGeo.setAttribute('position', new THREE.BufferAttribute(atomPos, 3));
+    const atomMat = new THREE.PointsMaterial({
+      color: 0xff0055,
+      size: 0.28,
+      map: glowTex ?? undefined,
+      transparent: true,
+      blending: THREE.AdditiveBlending,
+      depthWrite: false,
+    });
+    scene.add(new THREE.Points(atomGeo, atomMat));
     disposables.push(atomGeo, atomMat);
 
     const domEl = renderer.domElement;
@@ -144,6 +165,7 @@ export const Antimatter3DTrapCanvas: React.FC<Antimatter3DTrapCanvasProps> = ({
       renderer.setSize(nw, nh);
       camera.aspect = nw / nh;
       camera.updateProjectionMatrix();
+      renderer.render(scene, camera);
     });
     ro.observe(container);
 
@@ -151,6 +173,8 @@ export const Antimatter3DTrapCanvas: React.FC<Antimatter3DTrapCanvasProps> = ({
     let t = 0;
     const animate = () => {
       animId = requestAnimationFrame(animate);
+      if (!isVisible) return;
+
       const st = stateRef.current;
       if (!st.reduceMotion) {
         t += 0.045;
@@ -159,29 +183,35 @@ export const Antimatter3DTrapCanvas: React.FC<Antimatter3DTrapCanvasProps> = ({
         }
       }
 
+      wallMat.uniforms.uTime.value = t * 0.7;
+      const trapStrength = Math.max(0.1, 1 - st.rampProgress / 100);
+      wallMat.uniforms.uIntensity.value = 0.25 + trapStrength * 0.6;
+
       const dist = 6.6;
       camera.position.x = dist * Math.cos(camRef.current.elevation) * Math.sin(camRef.current.azimuth);
       camera.position.y = dist * Math.sin(camRef.current.elevation);
       camera.position.z = dist * Math.cos(camRef.current.elevation) * Math.cos(camRef.current.azimuth);
       camera.lookAt(0, 0, 0);
 
-      // Coil glow dims as ramp releases magnetic confinement
-      const trapStrength = Math.max(0.1, 1 - st.rampProgress / 100);
       topCoilMat.emissiveIntensity = trapStrength;
       botCoilMat.emissiveIntensity = trapStrength * (st.deltaB_uT >= 0 ? 1.2 : 0.7);
       barMat.opacity = 0.15 + trapStrength * 0.55;
 
       const jitterAmp = 0.08 + st.temperatureK * 0.12;
       const dropFrac = st.rampProgress / 100;
+      const posArr = atomGeo.attributes.position.array as Float32Array;
 
-      atoms.forEach((a) => {
+      atomMeta.forEach((a, idx) => {
         const rx = Math.sin(t * 2.1 + a.seed) * 0.45 * (1 + dropFrac * 0.6);
         const rz = Math.cos(t * 1.9 + a.seed * 1.3) * 0.45 * (1 + dropFrac * 0.6);
         const fallsDown = a.dirSign < st.fBottomTheory;
         const driftY = dropFrac > 0.05 ? (fallsDown ? -dropFrac * 1.95 : dropFrac * 1.95) : 0;
         const thermalY = Math.sin(t * 3.1 + a.seed * 0.7) * jitterAmp;
-        a.mesh.position.set(rx, Math.max(-2.0, Math.min(2.0, thermalY + driftY)), rz);
+        posArr[idx * 3] = rx;
+        posArr[idx * 3 + 1] = Math.max(-2.0, Math.min(2.0, thermalY + driftY));
+        posArr[idx * 3 + 2] = rz;
       });
+      atomGeo.attributes.position.needsUpdate = true;
 
       renderer.render(scene, camera);
     };
@@ -189,6 +219,7 @@ export const Antimatter3DTrapCanvas: React.FC<Antimatter3DTrapCanvasProps> = ({
 
     return () => {
       cancelAnimationFrame(animId);
+      cleanupVis();
       ro.disconnect();
       domEl.removeEventListener('pointerdown', onDown);
       window.removeEventListener('pointermove', onMove);

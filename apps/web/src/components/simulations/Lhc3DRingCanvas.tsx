@@ -3,6 +3,7 @@
 import React, { useEffect, useRef, useState } from 'react';
 import * as THREE from 'three';
 import { useGlobalStore } from '@/lib/store';
+import { createThreeGlowTexture, observeOffscreenVisibility } from '@/lib/cernVisuals';
 import { Rotate3D, Eye } from 'lucide-react';
 
 interface Lhc3DRingCanvasProps {
@@ -243,13 +244,22 @@ export const Lhc3DRingCanvas: React.FC<Lhc3DRingCanvasProps> = ({
         ipIdx,
       });
     }
+    const glowTex = createThreeGlowTexture(64);
+    let isVisible = true;
+    const cleanupVis = observeOffscreenVisibility(container, (v) => {
+      isVisible = v;
+    });
+
     const sparkGeo = new THREE.BufferGeometry();
     sparkGeo.setAttribute('position', new THREE.BufferAttribute(sparkPositions, 3));
     const sparkMat = new THREE.PointsMaterial({
       color: 0xffe600,
-      size: 0.14,
+      size: 0.32,
+      map: glowTex ?? undefined,
       transparent: true,
-      opacity: 0.9,
+      opacity: 0.95,
+      blending: THREE.AdditiveBlending,
+      depthWrite: false,
     });
     const sparkPoints = new THREE.Points(sparkGeo, sparkMat);
     scene.add(sparkPoints);
@@ -262,6 +272,7 @@ export const Lhc3DRingCanvas: React.FC<Lhc3DRingCanvasProps> = ({
       side: THREE.DoubleSide,
       transparent: true,
       opacity: 0.75,
+      blending: THREE.AdditiveBlending,
     });
     const shockRing1 = new THREE.Mesh(shockGeo, shockMat);
     const shockRing2 = new THREE.Mesh(shockGeo, shockMat);
@@ -278,6 +289,7 @@ export const Lhc3DRingCanvas: React.FC<Lhc3DRingCanvasProps> = ({
         camera.aspect = w / h;
         camera.updateProjectionMatrix();
         renderer.setSize(w, h);
+        renderer.render(scene, camera);
       }
     });
     resizeObs.observe(container);
@@ -289,6 +301,7 @@ export const Lhc3DRingCanvas: React.FC<Lhc3DRingCanvasProps> = ({
 
     const animate = () => {
       rafId = requestAnimationFrame(animate);
+      if (!isVisible) return;
       const { beamEnergyGev: eGev, bunches: nb, betaStarM: bStar, particleType: pType, isRunning: run, pileup: mu, reduceMotion: red } =
         simRef.current;
 
@@ -333,7 +346,7 @@ export const Lhc3DRingCanvas: React.FC<Lhc3DRingCanvasProps> = ({
         const a1 = phase1 + (i / visibleBunches) * Math.PI * 2;
         const a2 = phase2 + (i / visibleBunches) * Math.PI * 2;
 
-        // Slight vertical betatron wiggle that tightens near IP (cos(2*angle)^2 ~ 1 at 0, pi/2, pi, 3pi/2)
+        // Slight vertical betatron wiggle that tightens near IP
         const r1 = RING_RADIUS + 0.055;
         const r2 = RING_RADIUS - 0.055;
         const ySqueeze1 = Math.sin(a1 * 6) * 0.03 * squeezeRadiusFactor;
@@ -343,8 +356,8 @@ export const Lhc3DRingCanvas: React.FC<Lhc3DRingCanvasProps> = ({
         beam2Meshes[i].position.set(Math.cos(a2) * r2, ySqueeze2, Math.sin(a2) * r2);
       }
 
-      // Pulse IP flashes scaled by pileup & squeeze
-      const pulseBase = run && !red ? 0.65 + 0.55 * Math.sin(performance.now() * 0.015) : 0.7;
+      // Gentle IP luminosity breathing well under 3 Hz WCAG flash limit
+      const pulseBase = run && !red ? 0.72 + 0.35 * Math.sin(performance.now() * 0.008) : 0.7;
       const lumiScale = Math.min(2.2, Math.max(0.5, 0.7 + mu / 50));
       ipFlashMeshes.forEach((flash, idx) => {
         const s = pulseBase * lumiScale * (idx === 0 || idx === 2 ? 1.15 : 0.75);
@@ -375,7 +388,7 @@ export const Lhc3DRingCanvas: React.FC<Lhc3DRingCanvasProps> = ({
         }
         sparkGeo.attributes.position.needsUpdate = true;
 
-        const swPhase = (performance.now() * 0.0018) % 1;
+        const swPhase = (performance.now() * 0.0014) % 1;
         const swScale = 0.6 + swPhase * (2.6 + Math.min(2.0, mu / 35));
         shockRing1.scale.setScalar(swScale);
         shockRing2.scale.setScalar(swScale);
@@ -389,6 +402,8 @@ export const Lhc3DRingCanvas: React.FC<Lhc3DRingCanvasProps> = ({
 
     return () => {
       cancelAnimationFrame(rafId);
+      cleanupVis();
+      glowTex?.dispose();
       resizeObs.disconnect();
       cryostatGeo.dispose();
       cryostatMat.dispose();

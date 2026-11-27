@@ -7,6 +7,11 @@ import { FidelityBadge } from '@/components/provenance/FidelityBadge';
 import { Eli5Card } from '@/components/ui/Eli5Card';
 import { MathFormula } from '@/components/ui/MathFormula';
 import { useGlobalStore } from '@/lib/store';
+import {
+  createPlasmaWaveShaderMaterial,
+  createThreeGlowTexture,
+  observeOffscreenVisibility,
+} from '@/lib/cernVisuals';
 import { Orbit, Sparkles, Rotate3D } from 'lucide-react';
 
 export const MirrorDimensionLab: React.FC = () => {
@@ -32,12 +37,22 @@ export const MirrorDimensionLab: React.FC = () => {
   useEffect(() => {
     const container = containerRef.current;
     if (!container) return;
+    let isVisible = true;
+    const cleanupVis = observeOffscreenVisibility(container, (v) => {
+      isVisible = v;
+    });
 
     let renderer: THREE.WebGLRenderer;
     try {
-      renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true, preserveDrawingBuffer: true });
+      renderer = new THREE.WebGLRenderer({
+        antialias: true,
+        alpha: true,
+        preserveDrawingBuffer: true,
+        powerPreference: 'high-performance',
+      });
     } catch {
       setWebglFailed(true);
+      cleanupVis();
       return;
     }
 
@@ -45,13 +60,14 @@ export const MirrorDimensionLab: React.FC = () => {
     const h = container.clientHeight || 280;
     renderer.setSize(w, h);
     renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, 2));
-    renderer.setClearColor(0x070312, 1);
+    renderer.setClearColor(0x060210, 1);
 
     container.innerHTML = '';
     container.appendChild(renderer.domElement);
 
     const scene = new THREE.Scene();
-    const camera = new THREE.PerspectiveCamera(45, w / h, 0.1, 100);
+    scene.fog = new THREE.FogExp2(0x060210, 0.055);
+    const camera = new THREE.PerspectiveCamera(44, w / h, 0.1, 100);
 
     scene.add(new THREE.AmbientLight(0xd8b4fe, 0.7));
     const goldLight = new THREE.PointLight(0xffb000, 3.0, 22);
@@ -61,74 +77,94 @@ export const MirrorDimensionLab: React.FC = () => {
     cyanLight.position.set(-4, -2, 3);
     scene.add(cyanLight);
 
-    // Kaleidoscopic Mirror-Dimension Nested Calabi-Yau Manifolds (Solid Core + Wireframe Lattice)
+    const disposables: Array<{ dispose: () => void }> = [];
+    const glowTex = createThreeGlowTexture(64);
+    if (glowTex) disposables.push(glowTex);
+
+    // Kaleidoscopic Mirror-Dimension Nested Calabi-Yau Manifolds with GLSL Portal Rim Shader
     const p = 2 + (extraDims % 4);
     const q = 3 + ((extraDims + 1) % 5);
-    const knotGeom = new THREE.TorusKnotGeometry(1.42, 0.28, 140, 24, p, q);
-    const solidKnot = new THREE.Mesh(
-      knotGeom,
-      new THREE.MeshStandardMaterial({
-        color: 0x3b0764,
-        emissive: 0x4c1d95,
-        metalness: 0.88,
-        roughness: 0.18,
-      })
-    );
+    const knotGeom = new THREE.TorusKnotGeometry(1.42, 0.28, 160, 26, p, q);
+    const solidMat = createPlasmaWaveShaderMaterial(0xf59e0b, 0xa855f7);
+    const solidKnot = new THREE.Mesh(knotGeom, solidMat);
     scene.add(solidKnot);
 
-    const wireKnot = new THREE.Mesh(
-      knotGeom,
-      new THREE.MeshBasicMaterial({ color: 0xf59e0b, wireframe: true })
-    );
-    wireKnot.scale.setScalar(1.015);
+    const wireMat = new THREE.MeshBasicMaterial({
+      color: 0x00e5ff,
+      wireframe: true,
+      transparent: true,
+      opacity: 0.42,
+      blending: THREE.AdditiveBlending,
+    });
+    const wireKnot = new THREE.Mesh(knotGeom, wireMat);
+    wireKnot.scale.setScalar(1.03);
     scene.add(wireKnot);
+    disposables.push(knotGeom, solidMat, wireMat);
 
-    // Counter-rotating Golden Mirror Mandala Rings
+    // Counter-rotating Golden & Cyan Mirror Mandala Rings
     const portalRings: THREE.Mesh[] = [];
-    for (let i = 0; i < 3; i++) {
-      const ring = new THREE.Mesh(
-        new THREE.TorusGeometry(2.15 + i * 0.28, 0.025, 10, 80),
-        new THREE.MeshBasicMaterial({ color: i % 2 === 0 ? 0x00e5ff : 0xfbbf24 })
-      );
+    for (let i = 0; i < 4; i++) {
+      const rGeo = new THREE.TorusGeometry(2.1 + i * 0.26, 0.024, 10, 84);
+      const rMat = new THREE.MeshBasicMaterial({
+        color: i % 2 === 0 ? 0x00e5ff : 0xfbbf24,
+        transparent: true,
+        opacity: 0.85,
+        blending: THREE.AdditiveBlending,
+      });
+      const ring = new THREE.Mesh(rGeo, rMat);
       ring.rotation.x = i * 0.7;
       ring.rotation.y = i * 1.1;
       portalRings.push(ring);
       scene.add(ring);
+      disposables.push(rGeo, rMat);
     }
 
-    // Orbiting Kaluza-Klein Graviton Particle Halo
-    const ptsCount = 160;
+    // Orbiting Kaluza-Klein Graviton Soft Luminous Halo
+    const ptsCount = 190;
     const positions = new Float32Array(ptsCount * 3);
     for (let i = 0; i < ptsCount; i++) {
       const th = Math.random() * Math.PI * 2;
       const ph = Math.acos(2 * Math.random() - 1);
-      const r = 2.0 + Math.random() * 1.5;
+      const r = 1.9 + Math.random() * 1.65;
       positions[i * 3] = r * Math.sin(ph) * Math.cos(th);
       positions[i * 3 + 1] = r * Math.sin(ph) * Math.sin(th);
       positions[i * 3 + 2] = r * Math.cos(ph);
     }
     const pGeom = new THREE.BufferGeometry();
     pGeom.setAttribute('position', new THREE.BufferAttribute(positions, 3));
-    const halo = new THREE.Points(
-      pGeom,
-      new THREE.PointsMaterial({ color: 0x38bdf8, size: 0.06, transparent: true, opacity: 0.85 })
-    );
+    const pMat = new THREE.PointsMaterial({
+      color: 0x38bdf8,
+      size: 0.22,
+      map: glowTex ?? undefined,
+      transparent: true,
+      opacity: 0.85,
+      blending: THREE.AdditiveBlending,
+      depthWrite: false,
+    });
+    const halo = new THREE.Points(pGeom, pMat);
     scene.add(halo);
+    disposables.push(pGeom, pMat);
 
     let animId = 0;
     let angle = 0;
     const renderLoop = () => {
+      if (!isVisible) {
+        if (!stateRef.current.reduceMotion) animId = requestAnimationFrame(renderLoop);
+        return;
+      }
       const { reduceMotion: rm, radiusMicrons: r } = stateRef.current;
       if (!rm) {
-        angle += 0.012;
-        camRef.current.az += 0.003;
+        angle += 0.013;
+        if (!camRef.current.dragging) camRef.current.az += 0.003;
       }
+      solidMat.uniforms.uTime.value = angle * 1.8;
+      solidMat.uniforms.uIntensity.value = 0.85;
       solidKnot.rotation.x = angle * 0.6;
       solidKnot.rotation.y = angle;
       wireKnot.rotation.copy(solidKnot.rotation);
       const scaleMod = 0.78 + Math.min(0.4, Math.log10(Math.max(1, r)) * 0.12);
       solidKnot.scale.setScalar(scaleMod);
-      wireKnot.scale.setScalar(scaleMod * 1.015);
+      wireKnot.scale.setScalar(scaleMod * 1.03);
       portalRings.forEach((ring, idx) => {
         ring.rotation.z = angle * (idx % 2 === 0 ? 0.55 : -0.65);
         ring.rotation.x += rm ? 0 : 0.004 * (idx + 1);
@@ -149,6 +185,8 @@ export const MirrorDimensionLab: React.FC = () => {
 
     return () => {
       cancelAnimationFrame(animId);
+      cleanupVis();
+      disposables.forEach((d) => d.dispose());
       renderer.dispose();
     };
   }, [extraDims, radiusMicrons, reduceMotion]);

@@ -5,6 +5,13 @@ import { FidelityBadge } from '@/components/provenance/FidelityBadge';
 import { Eli5Card } from '@/components/ui/Eli5Card';
 import { MathFormula } from '@/components/ui/MathFormula';
 import { useGlobalStore } from '@/lib/store';
+import {
+  drawAdditiveGlowDot,
+  drawCernGridBackdrop,
+  drawPhosphorCurve,
+  observeOffscreenVisibility,
+  setupHiDpiCanvas,
+} from '@/lib/cernVisuals';
 import { playDiscoveryChime, playTemPadClick } from '@/lib/sonifier';
 import { ZoomIn, Compass, Play, Pause } from 'lucide-react';
 
@@ -113,212 +120,167 @@ export const QuantumScaleZoomSimulator: React.FC = () => {
   useEffect(() => {
     const canvas = canvasRef.current;
     if (!canvas) return;
-    const ctx = canvas.getContext('2d');
-    if (!ctx) return;
+    let isVisible = true;
+    const cleanupVis = observeOffscreenVisibility(canvas, (v) => {
+      isVisible = v;
+    });
     let animId = 0;
 
     const render = () => {
-      if (isPlaying && !reduceMotion) tRef.current += 0.03;
+      if (isPlaying && !reduceMotion && isVisible) tRef.current += 0.032;
+      const vp = setupHiDpiCanvas(canvas, 560, 290);
+      if (!vp || !isVisible) {
+        if (isPlaying && !reduceMotion) animId = requestAnimationFrame(render);
+        return;
+      }
+      const { ctx, width: w, height: h } = vp;
       const t = tRef.current;
-      const w = canvas.width;
-      const h = canvas.height;
       const cx = w / 2;
       const cy = h / 2;
 
-      ctx.fillStyle = '#040610';
-      ctx.fillRect(0, 0, w, h);
+      drawCernGridBackdrop(ctx, w, h, {
+        accentColor: 'rgba(168, 85, 247, 0.09)',
+        bgInner: '#0B0B1E',
+        bgOuter: '#03050B',
+        gridStep: 26,
+        showScanlines: true,
+        showCrosshair: true,
+      });
 
-      // Background logarithmic grid + zooming hyperspace reticle
+      // Logarithmic Warp-Tunnel Rings & Rotating Microscope ApertureTicks
       const zoomFrac = ((scaleExp + 35) % 4) / 4;
-      for (let i = 0; i < 6; i++) {
-        const ringPhase = (i / 6 + (isPlaying && !reduceMotion ? (t * 0.12) % 1 : zoomFrac)) % 1;
-        const r = Math.pow(ringPhase, 1.5) * (w * 0.48);
+      for (let i = 0; i < 7; i++) {
+        const ringPhase = (i / 7 + (isPlaying && !reduceMotion ? (t * 0.14) % 1 : zoomFrac)) % 1;
+        const r = Math.pow(ringPhase, 1.55) * (w * 0.46);
+        ctx.save();
         ctx.strokeStyle = activeMilestone.color;
-        ctx.globalAlpha = (1 - ringPhase) * 0.35;
+        ctx.globalAlpha = (1 - ringPhase) * 0.42;
         ctx.lineWidth = 1.6;
+        ctx.setLineDash([12, 8]);
+        ctx.lineDashOffset = -t * 18;
         ctx.beginPath();
-        ctx.arc(cx, cy, Math.max(4, r), 0, Math.PI * 2);
+        ctx.arc(cx, cy, Math.max(5, r), 0, Math.PI * 2);
         ctx.stroke();
+        ctx.restore();
       }
-      ctx.globalAlpha = 1;
 
-      // Reticle crosshairs
-      ctx.strokeStyle = 'rgba(148, 163, 184, 0.22)';
-      ctx.lineWidth = 1;
-      ctx.beginPath();
-      ctx.moveTo(cx, 12);
-      ctx.lineTo(cx, h - 12);
-      ctx.moveTo(20, cy);
-      ctx.lineTo(w - 20, cy);
-      ctx.stroke();
-
-      // Scale-specific physical visualization
+      // Scale-specific physical visualization with additive bloom & phosphor traces
       if (scaleExp >= 12) {
-        // Observable Universe Cosmic Web filaments
-        for (let i = 0; i < 14; i++) {
-          const a1 = i * 0.45 + t * 0.05;
-          const a2 = a1 + 1.1;
-          const x1 = cx + Math.cos(a1) * (50 + (i % 4) * 32);
-          const y1 = cy + Math.sin(a1 * 1.3) * (35 + (i % 3) * 24);
-          const x2 = cx + Math.cos(a2) * (60 + ((i + 2) % 4) * 28);
-          const y2 = cy + Math.sin(a2 * 1.2) * (40 + ((i + 1) % 3) * 24);
-          ctx.strokeStyle = 'rgba(168, 85, 247, 0.55)';
-          ctx.lineWidth = 1.5;
-          ctx.beginPath();
-          ctx.moveTo(x1, y1);
-          ctx.lineTo(x2, y2);
-          ctx.stroke();
-          ctx.fillStyle = '#E9D5FF';
-          ctx.beginPath();
-          ctx.arc(x1, y1, 3, 0, Math.PI * 2);
-          ctx.fill();
+        for (let i = 0; i < 16; i++) {
+          const a1 = i * 0.42 + t * 0.06;
+          const a2 = a1 + 1.05;
+          const x1 = cx + Math.cos(a1) * (46 + (i % 4) * 34);
+          const y1 = cy + Math.sin(a1 * 1.3) * (32 + (i % 3) * 24);
+          const x2 = cx + Math.cos(a2) * (58 + ((i + 2) % 4) * 28);
+          const y2 = cy + Math.sin(a2 * 1.2) * (36 + ((i + 1) % 3) * 24);
+          drawPhosphorCurve(ctx, [{ x: x1, y: y1 }, { x: x2, y: y2 }], '#A855F7', 1.2, 0.55);
+          drawAdditiveGlowDot(ctx, x1, y1, 10, '216, 180, 254', 0.85);
         }
       } else if (scaleExp >= -2) {
-        // LHC 27km Superconducting Ring & dual beams
-        ctx.strokeStyle = '#1E293B';
-        ctx.lineWidth = 12;
-        ctx.beginPath();
-        ctx.arc(cx, cy, 86, 0, Math.PI * 2);
-        ctx.stroke();
-
-        ctx.strokeStyle = '#00E5FF';
-        ctx.lineWidth = 2.5;
-        ctx.beginPath();
-        ctx.arc(cx, cy, 86, 0, Math.PI * 2);
-        ctx.stroke();
-
-        for (let b = 0; b < 6; b++) {
-          const ang1 = t * 1.8 + (b * Math.PI) / 3;
-          const ang2 = -t * 1.8 + (b * Math.PI) / 3;
-          ctx.fillStyle = '#00E5FF';
-          ctx.beginPath();
-          ctx.arc(cx + Math.cos(ang1) * 88, cy + Math.sin(ang1) * 88, 4, 0, Math.PI * 2);
-          ctx.fill();
-          ctx.fillStyle = '#FF0055';
-          ctx.beginPath();
-          ctx.arc(cx + Math.cos(ang2) * 84, cy + Math.sin(ang2) * 84, 4, 0, Math.PI * 2);
-          ctx.fill();
+        // LHC 27km Superconducting Ring & Glowing Counter-Rotating Beams
+        drawPhosphorCurve(
+          ctx,
+          Array.from({ length: 65 }, (_, i) => {
+            const a = (i / 64) * Math.PI * 2;
+            return { x: cx + Math.cos(a) * 86, y: cy + Math.sin(a) * 86 };
+          }),
+          '#00E5FF',
+          2.0,
+          0.7
+        );
+        for (let b = 0; b < 8; b++) {
+          const ang1 = t * 1.9 + (b * Math.PI) / 4;
+          const ang2 = -t * 1.9 + (b * Math.PI) / 4;
+          drawAdditiveGlowDot(ctx, cx + Math.cos(ang1) * 88, cy + Math.sin(ang1) * 88, 9, '0, 229, 255', 0.9);
+          drawAdditiveGlowDot(ctx, cx + Math.cos(ang2) * 83, cy + Math.sin(ang2) * 83, 9, '255, 0, 85', 0.9);
         }
         ['ATLAS', 'CMS', 'ALICE', 'LHCb'].forEach((name, idx) => {
           const a = (idx * Math.PI) / 2;
           const ix = cx + Math.cos(a) * 86;
           const iy = cy + Math.sin(a) * 86;
-          ctx.fillStyle = '#FFE600';
-          ctx.beginPath();
-          ctx.arc(ix, iy, 5.5, 0, Math.PI * 2);
-          ctx.fill();
+          drawAdditiveGlowDot(ctx, ix, iy, 14, '255, 230, 0', 0.95);
           ctx.fillStyle = '#FFFFFF';
           ctx.font = 'bold 9px monospace';
-          ctx.fillText(name, ix + 8, iy + 3);
+          ctx.fillText(name, ix + 10, iy + 3);
         });
       } else if (scaleExp >= -12) {
-        // Atom electron orbital cloud
-        const cloud = ctx.createRadialGradient(cx, cy, 4, cx, cy, 96);
-        cloud.addColorStop(0, 'rgba(56, 189, 248, 0.85)');
-        cloud.addColorStop(0.45, 'rgba(56, 189, 248, 0.25)');
-        cloud.addColorStop(1, 'rgba(56, 189, 248, 0)');
-        ctx.fillStyle = cloud;
-        ctx.beginPath();
-        ctx.arc(cx, cy, 96, 0, Math.PI * 2);
-        ctx.fill();
-
+        drawAdditiveGlowDot(ctx, cx, cy, 85, '56, 189, 248', 0.4);
         for (let o = 0; o < 3; o++) {
-          ctx.save();
-          ctx.translate(cx, cy);
-          ctx.rotate((o * Math.PI) / 3 + t * 0.25);
-          ctx.strokeStyle = 'rgba(0, 229, 255, 0.6)';
-          ctx.lineWidth = 1.5;
-          ctx.beginPath();
-          ctx.ellipse(0, 0, 92, 32, 0, 0, Math.PI * 2);
-          ctx.stroke();
-          const ex = Math.cos(t * 2.6 + o) * 92;
-          const ey = Math.sin(t * 2.6 + o) * 32;
-          ctx.fillStyle = '#FFE600';
-          ctx.beginPath();
-          ctx.arc(ex, ey, 4.5, 0, Math.PI * 2);
-          ctx.fill();
-          ctx.restore();
+          const rot = (o * Math.PI) / 3 + t * 0.25;
+          const pts: { x: number; y: number }[] = [];
+          for (let s = 0; s <= 48; s++) {
+            const a = (s / 48) * Math.PI * 2;
+            const lx = Math.cos(a) * 92;
+            const ly = Math.sin(a) * 32;
+            pts.push({
+              x: cx + lx * Math.cos(rot) - ly * Math.sin(rot),
+              y: cy + lx * Math.sin(rot) + ly * Math.cos(rot),
+            });
+          }
+          drawPhosphorCurve(ctx, pts, '#00E5FF', 1.3, 0.55);
+          const lx = Math.cos(t * 2.6 + o) * 92;
+          const ly = Math.sin(t * 2.6 + o) * 32;
+          drawAdditiveGlowDot(
+            ctx,
+            cx + lx * Math.cos(rot) - ly * Math.sin(rot),
+            cy + lx * Math.sin(rot) + ly * Math.cos(rot),
+            12,
+            '255, 230, 0',
+            0.95
+          );
         }
-        ctx.fillStyle = '#FF0055';
-        ctx.beginPath();
-        ctx.arc(cx, cy, 5, 0, Math.PI * 2);
-        ctx.fill();
+        drawAdditiveGlowDot(ctx, cx, cy, 14, '255, 0, 85', 1.0);
       } else if (scaleExp >= -16) {
-        // Atomic nucleus: packed protons & neutrons
-        for (let n = 0; n < 14; n++) {
+        for (let n = 0; n < 16; n++) {
           const ang = n * 2.399 + t * 0.35;
-          const rad = 12 + Math.sqrt(n) * 14;
+          const rad = 10 + Math.sqrt(n) * 14;
           const nx = cx + Math.cos(ang) * rad + Math.sin(t * 3 + n) * 2;
           const ny = cy + Math.sin(ang) * rad + Math.cos(t * 3 + n) * 2;
-          const g = ctx.createRadialGradient(nx - 3, ny - 3, 2, nx, ny, 14);
-          g.addColorStop(0, n % 2 === 0 ? '#FF80AB' : '#93C5FD');
-          g.addColorStop(1, n % 2 === 0 ? '#9D174D' : '#1E3A8A');
-          ctx.fillStyle = g;
-          ctx.beginPath();
-          ctx.arc(nx, ny, 13, 0, Math.PI * 2);
-          ctx.fill();
+          drawAdditiveGlowDot(ctx, nx, ny, 20, n % 2 === 0 ? '255, 0, 85' : '56, 189, 248', 0.85);
         }
       } else if (scaleExp >= -24) {
-        // Inside the Proton: 3 Valence Quarks + pulsing Gluon spring tubes!
         const quarkPos = [0, 1, 2].map((idx) => {
           const a = idx * ((Math.PI * 2) / 3) + t * 1.5;
-          const r = 52 + Math.sin(t * 2.5 + idx) * 8;
+          const r = 54 + Math.sin(t * 2.5 + idx) * 8;
           return { x: cx + Math.cos(a) * r, y: cy + Math.sin(a) * r, label: idx < 2 ? 'u' : 'd' };
         });
-        // Pulsing Gluon flux springs
         for (let i = 0; i < 3; i++) {
           const p1 = quarkPos[i];
           const p2 = quarkPos[(i + 1) % 3];
-          ctx.beginPath();
-          for (let s = 0; s <= 24; s++) {
-            const u = s / 24;
-            const lx = p1.x + (p2.x - p1.x) * u;
-            const ly = p1.y + (p2.y - p1.y) * u + Math.sin(u * Math.PI * 6 - t * 5) * 6;
-            if (s === 0) ctx.moveTo(lx, ly);
-            else ctx.lineTo(lx, ly);
+          const pts: { x: number; y: number }[] = [];
+          for (let s = 0; s <= 28; s++) {
+            const u = s / 28;
+            pts.push({
+              x: p1.x + (p2.x - p1.x) * u,
+              y: p1.y + (p2.y - p1.y) * u + Math.sin(u * Math.PI * 6 - t * 5) * 7,
+            });
           }
-          ctx.strokeStyle = '#FFE600';
-          ctx.lineWidth = 2.4;
-          ctx.stroke();
+          drawPhosphorCurve(ctx, pts, '#FFE600', 1.8, 0.85);
         }
         quarkPos.forEach((q, idx) => {
-          const g = ctx.createRadialGradient(q.x, q.y, 2, q.x, q.y, 20);
-          g.addColorStop(0, '#FFFFFF');
-          g.addColorStop(0.45, idx === 0 ? '#FF0055' : idx === 1 ? '#00E5FF' : '#10B981');
-          g.addColorStop(1, 'transparent');
-          ctx.fillStyle = g;
-          ctx.beginPath();
-          ctx.arc(q.x, q.y, 20, 0, Math.PI * 2);
-          ctx.fill();
+          drawAdditiveGlowDot(ctx, q.x, q.y, 24, idx === 0 ? '255, 0, 85' : idx === 1 ? '0, 229, 255' : '16, 185, 129', 0.95);
           ctx.fillStyle = '#000000';
-          ctx.font = 'bold 12px monospace';
+          ctx.font = 'bold 11px monospace';
           ctx.fillText(q.label, q.x - 4, q.y + 4);
         });
       } else {
-        // Planck Foam Quantum Spacetime
-        ctx.strokeStyle = '#F97316';
-        for (let x = 24; x < w - 24; x += 28) {
-          ctx.beginPath();
-          for (let y = 18; y < h - 18; y += 12) {
-            const warp = Math.sin(x * 0.08 + y * 0.09 + t * 2.8) * 7;
-            if (y === 18) ctx.moveTo(x + warp, y);
-            else ctx.lineTo(x + warp, y);
+        for (let x = 24; x < w - 24; x += 26) {
+          const pts: { x: number; y: number }[] = [];
+          for (let y = 20; y < h - 24; y += 10) {
+            const warp = Math.sin(x * 0.08 + y * 0.09 + t * 2.8) * 8;
+            pts.push({ x: x + warp, y });
           }
-          ctx.stroke();
+          drawPhosphorCurve(ctx, pts, '#F97316', 1.3, 0.65);
         }
       }
 
-      // Probe energy de Broglie wave across bottom
-      ctx.beginPath();
+      // Probe de Broglie Quantum Microscope Wave across bottom
       const freq = Math.min(0.28, 0.03 + Math.abs(scaleExp) * 0.006);
-      for (let x = 16; x <= w - 16; x += 3) {
-        const y = h - 24 + Math.sin(x * freq - t * 4) * 6;
-        if (x === 16) ctx.moveTo(x, y);
-        else ctx.lineTo(x, y);
+      const wavePts: { x: number; y: number }[] = [];
+      for (let x = 16; x <= w - 16; x += 4) {
+        wavePts.push({ x, y: h - 24 + Math.sin(x * freq - t * 4) * 6.5 });
       }
-      ctx.strokeStyle = 'rgba(0, 229, 255, 0.7)';
-      ctx.lineWidth = 1.6;
-      ctx.stroke();
+      drawPhosphorCurve(ctx, wavePts, '#00E5FF', 1.4, 0.8);
 
       ctx.fillStyle = '#E2E8F0';
       ctx.font = 'bold 10px monospace';
@@ -328,7 +290,10 @@ export const QuantumScaleZoomSimulator: React.FC = () => {
     };
 
     render();
-    return () => cancelAnimationFrame(animId);
+    return () => {
+      cancelAnimationFrame(animId);
+      cleanupVis();
+    };
   }, [scaleExp, activeMilestone, isPlaying, reduceMotion]);
 
   return (

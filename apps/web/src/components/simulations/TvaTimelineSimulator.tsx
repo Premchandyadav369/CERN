@@ -11,6 +11,13 @@ import { FidelityBadge } from '@/components/provenance/FidelityBadge';
 import { Eli5Card } from '@/components/ui/Eli5Card';
 import { MathFormula } from '@/components/ui/MathFormula';
 import { useGlobalStore } from '@/lib/store';
+import {
+  drawAdditiveGlowDot,
+  drawCernGridBackdrop,
+  drawPhosphorCurve,
+  observeOffscreenVisibility,
+  setupHiDpiCanvas,
+} from '@/lib/cernVisuals';
 import { playTimeChargeSweep, playTemPadClick, playDiscoveryChime } from '@/lib/sonifier';
 import { TvaTimeline3DLoom } from '@/components/simulations/TvaTimeline3DLoom';
 import { Clock, Play, Pause, Scissors, AlertTriangle, ShieldCheck, Activity, Box, Columns } from 'lucide-react';
@@ -144,70 +151,62 @@ export const TvaTimelineSimulator: React.FC = () => {
   useEffect(() => {
     const canvas = canvasRef.current;
     if (!canvas) return;
-    const ctx = canvas.getContext('2d');
-    if (!ctx) return;
-
+    let isVisible = true;
+    const cleanupVis = observeOffscreenVisibility(canvas, (v) => {
+      isVisible = v;
+    });
     let animId = 0;
 
     const render = () => {
-      if (isPlaying && !reduceMotion) {
+      if (isPlaying && !reduceMotion && isVisible) {
         timeRef.current += 0.025;
       }
+      const vp = setupHiDpiCanvas(canvas, 680, 290);
+      if (!vp || !isVisible) {
+        if (isPlaying && !reduceMotion) animId = requestAnimationFrame(render);
+        return;
+      }
+      const { ctx, width: w, height: h } = vp;
       const t = timeRef.current;
-
-      const w = canvas.width;
-      const h = canvas.height;
       const cy = h / 2;
       const redlineOffset = 68;
 
-      // Retro TVA CRT monitor background
-      ctx.fillStyle = '#120B05';
-      ctx.fillRect(0, 0, w, h);
-
-      // Subtle CRT phosphor grid
-      ctx.strokeStyle = 'rgba(255, 176, 0, 0.08)';
-      ctx.lineWidth = 1;
-      for (let gx = 0; gx < w; gx += 32) {
-        ctx.beginPath();
-        ctx.moveTo(gx, 0);
-        ctx.lineTo(gx, h);
-        ctx.stroke();
-      }
-      for (let gy = 0; gy < h; gy += 28) {
-        ctx.beginPath();
-        ctx.moveTo(0, gy);
-        ctx.lineTo(w, gy);
-        ctx.stroke();
-      }
+      drawCernGridBackdrop(ctx, w, h, {
+        accentColor: 'rgba(255, 176, 0, 0.08)',
+        bgInner: '#1E1105',
+        bgOuter: '#0A0602',
+        gridStep: 28,
+        showScanlines: true,
+        showCrosshair: false,
+      });
 
       // Red Line Variance Thresholds (top & bottom)
       const drawRedline = (yPos: number, tag: string) => {
         ctx.save();
         ctx.setLineDash([7, 5]);
         ctx.strokeStyle = '#FF334B';
-        ctx.lineWidth = 1.75;
+        ctx.lineWidth = 1.6;
         ctx.beginPath();
-        ctx.moveTo(12, yPos);
-        ctx.lineTo(w - 12, yPos);
+        ctx.moveTo(14, yPos);
+        ctx.lineTo(w - 14, yPos);
         ctx.stroke();
         ctx.restore();
 
-        ctx.fillStyle = '#FF5E73';
+        ctx.fillStyle = '#FF6B7F';
         ctx.font = 'bold 10px monospace';
-        ctx.fillText(tag, 16, yPos < cy ? yPos - 6 : yPos + 13);
+        ctx.fillText(tag, 18, yPos < cy ? yPos - 6 : yPos + 13);
       };
 
       drawRedline(cy - redlineOffset, '▲ VARIANCE RED LINE (+λ INSTABILITY BOUND)');
       drawRedline(cy + redlineOffset, '▼ VARIANCE RED LINE (−λ TUNNELING BOUND)');
 
-      // Draw quantum branches behind the central Sacred Timeline core
+      // Phosphor Quantum Vacuum Branches behind Sacred Timeline core
       const activeSweepX = pruneProgress !== null ? pruneProgress * w : -1;
 
       branches.forEach((b, idx) => {
         const startX = b.startFrac * w;
-        const endX = Math.min(w - 18, startX + 145 + idx * 12);
+        const endX = Math.min(w - 22, startX + 145 + idx * 12);
 
-        // If time-charge reset wave swept past startX, dampen/prune branches visibly
         const prunedFactor =
           activeSweepX > startX
             ? Math.max(0.08, 1 - Math.min(1, (activeSweepX - startX) / 95))
@@ -217,60 +216,50 @@ export const TvaTimelineSimulator: React.FC = () => {
         const waveWobble =
           isPlaying && !reduceMotion ? Math.sin(t * 1.8 * b.growthRate + idx) * 4 * prunedFactor : 0;
 
-        ctx.beginPath();
-        ctx.moveTo(startX, cy);
-        ctx.bezierCurveTo(
-          startX + 42,
-          cy + b.direction * 6 * prunedFactor,
-          startX + 68,
-          targetY + waveWobble,
-          endX,
-          targetY + waveWobble
-        );
-
-        if (b.crossesRedline && prunedFactor > 0.4) {
-          ctx.strokeStyle = vacuum.regime === 'REDLINE' ? '#FF2A4B' : '#FF6B35';
-          ctx.lineWidth = 2.4;
-        } else {
-          ctx.strokeStyle = '#38BDF8';
-          ctx.lineWidth = 1.7;
+        // Sample cubic bezier into discrete points for multi-pass phosphor CRT glow
+        const pts: { x: number; y: number }[] = [];
+        const p0x = startX;
+        const p0y = cy;
+        const p1x = startX + 42;
+        const p1y = cy + b.direction * 6 * prunedFactor;
+        const p2x = startX + 68;
+        const p2y = targetY + waveWobble;
+        const p3x = endX;
+        const p3y = targetY + waveWobble;
+        for (let s = 0; s <= 18; s++) {
+          const u = s / 18;
+          const mu = 1 - u;
+          const bx = mu * mu * mu * p0x + 3 * mu * mu * u * p1x + 3 * mu * u * u * p2x + u * u * u * p3x;
+          const by = mu * mu * mu * p0y + 3 * mu * mu * u * p1y + 3 * mu * u * u * p2y + u * u * u * p3y;
+          pts.push({ x: bx, y: by });
         }
-        ctx.stroke();
 
-        // Branch tip marker & label
+        const isRed = b.crossesRedline && prunedFactor > 0.4;
+        const bCol = isRed ? (vacuum.regime === 'REDLINE' ? '#FF2A4B' : '#FF6B35') : '#38BDF8';
+        drawPhosphorCurve(ctx, pts, bCol, isRed ? 2.1 : 1.5, 0.92);
+
         const tipY = targetY + waveWobble;
-        ctx.beginPath();
-        ctx.arc(endX, tipY, b.crossesRedline && prunedFactor > 0.4 ? 4.5 : 3, 0, Math.PI * 2);
-        ctx.fillStyle = b.crossesRedline && prunedFactor > 0.4 ? '#FF334B' : '#00E5FF';
-        ctx.fill();
+        drawAdditiveGlowDot(ctx, endX, tipY, isRed ? 14 : 9, isRed ? '255, 51, 75' : '0, 229, 255', 0.9);
 
         if (prunedFactor > 0.45) {
-          ctx.fillStyle = b.crossesRedline ? '#FFA3AF' : '#93E6FF';
+          ctx.fillStyle = isRed ? '#FFA3AF' : '#93E6FF';
           ctx.font = 'bold 9px monospace';
-          ctx.fillText(b.label, Math.min(w - 64, endX + 6), tipY + 3);
+          ctx.fillText(b.label, Math.min(w - 64, endX + 7), tipY + 3);
         }
       });
 
-      // Draw luminous braided TVA Sacred Timeline along center
+      // Luminous Braided TVA Sacred Timeline along center with multi-strand phosphor bloom
       for (let strand = -1; strand <= 1; strand++) {
-        ctx.beginPath();
-        for (let x = 0; x <= w; x += 6) {
+        const strandPts: { x: number; y: number }[] = [];
+        for (let x = 10; x <= w - 10; x += 7) {
           const phase = x * 0.025 - (isPlaying && !reduceMotion ? t * 2.1 : 0);
           const braidOffset =
-            strand * 4.5 * Math.sin(phase + strand * 1.4) +
-            Math.cos(phase * 0.5) * 1.8;
-          const y = cy + braidOffset;
-          if (x === 0) ctx.moveTo(x, y);
-          else ctx.lineTo(x, y);
+            strand * 4.5 * Math.sin(phase + strand * 1.4) + Math.cos(phase * 0.5) * 1.8;
+          strandPts.push({ x, y: cy + braidOffset });
         }
-        ctx.strokeStyle =
-          strand === 0
-            ? '#FFD166'
-            : vacuum.regime === 'REDLINE'
-            ? 'rgba(255, 94, 115, 0.7)'
-            : 'rgba(255, 176, 0, 0.55)';
-        ctx.lineWidth = strand === 0 ? 3.2 : 1.5;
-        ctx.stroke();
+        const strandCol =
+          strand === 0 ? '#FFD166' : vacuum.regime === 'REDLINE' ? '#FF5E73' : '#FFB000';
+        drawPhosphorCurve(ctx, strandPts, strandCol, strand === 0 ? 2.8 : 1.35, strand === 0 ? 1.0 : 0.7);
       }
 
       // Present epoch marker (13.8 Gyr LHC observation)
@@ -282,6 +271,7 @@ export const TvaTimelineSimulator: React.FC = () => {
       ctx.lineTo(nowX, h - 20);
       ctx.stroke();
 
+      drawAdditiveGlowDot(ctx, nowX, cy, 18, '255, 224, 130', 0.85);
       ctx.fillStyle = '#FFE082';
       ctx.font = 'bold 10px monospace';
       ctx.fillText('LHC EPOCH (13.8 Gyr)', nowX - 58, 18);
@@ -289,12 +279,12 @@ export const TvaTimelineSimulator: React.FC = () => {
       // Animated Time-Charge Reset Wavefront
       if (pruneProgress !== null) {
         const sweepX = pruneProgress * w;
-        const grad = ctx.createLinearGradient(sweepX - 40, 0, sweepX + 12, 0);
+        const grad = ctx.createLinearGradient(sweepX - 45, 0, sweepX + 12, 0);
         grad.addColorStop(0, 'rgba(255, 176, 0, 0)');
         grad.addColorStop(0.75, 'rgba(255, 176, 0, 0.55)');
-        grad.addColorStop(1, 'rgba(255, 235, 160, 0.95)');
+        grad.addColorStop(1, 'rgba(255, 245, 200, 0.95)');
         ctx.fillStyle = grad;
-        ctx.fillRect(Math.max(0, sweepX - 40), 0, 52, h);
+        ctx.fillRect(Math.max(0, sweepX - 45), 0, 57, h);
 
         ctx.fillStyle = '#FFE082';
         ctx.font = 'bold 10px monospace';
@@ -307,7 +297,10 @@ export const TvaTimelineSimulator: React.FC = () => {
     };
 
     render();
-    return () => cancelAnimationFrame(animId);
+    return () => {
+      cancelAnimationFrame(animId);
+      cleanupVis();
+    };
   }, [branches, isPlaying, reduceMotion, pruneProgress, vacuum.regime]);
 
   // Step Time-Charge Reset Wave animation cleanly

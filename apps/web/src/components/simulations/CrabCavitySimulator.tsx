@@ -3,6 +3,14 @@
 import React, { useState, useEffect, useRef, useMemo } from 'react';
 import { FidelityBadge } from '@/components/provenance/FidelityBadge';
 import { Eli5Card } from '@/components/ui/Eli5Card';
+import { useGlobalStore } from '@/lib/store';
+import {
+  drawAdditiveGlowDot,
+  drawCernGridBackdrop,
+  drawPhosphorCurve,
+  observeOffscreenVisibility,
+  setupHiDpiCanvas,
+} from '@/lib/cernVisuals';
 import {
   RotateCcw,
   Sliders,
@@ -108,83 +116,95 @@ export function CrabCavitySimulator() {
     }
   };
 
+  const reduceMotion = useGlobalStore((s) => s.reduceMotion);
+
   // Canvas Animation: 60fps Bunch Crossing and Crabbing Overlap
   useEffect(() => {
     const canvas = canvasRef.current;
     if (!canvas) return;
-    const ctx = canvas.getContext('2d');
-    if (!ctx) return;
+    let isVisible = true;
+    const cleanupVis = observeOffscreenVisibility(canvas, (v) => {
+      isVisible = v;
+    });
 
     let animId: number;
 
     const render = () => {
-      if (isPlaying) {
+      if (isPlaying && !reduceMotion && isVisible) {
         animTimeRef.current += 0.04;
       }
+      const vp = setupHiDpiCanvas(canvas, 600, 215);
+      if (!vp || !isVisible) {
+        if (isPlaying && !reduceMotion) animId = requestAnimationFrame(render);
+        return;
+      }
+      const { ctx, width: w, height: h } = vp;
       const t = animTimeRef.current;
-
-      ctx.clearRect(0, 0, canvas.width, canvas.height);
-      const w = canvas.width;
-      const h = canvas.height;
       const cx = w / 2;
       const cy = h / 2;
 
-      // 1. Vacuum Chamber & Coordinate Axis
-      ctx.fillStyle = '#060B14';
-      ctx.fillRect(0, 0, w, h);
-
-      // Interaction Point marker (IP1 / IP5)
-      ctx.strokeStyle = '#334155';
-      ctx.setLineDash([3, 3]);
-      ctx.beginPath();
-      ctx.moveTo(cx, 15);
-      ctx.lineTo(cx, h - 15);
-      ctx.moveTo(20, cy);
-      ctx.lineTo(w - 20, cy);
-      ctx.stroke();
-      ctx.setLineDash([]);
+      drawCernGridBackdrop(ctx, w, h, {
+        accentColor: 'rgba(0, 229, 255, 0.08)',
+        bgInner: '#081529',
+        bgOuter: '#03060D',
+        gridStep: 24,
+        showScanlines: true,
+        showCrosshair: true,
+      });
 
       ctx.fillStyle = '#00E5FF';
       ctx.font = 'bold 9px monospace';
       ctx.textAlign = 'center';
-      ctx.fillText('IP (COLLISION POINT)', cx, 18);
+      ctx.fillText('IP1 / IP5 (COLLISION POINT)', cx, 18);
 
-      // Crab Cavity Glyphs upstream
+      // Upstream RF Crab Cavities with glowing transverse kick fields
+      drawAdditiveGlowDot(ctx, 72, cy, 24, '255, 176, 32', 0.45);
+      drawAdditiveGlowDot(ctx, w - 72, cy, 24, '255, 176, 32', 0.45);
       ctx.strokeStyle = '#FFB020';
-      ctx.lineWidth = 1.5;
+      ctx.lineWidth = 1.6;
       ctx.strokeRect(60, cy - 30, 25, 60);
       ctx.strokeRect(w - 85, cy - 30, 25, 60);
       ctx.fillStyle = '#FFB020';
-      ctx.font = '8px monospace';
+      ctx.font = 'bold 8px monospace';
       ctx.fillText('CRAB', 72, cy - 34);
       ctx.fillText('CRAB', w - 73, cy - 34);
 
-      // 2. Bunch Trajectories & Collision Geometry
-      // Beam 1 travels left to right at angle +halfAngle
-      // Beam 2 travels right to left at angle -halfAngle
-      const halfAngleVis = (crossingAngle_urad / 500) * 0.18; // Visually scaled crossing angle
-      const crabTiltVis = (crabVoltageMV / 3.4) * 0.09; // Bunch rotation tilt (0.09 rad visual compensation at 3.4 MV)
+      const halfAngleVis = (crossingAngle_urad / 500) * 0.18;
+      const crabTiltVis = (crabVoltageMV / 3.4) * 0.09;
 
-      // Bunch phase along trajectory: loops between -200 and +200 px from IP
+      // Guide beamline trajectories
+      drawPhosphorCurve(
+        ctx,
+        [{ x: 30, y: cy - (cx - 30) * Math.tan(halfAngleVis) }, { x: w - 30, y: cy + (cx - 30) * Math.tan(halfAngleVis) }],
+        '#00E5FF',
+        1.0,
+        0.22
+      );
+      drawPhosphorCurve(
+        ctx,
+        [{ x: 30, y: cy + (cx - 30) * Math.tan(halfAngleVis) }, { x: w - 30, y: cy - (cx - 30) * Math.tan(halfAngleVis) }],
+        '#FF0055',
+        1.0,
+        0.22
+      );
+
       const travelDist = 180;
       const progress = (t * 50) % (travelDist * 2);
-      const pos1 = progress - travelDist; // x position of Beam 1 relative to IP
-      const pos2 = -pos1; // x position of Beam 2 relative to IP
+      const pos1 = progress - travelDist;
+      const pos2 = -pos1;
 
-      const bunchLengthVis = 45 * (bunchLengthCm / 7.55);
+      const bunchLengthVis = 48 * (bunchLengthCm / 7.55);
       const bunchHeightVis = 14;
 
       // Beam 1 Bunch (Cyan - Moving Right)
       ctx.save();
-      const b1X = cx + pos1;
-      const b1Y = cy + pos1 * Math.tan(halfAngleVis);
-      ctx.translate(b1X, b1Y);
-      // Rotation angle: trajectory angle minus crab compensation tilt
+      ctx.globalCompositeOperation = 'lighter';
+      ctx.translate(cx + pos1, cy + pos1 * Math.tan(halfAngleVis));
       ctx.rotate(halfAngleVis - crabTiltVis);
-
       const grad1 = ctx.createRadialGradient(0, 0, 2, 0, 0, bunchLengthVis / 2);
-      grad1.addColorStop(0, '#00E5FF');
-      grad1.addColorStop(0.6, 'rgba(0, 229, 255, 0.4)');
+      grad1.addColorStop(0, '#FFFFFF');
+      grad1.addColorStop(0.3, '#00E5FF');
+      grad1.addColorStop(0.75, 'rgba(0, 229, 255, 0.35)');
       grad1.addColorStop(1, 'transparent');
       ctx.fillStyle = grad1;
       ctx.beginPath();
@@ -194,15 +214,13 @@ export function CrabCavitySimulator() {
 
       // Beam 2 Bunch (Magenta - Moving Left)
       ctx.save();
-      const b2X = cx + pos2;
-      const b2Y = cy - pos2 * Math.tan(halfAngleVis);
-      ctx.translate(b2X, b2Y);
-      // Rotation angle: trajectory angle minus crab compensation tilt
+      ctx.globalCompositeOperation = 'lighter';
+      ctx.translate(cx + pos2, cy - pos2 * Math.tan(halfAngleVis));
       ctx.rotate(-halfAngleVis + crabTiltVis);
-
       const grad2 = ctx.createRadialGradient(0, 0, 2, 0, 0, bunchLengthVis / 2);
-      grad2.addColorStop(0, '#FF0055');
-      grad2.addColorStop(0.6, 'rgba(255, 0, 85, 0.4)');
+      grad2.addColorStop(0, '#FFFFFF');
+      grad2.addColorStop(0.3, '#FF0055');
+      grad2.addColorStop(0.75, 'rgba(255, 0, 85, 0.35)');
       grad2.addColorStop(1, 'transparent');
       ctx.fillStyle = grad2;
       ctx.beginPath();
@@ -210,35 +228,28 @@ export function CrabCavitySimulator() {
       ctx.fill();
       ctx.restore();
 
-      // 3. Collision Overlap Luminosity Flash at IP
+      // Collision Overlap Luminosity Flash & Relativistic Sparks at IP
       const overlapDist = Math.abs(pos1);
       if (overlapDist < bunchLengthVis / 2) {
         const overlapFactor = 1.0 - overlapDist / (bunchLengthVis / 2);
         const flashIntensity = overlapFactor * physics.F_eff;
 
-        ctx.fillStyle = `rgba(255, 230, 0, ${flashIntensity * 0.75})`;
-        ctx.shadowColor = '#FFE600';
-        ctx.shadowBlur = 20 * flashIntensity;
-        ctx.beginPath();
-        ctx.arc(cx, cy, 14 * flashIntensity + 4, 0, Math.PI * 2);
-        ctx.fill();
-        ctx.shadowBlur = 0;
+        drawAdditiveGlowDot(ctx, cx, cy, 24 * flashIntensity + 8, '255, 230, 0', flashIntensity);
 
-        // Collision Sparks
-        const numSparks = Math.floor(flashIntensity * 8);
-        ctx.strokeStyle = '#FFFFFF';
-        ctx.lineWidth = 1;
+        const numSparks = Math.max(4, Math.floor(flashIntensity * 10));
         for (let s = 0; s < numSparks; s++) {
           const sparkAngle = (s * Math.PI * 2) / numSparks + t * 4;
-          const sparkLen = 10 * flashIntensity + 5;
-          ctx.beginPath();
-          ctx.moveTo(cx, cy);
-          ctx.lineTo(cx + Math.cos(sparkAngle) * sparkLen, cy + Math.sin(sparkAngle) * sparkLen);
-          ctx.stroke();
+          const sparkLen = 14 * flashIntensity + 7;
+          drawPhosphorCurve(
+            ctx,
+            [{ x: cx, y: cy }, { x: cx + Math.cos(sparkAngle) * sparkLen, y: cy + Math.sin(sparkAngle) * sparkLen }],
+            '#FFE600',
+            1.1,
+            0.85
+          );
         }
       }
 
-      // 4. Overlap Geometry State Label in Bottom Corner
       ctx.fillStyle = physics.F_eff > 0.85 ? '#00FF66' : physics.F_eff > 0.5 ? '#FFE600' : '#FF0055';
       ctx.font = 'bold 10px monospace';
       ctx.textAlign = 'left';
@@ -248,20 +259,25 @@ export function CrabCavitySimulator() {
           : physics.F_eff > 0.5
           ? '⚠ PARTIAL CRABBING OVERLAP'
           : '✗ SEVERE PIWINSKI ANGLE LOSS',
-        20,
-        h - 18
+        18,
+        h - 14
       );
 
       ctx.fillStyle = '#94A3B8';
       ctx.textAlign = 'right';
-      ctx.fillText(`Piwinski: Φ = ${physics.Piwinski_eff.toFixed(2)} | F = ${physics.F_eff.toFixed(2)}`, w - 20, h - 18);
+      ctx.fillText(`Piwinski: Φ = ${physics.Piwinski_eff.toFixed(2)} | F = ${physics.F_eff.toFixed(2)}`, w - 18, h - 14);
 
-      animId = requestAnimationFrame(render);
+      if (isPlaying && !reduceMotion) {
+        animId = requestAnimationFrame(render);
+      }
     };
 
     animId = requestAnimationFrame(render);
-    return () => cancelAnimationFrame(animId);
-  }, [crossingAngle_urad, crabVoltageMV, bunchLengthCm, physics, isPlaying]);
+    return () => {
+      cancelAnimationFrame(animId);
+      cleanupVis();
+    };
+  }, [crossingAngle_urad, crabVoltageMV, bunchLengthCm, physics, isPlaying, reduceMotion]);
 
   // Export JSON Scenario
   const exportJson = () => {

@@ -6,6 +6,13 @@ import { FidelityBadge } from '@/components/provenance/FidelityBadge';
 import { Eli5Card } from '@/components/ui/Eli5Card';
 import { MathFormula } from '@/components/ui/MathFormula';
 import { useGlobalStore } from '@/lib/store';
+import {
+  drawAdditiveGlowDot,
+  drawCernGridBackdrop,
+  drawPhosphorCurve,
+  observeOffscreenVisibility,
+  setupHiDpiCanvas,
+} from '@/lib/cernVisuals';
 import { Radio, Play, Pause, Compass } from 'lucide-react';
 
 interface BaselinePreset {
@@ -64,49 +71,61 @@ export const NeutrinoOscillationSimulator: React.FC = () => {
   useEffect(() => {
     const canvas = canvasRef.current;
     if (!canvas) return;
-    const ctx = canvas.getContext('2d');
-    if (!ctx) return;
-
+    let isVisible = true;
+    const cleanupVis = observeOffscreenVisibility(canvas, (v) => {
+      isVisible = v;
+    });
     let animId = 0;
     let phaseShift = 0;
 
     const render = () => {
-      if (isPlaying && !reduceMotion) {
-        phaseShift += 0.08;
+      if (isPlaying && !reduceMotion && isVisible) {
+        phaseShift += 0.085;
       }
+      const vp = setupHiDpiCanvas(canvas, 620, 260);
+      if (!vp || !isVisible) {
+        if (isPlaying && !reduceMotion) animId = requestAnimationFrame(render);
+        return;
+      }
+      const { ctx, width: w, height: h } = vp;
 
-      const w = canvas.width;
-      const h = canvas.height;
-      ctx.fillStyle = '#050811';
-      ctx.fillRect(0, 0, w, h);
+      drawCernGridBackdrop(ctx, w, h, {
+        accentColor: 'rgba(0, 229, 255, 0.07)',
+        bgInner: '#091529',
+        bgOuter: '#03060E',
+        gridStep: 26,
+        showScanlines: true,
+        showCrosshair: false,
+      });
 
-      // Subtle Earth Crust Profile Band
-      ctx.fillStyle = 'rgba(30, 41, 59, 0.35)';
-      ctx.fillRect(0, h * 0.25, w, h * 0.55);
-      ctx.strokeStyle = '#1E293B';
+      // Geodesic Earth Crust Profile Mantle Band
+      const crustGrad = ctx.createLinearGradient(0, h * 0.22, 0, h * 0.8);
+      crustGrad.addColorStop(0, 'rgba(30, 41, 59, 0.45)');
+      crustGrad.addColorStop(1, 'rgba(15, 23, 42, 0.12)');
+      ctx.fillStyle = crustGrad;
+      ctx.fillRect(10, h * 0.24, w - 20, h * 0.56);
+      ctx.strokeStyle = 'rgba(56, 189, 248, 0.28)';
       ctx.beginPath();
-      ctx.moveTo(0, h * 0.25);
-      ctx.lineTo(w, h * 0.25);
+      ctx.moveTo(10, h * 0.24);
+      ctx.lineTo(w - 10, h * 0.24);
       ctx.stroke();
 
       const padX = 48;
       const spanW = w - padX * 2;
       const cy = h * 0.52;
 
-      // Source & Far Detector markers
       ctx.fillStyle = '#00E5FF';
       ctx.font = 'bold 10px monospace';
-      ctx.fillText('CERN SOURCE (100% ν_μ)', 10, 20);
+      ctx.fillText('CERN SPS TARGET (100% ν_μ)', 14, 22);
       ctx.fillStyle = '#FF0055';
-      ctx.fillText(`FAR DETECTOR (${distanceKm.toFixed(distanceKm < 5 ? 2 : 0)} km)`, w - 185, 20);
+      ctx.textAlign = 'right';
+      ctx.fillText(`FAR DETECTOR (${distanceKm.toFixed(distanceKm < 5 ? 2 : 0)} km)`, w - 14, 22);
+      ctx.textAlign = 'left';
 
-      // Plot Live Oscillating Flavor Waveforms along baseline [0 -> distanceKm]
+      // Phosphor Three-Flavor Probability Waveforms
       const steps = 140;
       const drawFlavorWave = (key: 'mu' | 'tau' | 'e', color: string, baseOpacity: number) => {
-        ctx.strokeStyle = color;
-        ctx.globalAlpha = baseOpacity;
-        ctx.lineWidth = 2.4;
-        ctx.beginPath();
+        const pts: { x: number; y: number }[] = [];
         for (let i = 0; i <= steps; i++) {
           const frac = i / steps;
           const x = padX + frac * spanW;
@@ -119,37 +138,33 @@ export const NeutrinoOscillationSimulator: React.FC = () => {
               ? res.probNuMuToNuTau
               : res.probNuMuToNuE;
           const carrier = Math.sin(frac * 26 - (isPlaying && !reduceMotion ? phaseShift : 0));
-          const y = cy - (prob - 0.5) * 95 + carrier * prob * 14;
-          if (i === 0) ctx.moveTo(x, y);
-          else ctx.lineTo(x, y);
+          pts.push({ x, y: cy - (prob - 0.5) * 92 + carrier * prob * 14 });
         }
-        ctx.stroke();
-        ctx.globalAlpha = 1.0;
+        drawPhosphorCurve(ctx, pts, color, 1.85, baseOpacity);
       };
 
-      drawFlavorWave('e', '#00FF66', 0.85);
-      drawFlavorWave('tau', '#FF0055', 0.95);
+      drawFlavorWave('e', '#00FF66', 0.78);
+      drawFlavorWave('tau', '#FF0055', 0.92);
       drawFlavorWave('mu', '#00E5FF', 0.95);
 
-      // Travelling Quantum Packet Dot
-      const pktFrac = isPlaying && !reduceMotion ? ((phaseShift * 0.03) % 1) : 1.0;
+      // Source & Far Detector Anchor Portals
+      drawAdditiveGlowDot(ctx, padX, cy, 18, '0, 229, 255', 0.8);
+      drawAdditiveGlowDot(ctx, padX + spanW, cy, 20, '255, 0, 85', 0.8);
+
+      // Travelling Quantum Superposition Wavepacket
+      const pktFrac = isPlaying && !reduceMotion ? ((phaseShift * 0.028) % 1) : 1.0;
       const pktX = padX + pktFrac * spanW;
       const pktRes = calculateNeutrinoOscillation(Math.max(0.01, pktFrac * distanceKm), energyGev);
-      const rCol = Math.round(pktRes.probNuMuToNuTau * 255);
-      const gCol = Math.round(pktRes.probNuMuSurvival * 229 + pktRes.probNuMuToNuE * 255);
-      const bCol = Math.round(pktRes.probNuMuSurvival * 255 + pktRes.probNuMuToNuTau * 85);
+      const rCol = Math.min(255, Math.round(pktRes.probNuMuToNuTau * 255));
+      const gCol = Math.min(255, Math.round(pktRes.probNuMuSurvival * 229 + pktRes.probNuMuToNuE * 255));
+      const bCol = Math.min(255, Math.round(pktRes.probNuMuSurvival * 255 + pktRes.probNuMuToNuTau * 85));
 
-      ctx.beginPath();
-      ctx.arc(pktX, cy, 8, 0, Math.PI * 2);
-      ctx.fillStyle = `rgb(${Math.min(255, rCol)}, ${Math.min(255, gCol)}, ${Math.min(255, bCol)})`;
-      ctx.fill();
-      ctx.strokeStyle = '#FFFFFF';
-      ctx.lineWidth = 2;
-      ctx.stroke();
+      drawAdditiveGlowDot(ctx, pktX, cy, 22, `${rCol}, ${gCol}, ${bCol}`, 1.0);
+      drawAdditiveGlowDot(ctx, pktX, cy, 8, '255, 255, 255', 0.9);
 
       ctx.fillStyle = '#94A3B8';
       ctx.font = 'bold 10px monospace';
-      ctx.fillText('Cyan: ν_μ Survival | Magenta: ν_τ Appearance | Green: ν_e Appearance', 14, h - 10);
+      ctx.fillText('Cyan: ν_μ Survival · Magenta: ν_τ Appearance · Green: ν_e Appearance', 14, h - 10);
 
       if (isPlaying && !reduceMotion) {
         animId = requestAnimationFrame(render);
@@ -157,7 +172,10 @@ export const NeutrinoOscillationSimulator: React.FC = () => {
     };
 
     render();
-    return () => cancelAnimationFrame(animId);
+    return () => {
+      cancelAnimationFrame(animId);
+      cleanupVis();
+    };
   }, [distanceKm, energyGev, isPlaying, reduceMotion]);
 
   const applyPreset = (b: BaselinePreset) => {

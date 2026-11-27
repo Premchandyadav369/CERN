@@ -6,6 +6,14 @@ import { FidelityBadge } from '@/components/provenance/FidelityBadge';
 import { Eli5Card } from '@/components/ui/Eli5Card';
 import { MathFormula } from '@/components/ui/MathFormula';
 import { useGlobalStore } from '@/lib/store';
+import {
+  drawAdditiveGlowDot,
+  drawCernGridBackdrop,
+  drawPhosphorCurve,
+  drawVectorArrow,
+  observeOffscreenVisibility,
+  setupHiDpiCanvas,
+} from '@/lib/cernVisuals';
 import { playDiscoveryChime, playQuenchAlarm } from '@/lib/sonifier';
 import { Zap, Snowflake, AlertOctagon, ShieldCheck, Play, Pause } from 'lucide-react';
 
@@ -42,119 +50,166 @@ export const ArcMagnetSimulator: React.FC = () => {
   useEffect(() => {
     const canvas = canvasRef.current;
     if (!canvas) return;
-    const ctx = canvas.getContext('2d');
-    if (!ctx) return;
+    let isVisible = true;
+    const cleanupVis = observeOffscreenVisibility(canvas, (v) => {
+      isVisible = v;
+    });
     let animId = 0;
 
     const render = () => {
-      if (isPlaying && !reduceMotion) phaseRef.current += 0.03;
+      if (isPlaying && !reduceMotion && isVisible) phaseRef.current += 0.032;
+      const vp = setupHiDpiCanvas(canvas, 540, 290);
+      if (!vp || !isVisible) {
+        if (isPlaying && !reduceMotion) animId = requestAnimationFrame(render);
+        return;
+      }
+      const { ctx, width: w, height: h } = vp;
       const t = phaseRef.current;
-      const w = canvas.width;
-      const h = canvas.height;
       const cx = w / 2;
       const cy = h / 2;
+      const isSF = tempK <= 2.17;
+      const intensity = Math.min(1, fieldT / 16);
 
-      ctx.fillStyle = '#040812';
-      ctx.fillRect(0, 0, w, h);
+      drawCernGridBackdrop(ctx, w, h, {
+        accentColor: metrics.quenched ? 'rgba(239, 68, 68, 0.09)' : 'rgba(0, 229, 255, 0.08)',
+        bgInner: metrics.quenched ? '#24080C' : '#08182C',
+        bgOuter: '#03060D',
+        gridStep: 24,
+        showScanlines: true,
+        showCrosshair: true,
+      });
 
-      // Outer cryostat steel collar
-      ctx.fillStyle = '#0F172A';
+      // Outer Cryostat Iron Yoke Collar (CAD laminated bezel)
+      ctx.save();
+      const yokeGrad = ctx.createRadialGradient(cx, cy, 74, cx, cy, 122);
+      yokeGrad.addColorStop(0, '#0F172A');
+      yokeGrad.addColorStop(0.75, '#1E293B');
+      yokeGrad.addColorStop(1, '#090D16');
+      ctx.fillStyle = yokeGrad;
       ctx.beginPath();
-      ctx.arc(cx, cy, 114, 0, Math.PI * 2);
+      ctx.arc(cx, cy, 118, 0, Math.PI * 2);
       ctx.fill();
-      ctx.strokeStyle = metrics.quenched ? '#EF4444' : '#334155';
-      ctx.lineWidth = 6;
+      ctx.strokeStyle = metrics.quenched ? '#EF4444' : '#38BDF8';
+      ctx.lineWidth = 3;
       ctx.stroke();
 
-      // Superfluid Helium-II cooling channels flowing around the magnet collar
-      for (let i = 0; i < 20; i++) {
-        const ang = (i / 20) * Math.PI * 2 + (isPlaying && !reduceMotion ? t * 0.4 : 0);
-        const rx = cx + Math.cos(ang) * 100;
-        const ry = cy + Math.sin(ang) * 100;
-        ctx.fillStyle = tempK <= 2.17 ? '#38BDF8' : '#FB923C';
-        ctx.beginPath();
-        ctx.arc(rx, ry, 3.2, 0, Math.PI * 2);
-        ctx.fill();
+      // Cooling collar annulus with Superfluid He-II quantized vortices OR nucleate boil bubbles
+      ctx.strokeStyle = isSF ? 'rgba(0, 229, 255, 0.25)' : 'rgba(251, 146, 60, 0.35)';
+      ctx.lineWidth = 14;
+      ctx.beginPath();
+      ctx.arc(cx, cy, 100, 0, Math.PI * 2);
+      ctx.stroke();
+      ctx.restore();
+
+      for (let i = 0; i < 24; i++) {
+        const ang = (i / 24) * Math.PI * 2 + (isPlaying && !reduceMotion ? t * (isSF ? 0.55 : 0.9) : 0);
+        const radJitter = isSF ? 0 : Math.sin(t * 4 + i) * 3.5;
+        const rx = cx + Math.cos(ang) * (100 + radJitter);
+        const ry = cy + Math.sin(ang) * (100 + radJitter);
+        drawAdditiveGlowDot(
+          ctx,
+          rx,
+          ry,
+          isSF ? 9 : 11,
+          metrics.quenched ? '239, 68, 68' : isSF ? '0, 229, 255' : '251, 146, 60',
+          isSF ? 0.72 : 0.85
+        );
       }
 
-      // Twin-aperture dipole flux streamlines
-      const intensity = Math.min(1, fieldT / 16);
-      const fluxColor = metrics.quenched
-        ? `rgba(239, 68, 68, ${0.4 + 0.3 * Math.sin(t * 2)})`
-        : `rgba(0, 229, 255, ${0.35 + 0.55 * intensity})`;
+      // Phosphor Dipole B-Field Streamlines arching across aperture
       for (let loop = -3; loop <= 3; loop++) {
         if (loop === 0) continue;
-        ctx.strokeStyle = fluxColor;
-        ctx.lineWidth = 1.6;
-        ctx.beginPath();
-        const span = Math.abs(loop) * 19;
-        ctx.ellipse(cx, cy + loop * 10, 62, span * 0.42, 0, 0, Math.PI * 2);
-        ctx.stroke();
+        const pts: { x: number; y: number }[] = [];
+        const spanX = 68;
+        const spanY = Math.abs(loop) * 14 + 10;
+        const yCenter = cy + loop * 9;
+        for (let s = 0; s <= 28; s++) {
+          const a = (s / 28) * Math.PI * 2;
+          pts.push({
+            x: cx + Math.cos(a) * spanX,
+            y: yCenter + Math.sin(a) * spanY * 0.42,
+          });
+        }
+        drawPhosphorCurve(
+          ctx,
+          pts,
+          metrics.quenched ? '#EF4444' : '#00E5FF',
+          1.2,
+          metrics.quenched ? 0.22 : 0.3 + 0.55 * intensity
+        );
       }
 
-      // 18 Superconducting Rutherford cables around inner yoke
+      // 18 Layered Nb-Ti / Nb3Sn Rutherford Keystone Cables with additive conductor halos
       for (let c = 0; c < 18; c++) {
         const a = (c / 18) * Math.PI * 2;
         const px = cx + Math.cos(a) * 76;
         const py = cy + Math.sin(a) * 76;
-        ctx.fillStyle = metrics.quenched
-          ? '#B91C1C'
-          : material === 'Nb3Sn'
-          ? '#0EA5E9'
-          : '#2563EB';
+        drawAdditiveGlowDot(
+          ctx,
+          px,
+          py,
+          12,
+          metrics.quenched ? '239, 68, 68' : material === 'Nb3Sn' ? '14, 165, 233' : '59, 130, 246',
+          0.6
+        );
+        ctx.fillStyle = metrics.quenched ? '#991B1B' : material === 'Nb3Sn' ? '#0284C7' : '#1D4ED8';
+        ctx.strokeStyle = '#E2E8F0';
+        ctx.lineWidth = 1.4;
         ctx.beginPath();
-        ctx.arc(px, py, 7, 0, Math.PI * 2);
+        ctx.arc(px, py, 6.5, 0, Math.PI * 2);
         ctx.fill();
-        ctx.strokeStyle = '#FFFFFF';
-        ctx.lineWidth = 1.5;
         ctx.stroke();
       }
 
-      // Central Cold Bore & glowing proton beam core
+      // Central Cold Bore & Relativistic Proton Beam Aperture Glow
       const boreR = Math.min(48, 16 + apertureMm * 0.45);
-      const beamGlow = ctx.createRadialGradient(cx, cy, 2, cx, cy, boreR * 1.4);
-      beamGlow.addColorStop(0, metrics.quenched ? 'rgba(239,68,68,0.7)' : 'rgba(0,229,255,0.65)');
-      beamGlow.addColorStop(1, 'rgba(0,0,0,0)');
-      ctx.fillStyle = beamGlow;
-      ctx.beginPath();
-      ctx.arc(cx, cy, boreR * 1.4, 0, Math.PI * 2);
-      ctx.fill();
+      drawAdditiveGlowDot(
+        ctx,
+        cx,
+        cy,
+        boreR * 1.45,
+        metrics.quenched ? '239, 68, 68' : '0, 229, 255',
+        0.65 + intensity * 0.35
+      );
+      drawAdditiveGlowDot(ctx, cx, cy, 8, '255, 255, 255', 0.9);
 
       ctx.strokeStyle = metrics.quenched ? '#EF4444' : '#38BDF8';
-      ctx.lineWidth = 3;
+      ctx.lineWidth = 2.5;
       ctx.beginPath();
       ctx.arc(cx, cy, boreR, 0, Math.PI * 2);
       ctx.stroke();
 
-      // Hoop force outward arrows scaled by P_B
-      const arrowLen = 10 + intensity * 18;
+      // Lorentz Bursting Hoop Pressure Vectors (P_B = B^2 / 2mu_0)
+      const arrowLen = 12 + intensity * 24;
       [0, Math.PI / 2, Math.PI, (3 * Math.PI) / 2].forEach((dir) => {
         const sx = cx + Math.cos(dir) * 86;
         const sy = cy + Math.sin(dir) * 86;
         const ex = cx + Math.cos(dir) * (86 + arrowLen);
         const ey = cy + Math.sin(dir) * (86 + arrowLen);
-        ctx.strokeStyle = '#FFE600';
-        ctx.lineWidth = 2;
-        ctx.beginPath();
-        ctx.moveTo(sx, sy);
-        ctx.lineTo(ex, ey);
-        ctx.stroke();
+        drawVectorArrow(ctx, sx, sy, ex, ey, '#FFE600', 2.0, 6);
       });
 
       ctx.fillStyle = '#FFFFFF';
       ctx.font = 'bold 12px monospace';
       ctx.textAlign = 'center';
-      ctx.fillText(`${fieldT.toFixed(1)} T`, cx, cy + 4);
+      ctx.fillText(`${fieldT.toFixed(1)} T`, cx, cy - boreR - 8);
       ctx.textAlign = 'left';
-      ctx.fillStyle = '#94A3B8';
+      ctx.fillStyle = '#CBD5E1';
       ctx.font = 'bold 10px monospace';
-      ctx.fillText(`Hoop Load: ${metrics.hoopForceKnPerMeter.toFixed(0)} kN/m | Safety: ${(metrics.safetyMarginFraction * 100).toFixed(0)}%`, 12, h - 10);
+      ctx.fillText(
+        `HOOP STRESS: ${metrics.hoopForceKnPerMeter.toFixed(0)} kN/m · SAFETY: ${(metrics.safetyMarginFraction * 100).toFixed(0)}% · ${isSF ? 'He-II SUPERFLUID' : 'He-I BOIL'}`,
+        14,
+        h - 10
+      );
 
       if (isPlaying && !reduceMotion) animId = requestAnimationFrame(render);
     };
 
     render();
-    return () => cancelAnimationFrame(animId);
+    return () => {
+      cancelAnimationFrame(animId);
+      cleanupVis();
+    };
   }, [fieldT, tempK, apertureMm, material, metrics, isPlaying, reduceMotion]);
 
   return (

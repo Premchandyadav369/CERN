@@ -6,6 +6,13 @@ import { FidelityBadge } from '@/components/provenance/FidelityBadge';
 import { Eli5Card } from '@/components/ui/Eli5Card';
 import { MathFormula } from '@/components/ui/MathFormula';
 import { useGlobalStore } from '@/lib/store';
+import {
+  drawAdditiveGlowDot,
+  drawCernGridBackdrop,
+  drawPhosphorCurve,
+  observeOffscreenVisibility,
+  setupHiDpiCanvas,
+} from '@/lib/cernVisuals';
 import { Magnet, Play, Pause } from 'lucide-react';
 
 export const MonopoleArenaSimulator: React.FC = () => {
@@ -28,109 +35,111 @@ export const MonopoleArenaSimulator: React.FC = () => {
   useEffect(() => {
     const canvas = canvasRef.current;
     if (!canvas) return;
-    const ctx = canvas.getContext('2d');
-    if (!ctx) return;
+    let isVisible = true;
+    const cleanupVis = observeOffscreenVisibility(canvas, (v) => {
+      isVisible = v;
+    });
     let animId = 0;
 
     const render = () => {
-      if (isPlaying && !reduceMotion) tRef.current = (tRef.current + 0.015) % 1;
+      if (isPlaying && !reduceMotion && isVisible) tRef.current = (tRef.current + 0.014) % 1;
+      const vp = setupHiDpiCanvas(canvas, 560, 260);
+      if (!vp || !isVisible) {
+        if (isPlaying && !reduceMotion) animId = requestAnimationFrame(render);
+        return;
+      }
+      const { ctx, width: w, height: h } = vp;
       const prog = reduceMotion ? 0.9 : tRef.current;
-      const w = canvas.width;
-      const h = canvas.height;
       const cy = h / 2;
 
-      ctx.fillStyle = '#050814';
-      ctx.fillRect(0, 0, w, h);
+      drawCernGridBackdrop(ctx, w, h, {
+        accentColor: 'rgba(56, 189, 248, 0.08)',
+        bgInner: '#081629',
+        bgOuter: '#03060D',
+        gridStep: 24,
+        showScanlines: true,
+        showCrosshair: true,
+      });
 
-      // Magnetic Field Vector Grid (B_z crosses)
-      const bAlpha = Math.min(0.45, 0.1 + (fieldT / 10) * 0.3);
+      // Calibrated MoEDAL Nuclear Track Detector (NTD) Folios on right wall
+      const ntdX = w - 24;
+      ctx.fillStyle = 'rgba(255, 176, 0, 0.14)';
+      ctx.fillRect(ntdX - 4, 24, 10, h - 48);
+      ctx.strokeStyle = '#FFB020';
+      ctx.lineWidth = 1.5;
+      ctx.strokeRect(ntdX - 4, 24, 10, h - 48);
+
+      // Solenoid B-field vector symbols
+      const bAlpha = Math.min(0.45, 0.12 + (fieldT / 10) * 0.3);
       ctx.strokeStyle = `rgba(56, 189, 248, ${bAlpha})`;
-      ctx.lineWidth = 1.2;
-      for (let gx = 45; gx < w - 20; gx += 48) {
-        for (let gy = 30; gy < h - 25; gy += 45) {
+      ctx.lineWidth = 1.1;
+      for (let gx = 48; gx < w - 36; gx += 52) {
+        for (let gy = 34; gy < h - 30; gy += 48) {
           ctx.beginPath();
-          ctx.arc(gx, gy, 7, 0, Math.PI * 2);
-          ctx.moveTo(gx - 4, gy - 4);
-          ctx.lineTo(gx + 4, gy + 4);
-          ctx.moveTo(gx + 4, gy - 4);
-          ctx.lineTo(gx - 4, gy + 4);
+          ctx.arc(gx, gy, 6.5, 0, Math.PI * 2);
+          ctx.moveTo(gx - 3.5, gy - 3.5);
+          ctx.lineTo(gx + 3.5, gy + 3.5);
+          ctx.moveTo(gx + 3.5, gy - 3.5);
+          ctx.lineTo(gx - 3.5, gy + 3.5);
           ctx.stroke();
         }
       }
 
       const bendCoeff = Math.min(0.85, (fieldT * 12) / Math.max(15, energyGev));
-      const monoCoeff = Math.min(1.3, metrics.deflectionSlopeT * 0.45);
+      const monoCoeff = Math.min(1.25, metrics.deflectionSlopeT * 0.45);
 
-      // 1. Standard Proton Lorentz Track (+e)
-      ctx.strokeStyle = '#00E5FF';
-      ctx.lineWidth = 3;
-      ctx.beginPath();
-      let pEndX = 30;
-      let pEndY = cy;
-      for (let i = 0; i <= 40; i++) {
-        const u = (i / 40) * Math.max(0.08, prog);
-        const px = 30 + u * (w - 60);
-        const py = Math.max(20, cy - bendCoeff * 85 * u * u);
-        if (i === 0) ctx.moveTo(px, py);
-        else ctx.lineTo(px, py);
-        pEndX = px;
-        pEndY = py;
+      // 1. Standard Proton Lorentz Track (+e) with Phosphor Curve
+      const protonPts: { x: number; y: number }[] = [];
+      for (let i = 0; i <= 42; i++) {
+        const u = (i / 42) * Math.max(0.08, prog);
+        protonPts.push({
+          x: 30 + u * (w - 64),
+          y: Math.max(22, cy - bendCoeff * 84 * u * u),
+        });
       }
-      ctx.stroke();
+      drawPhosphorCurve(ctx, protonPts, '#00E5FF', 2.0, 0.92);
+      const pEnd = protonPts[protonPts.length - 1];
+      drawAdditiveGlowDot(ctx, pEnd.x, pEnd.y, 12, '0, 229, 255', 0.9);
 
-      // Proton head
-      ctx.fillStyle = '#FFFFFF';
-      ctx.beginPath();
-      ctx.arc(pEndX, pEndY, 4.5, 0, Math.PI * 2);
-      ctx.fill();
-
-      // 2. Blazing Dirac Monopole Track (+n * g_D) with volumetric Delta-Ray ionization sheath!
-      const sheathWidth = Math.min(24, 9 + diracUnits * 3.5);
-      ctx.beginPath();
-      let mEndX = 30;
-      let mEndY = cy;
-      for (let i = 0; i <= 40; i++) {
-        const u = (i / 40) * Math.max(0.08, prog);
-        const mx = 30 + u * (w - 60);
-        const my = Math.min(h - 24, cy + monoCoeff * 95 * u * u);
-        if (i === 0) ctx.moveTo(mx, my);
-        else ctx.lineTo(mx, my);
-        mEndX = mx;
-        mEndY = my;
+      // 2. Blazing Dirac Monopole Track (+n g_D) + δ-ray ionization sheath
+      const monoPts: { x: number; y: number }[] = [];
+      for (let i = 0; i <= 42; i++) {
+        const u = (i / 42) * Math.max(0.08, prog);
+        monoPts.push({
+          x: 30 + u * (w - 64),
+          y: Math.min(h - 24, cy + monoCoeff * 92 * u * u),
+        });
       }
-      // Ionization glow halo
-      ctx.save();
-      ctx.strokeStyle = 'rgba(255, 176, 0, 0.25)';
-      ctx.lineWidth = sheathWidth;
-      ctx.lineCap = 'round';
-      ctx.stroke();
-      ctx.restore();
+      const sheathWidth = Math.min(18, 6 + diracUnits * 2.5);
+      drawPhosphorCurve(ctx, monoPts, '#FFB000', sheathWidth * 0.42, 0.35);
+      drawPhosphorCurve(ctx, monoPts, '#FFE082', 2.6, 1.0);
+      const mEnd = monoPts[monoPts.length - 1];
+      drawAdditiveGlowDot(ctx, mEnd.x, mEnd.y, 22, '255, 176, 0', 1.0);
 
-      // Bright core monopole track
-      ctx.strokeStyle = '#FFE082';
-      ctx.lineWidth = 4;
-      ctx.stroke();
-
-      const mGlow = ctx.createRadialGradient(mEndX, mEndY, 2, mEndX, mEndY, 18);
-      mGlow.addColorStop(0, '#FFFFFF');
-      mGlow.addColorStop(0.5, '#FFB000');
-      mGlow.addColorStop(1, 'transparent');
-      ctx.fillStyle = mGlow;
-      ctx.beginPath();
-      ctx.arc(mEndX, mEndY, 18, 0, Math.PI * 2);
-      ctx.fill();
+      // Emit Cherenkov / Delta-ray ionisation sparks along blazing monopole track
+      for (let s = 4; s < monoPts.length; s += 5) {
+        const pt = monoPts[s];
+        drawAdditiveGlowDot(ctx, pt.x, pt.y - 4 + (s % 3) * 3, 6, '255, 230, 120', 0.55);
+      }
 
       ctx.fillStyle = '#00E5FF';
-      ctx.font = 'bold 11px monospace';
-      ctx.fillText('Proton (+e · Lorentz v×B)', 210, 26);
+      ctx.font = 'bold 10px monospace';
+      ctx.fillText('Proton (+e · Lorentz v × B)', 24, 22);
       ctx.fillStyle = '#FFE082';
-      ctx.fillText(`Dirac Monopole (+${diracUnits} g_D · ${metrics.ionizingLossRatioVsProton.toFixed(0)}× Brighter Ionization!)`, 145, h - 10);
+      ctx.fillText(
+        `Dirac Monopole (+${diracUnits} g_D · ${metrics.ionizingLossRatioVsProton.toFixed(0)}× Brighter Ionization)`,
+        24,
+        h - 10
+      );
 
       if (isPlaying && !reduceMotion) animId = requestAnimationFrame(render);
     };
 
     render();
-    return () => cancelAnimationFrame(animId);
+    return () => {
+      cancelAnimationFrame(animId);
+      cleanupVis();
+    };
   }, [diracUnits, fieldT, energyGev, metrics, isPlaying, reduceMotion]);
 
   return (

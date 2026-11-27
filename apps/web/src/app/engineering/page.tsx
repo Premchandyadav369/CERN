@@ -7,6 +7,8 @@ import { FidelityBadge } from '@/components/provenance/FidelityBadge';
 import { Eli5Card } from '@/components/ui/Eli5Card';
 import { CryoMagnet3DCanvas } from '@/components/engineering/CryoMagnet3DCanvas';
 import { RfCavity3DCanvas } from '@/components/engineering/RfCavity3DCanvas';
+import { SuperfluidHeIICanvas } from '@/components/engineering/SuperfluidHeIICanvas';
+import { VacuumPipeCanvas } from '@/components/engineering/VacuumPipeCanvas';
 import { MathFormula } from '@/components/ui/MathFormula';
 import { LabExportBar } from '@/components/ui/LabExportBar';
 import { TechnicalTermDeck } from '@/components/ui/TechTermInfo';
@@ -199,6 +201,12 @@ export default function EngineeringPage() {
             cosmic microwave background), entering the quantum Superfluid He-II regime.
           </p>
 
+          <SuperfluidHeIICanvas
+            temperatureK={temperatureK}
+            magnetCurrentKa={magnetCurrentKa}
+            isSuperfluidHeII={isSuperfluidHeII}
+          />
+
           {/* Interactive Phase Bar */}
           <div className="p-3 bg-canvas-sub border-2 border-black shadow-[2px_2px_0px_#000] space-y-2">
             <div className="flex justify-between text-[11px] font-mono font-bold">
@@ -253,6 +261,11 @@ export default function EngineeringPage() {
             Cryopumping inside the 1.9 K beam screen freezes residual gas onto copper walls, achieving
             pressures lower than the Moon&apos;s surface so protons can orbit ~11,245 times per second.
           </p>
+
+          <VacuumPipeCanvas
+            vacuumLogExp={vacuumLogExp}
+            beamLifetimeHours={vacuumMetrics.beamLifetimeHours}
+          />
 
           <div className="p-3 bg-canvas-sub border-2 border-black shadow-[2px_2px_0px_#000]">
             <div className="flex justify-between text-xs font-mono mb-1 font-bold">

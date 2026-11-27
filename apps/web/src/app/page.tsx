@@ -38,13 +38,13 @@ export default function HomePage() {
       <section className="space-y-3">
         <div className="flex items-center justify-between pb-1">
           <div className="flex items-center gap-2">
-            <Radio className="w-4 h-4 text-cern-cyan animate-pulse" />
+            <Radio className="w-4 h-4 text-cern-cyan" />
             <span className="text-xs font-mono font-bold uppercase text-white tracking-wider">
               CERN Control Centre (CCC) · Live Operational Baselines
             </span>
           </div>
           <span className="text-xs font-mono text-emerald-400 font-bold hidden sm:flex items-center gap-1.5 px-2 py-0.5 border border-black bg-canvas-surface shadow-[1px_1px_0px_#000]">
-            <span className="w-2 h-2 rounded-none bg-emerald-400 animate-ping" />
+            <span className="w-2 h-2 rounded-none bg-emerald-400" aria-hidden="true" />
             CRYOGENICS 1.9 K NOMINAL
           </span>
         </div>

@@ -1,7 +1,7 @@
 'use client';
 
 import React, { useEffect, useRef, useState } from 'react';
-import { motion } from 'framer-motion';
+import { motion, useScroll, useSpring } from 'framer-motion';
 import gsap from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
 import { useGlobalStore } from '@/lib/store';
@@ -145,5 +145,46 @@ export const NumberTicker: React.FC<{
       {display}
       {suffix}
     </span>
+  );
+};
+
+/**
+ * Fixed top 2px root-scroll beamline progress bar.
+ * Uses compositor-only CSS Scroll-Driven Animation when supported,
+ * with Framer Motion useScroll fallback for older engines, and honors reduceMotion.
+ */
+export const ScrollBeamProgress: React.FC = () => {
+  const reduceMotion = useGlobalStore((s) => s.reduceMotion);
+  const [nativeTimeline, setNativeTimeline] = useState(true);
+  const { scrollYProgress } = useScroll();
+  const smoothScaleX = useSpring(scrollYProgress, {
+    stiffness: 260,
+    damping: 32,
+    restDelta: 0.001,
+  });
+
+  useEffect(() => {
+    if (typeof window !== 'undefined' && typeof CSS !== 'undefined') {
+      setNativeTimeline(Boolean(CSS.supports?.('animation-timeline', 'scroll(root block)')));
+    }
+  }, []);
+
+  if (reduceMotion) return null;
+
+  if (nativeTimeline) {
+    return (
+      <div
+        className="cern-scroll-progress cern-scroll-progress-native"
+        aria-hidden="true"
+      />
+    );
+  }
+
+  return (
+    <motion.div
+      className="cern-scroll-progress"
+      style={{ scaleX: smoothScaleX }}
+      aria-hidden="true"
+    />
   );
 };

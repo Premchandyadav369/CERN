@@ -501,3 +501,82 @@ html.cern-tva-theme body::after {
 .katex {
   font-size: 1.03em;
 }
+
+/* Perceptual color-space interpolation tokens (in oklab / in oklch) */
+:root {
+  --cern-grad-space: ;
+  --cern-beam-gradient: linear-gradient(90deg, #00e5ff, #38bdf8, #a855f7, #f59e0b);
+}
+
+@supports (background: linear-gradient(in oklab, white, black)) {
+  :root {
+    --cern-grad-space: in oklab;
+    --cern-beam-gradient: linear-gradient(in oklch 90deg, #00e5ff, #38bdf8, #a855f7, #f59e0b);
+  }
+}
+
+/* Typographic polish & optimal prose measure */
+h1,
+h2 {
+  text-wrap: balance;
+}
+
+.cern-prose {
+  max-width: 72ch;
+  text-wrap: pretty;
+}
+
+/* Off-screen rendering containment for heavy multi-panel routes */
+.cern-offscreen-section {
+  content-visibility: auto;
+  contain-intrinsic-size: auto none auto 420px;
+}
+
+/* Native CSS scroll-driven root beam progress indicator */
+.cern-scroll-progress {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 2px;
+  z-index: 60;
+  pointer-events: none;
+  transform-origin: 0% 50%;
+  background: var(--cern-beam-gradient);
+}
+
+@supports (animation-timeline: scroll(root block)) {
+  @media (prefers-reduced-motion: no-preference) {
+    @keyframes cern-beam-scroll-progress {
+      from {
+        transform: scaleX(0);
+      }
+      to {
+        transform: scaleX(1);
+      }
+    }
+
+    .cern-scroll-progress-native {
+      animation: cern-beam-scroll-progress linear both;
+      animation-timeline: scroll(root block);
+      animation-range: 0% 100%;
+    }
+  }
+}
+
+/* Windows High Contrast / forced-colors fallback where box-shadows drop */
+@media (forced-colors: active) {
+  .brutal-card,
+  .brutal-panel,
+  .brutal-btn,
+  .cern-spotlight-surface {
+    border: 1px solid ButtonText !important;
+    box-shadow: none !important;
+    forced-color-adjust: none;
+  }
+
+  :where(a, button, input, select, textarea, summary, [tabindex]):focus-visible {
+    outline: 2px solid Highlight !important;
+    outline-offset: 2px !important;
+  }
+}

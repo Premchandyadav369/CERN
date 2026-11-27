@@ -4,6 +4,7 @@ import React from 'react';
 import { GridSimulator } from '@/components/computing/GridSimulator';
 import { Eli5Card } from '@/components/ui/Eli5Card';
 import { TechnicalTermDeck } from '@/components/ui/TechTermInfo';
+import { GsapStaggerSection, SpotlightMotionCard } from '@/components/motion/CernMotionPrimitives';
 import { Server, Database, Network, ShieldCheck } from 'lucide-react';
 
 export default function ComputingPage() {
@@ -48,7 +49,7 @@ export default function ComputingPage() {
       </section>
 
       {/* Exascale HL-LHC Computing Challenge */}
-      <section className="p-6 bg-canvas-surface border-3 border-black shadow-[6px_6px_0px_0px_#000000] space-y-5">
+      <section className="p-6 bg-canvas-surface border-3 border-black shadow-[6px_6px_0px_0px_#000000] space-y-5 cern-offscreen-section">
         <div className="border-b-2 border-black pb-3">
           <h2 className="text-xl font-display font-extrabold text-white">
             The High-Luminosity LHC Computing Frontier
@@ -57,31 +58,31 @@ export default function ComputingPage() {
             Key architectural paradigms scaling storage and throughput for HL-LHC data deluge.
           </p>
         </div>
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-5 text-xs text-text-secondary leading-relaxed font-mono">
-          <div className="p-4 bg-canvas-sub border-2 border-black shadow-[4px_4px_0px_#00E5FF] space-y-2 hover:-translate-x-0.5 hover:-translate-y-0.5 transition-all">
+        <GsapStaggerSection className="grid grid-cols-1 md:grid-cols-3 gap-5 text-xs text-text-secondary leading-relaxed font-mono">
+          <SpotlightMotionCard className="gsap-stagger-item p-4 bg-canvas-sub border-2 border-black shadow-[4px_4px_0px_#00E5FF] space-y-2">
             <span className="text-cern-cyan font-bold text-sm block">Data Growth: 250+ PB/yr</span>
             <p className="text-text-secondary font-sans text-xs">
               HL-LHC instantaneous luminosity increases pile-up to 140–200 collisions per crossing,
               causing event sizes and tracking combinatorics to surge exponentially.
             </p>
-          </div>
+          </SpotlightMotionCard>
 
-          <div className="p-4 bg-canvas-sub border-2 border-black shadow-[4px_4px_0px_#00FF66] space-y-2 hover:-translate-x-0.5 hover:-translate-y-0.5 transition-all">
+          <SpotlightMotionCard className="gsap-stagger-item p-4 bg-canvas-sub border-2 border-black shadow-[4px_4px_0px_#00FF66] space-y-2">
             <span className="text-emerald-400 font-bold text-sm block">Tape Archival Storage</span>
             <p className="text-text-secondary font-sans text-xs">
               Cold data sits on automated high-density magnetic tape cartridges inside CERN&apos;s Meyrin
               vaults, consuming zero electrical power while idle.
             </p>
-          </div>
+          </SpotlightMotionCard>
 
-          <div className="p-4 bg-canvas-sub border-2 border-black shadow-[4px_4px_0px_#FFE600] space-y-2 hover:-translate-x-0.5 hover:-translate-y-0.5 transition-all">
+          <SpotlightMotionCard className="gsap-stagger-item p-4 bg-canvas-sub border-2 border-black shadow-[4px_4px_0px_#FFE600] space-y-2">
             <span className="text-amber-400 font-bold text-sm block">Heterogeneous Compute</span>
             <p className="text-text-secondary font-sans text-xs">
               Migration of tracking and reconstruction algorithms to GPU coprocessors (such as LHCb Allen
               and CMS Patatrack) to sustain throughput under tight power envelopes.
             </p>
-          </div>
-        </div>
+          </SpotlightMotionCard>
+        </GsapStaggerSection>
       </section>
 
       <TechnicalTermDeck contextId="page-computing" heading="Trigger, DAQ & WLCG Computing Terms (ⓘ Info Cards)" />

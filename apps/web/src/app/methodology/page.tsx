@@ -15,6 +15,7 @@ import { Eli5Card } from '@/components/ui/Eli5Card';
 import { MathFormula } from '@/components/ui/MathFormula';
 import { TechnicalTermDeck } from '@/components/ui/TechTermInfo';
 import { FidelityBadge } from '@/components/provenance/FidelityBadge';
+import { GsapStaggerSection, SpotlightMotionCard } from '@/components/motion/CernMotionPrimitives';
 import {
   ShieldCheck,
   Database,
@@ -438,32 +439,32 @@ export default function MethodologyPage() {
       </section>
 
       {/* Verification Guarantees Strip */}
-      <section className="grid grid-cols-1 md:grid-cols-3 gap-4 font-mono text-xs">
-        <div className="p-4 bg-canvas-surface border-2 border-black shadow-[4px_4px_0px_#00FF66] space-y-1">
+      <GsapStaggerSection className="grid grid-cols-1 md:grid-cols-3 gap-4 font-mono text-xs cern-offscreen-section">
+        <SpotlightMotionCard className="gsap-stagger-item p-4 bg-canvas-surface border-2 border-black shadow-[4px_4px_0px_#00FF66] space-y-1">
           <div className="flex items-center gap-1.5 text-emerald-400 font-black">
             <CheckCircle2 className="w-4 h-4" /> UNIT TEST SUITE
           </div>
           <p className="text-text-secondary">
             27 analytical &amp; statistical unit tests in vitest execute continuously on @cern-x/sim-core.
           </p>
-        </div>
-        <div className="p-4 bg-canvas-surface border-2 border-black shadow-[4px_4px_0px_#00E5FF] space-y-1">
+        </SpotlightMotionCard>
+        <SpotlightMotionCard className="gsap-stagger-item p-4 bg-canvas-surface border-2 border-black shadow-[4px_4px_0px_#00E5FF] space-y-1">
           <div className="flex items-center gap-1.5 text-cern-cyan font-black">
             <GitBranch className="w-4 h-4" /> SEEDED REPRODUCIBILITY
           </div>
           <p className="text-text-secondary">
             Stochastic physics samplers run Mulberry32 deterministic PRNG sequences rather than arbitrary Math.random().
           </p>
-        </div>
-        <div className="p-4 bg-canvas-surface border-2 border-black shadow-[4px_4px_0px_#FFE600] space-y-1">
+        </SpotlightMotionCard>
+        <SpotlightMotionCard className="gsap-stagger-item p-4 bg-canvas-surface border-2 border-black shadow-[4px_4px_0px_#FFE600] space-y-1">
           <div className="flex items-center gap-1.5 text-[#FFE600] font-black">
             <ShieldCheck className="w-4 h-4" /> NON-AFFILIATION &amp; ACCESSIBILITY
           </div>
           <p className="text-text-secondary">
             Independent educational project targeting WCAG 2.2 AA contrast, pause controls, and reduced motion compliance.
           </p>
-        </div>
-      </section>
+        </SpotlightMotionCard>
+      </GsapStaggerSection>
 
       {/* Embedded Technical Term Info Cards */}
       <TechnicalTermDeck

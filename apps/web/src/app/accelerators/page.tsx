@@ -8,6 +8,7 @@ import { BeamOpticsSandbox } from '@/components/simulations/BeamOpticsSandbox';
 import { Eli5Card } from '@/components/ui/Eli5Card';
 import { TechnicalTermDeck } from '@/components/ui/TechTermInfo';
 import { Value } from '@/components/provenance/Value';
+import { GsapStaggerSection } from '@/components/motion/CernMotionPrimitives';
 import { Zap, Play, ArrowRight, ExternalLink, Activity, Info, Orbit, HeartPulse } from 'lucide-react';
 
 export default function AcceleratorsPage() {
@@ -251,15 +252,24 @@ export default function AcceleratorsPage() {
           )}
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+        <GsapStaggerSection className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 cern-offscreen-section">
           {acceleratorsData.map((acc) => {
             const isSelected = acc.id === selectedAcceleratorId;
 
             return (
               <div
                 key={acc.id}
+                role="button"
+                tabIndex={0}
+                aria-pressed={isSelected}
                 onClick={() => setSelectedAcceleratorId(acc.id)}
-                className={`p-4 border-2 border-black transition-all cursor-pointer flex flex-col justify-between ${
+                onKeyDown={(e) => {
+                  if (e.key === 'Enter' || e.key === ' ') {
+                    e.preventDefault();
+                    setSelectedAcceleratorId(acc.id);
+                  }
+                }}
+                className={`gsap-stagger-item p-4 border-2 border-black transition-all cursor-pointer flex flex-col justify-between ${
                   isSelected
                     ? 'bg-canvas-sub border-black shadow-[5px_5px_0px_#00E5FF] -translate-x-0.5 -translate-y-0.5'
                     : 'bg-canvas-surface shadow-[4px_4px_0px_#000] hover:bg-canvas-sub hover:shadow-[5px_5px_0px_#000] hover:-translate-x-0.5 hover:-translate-y-0.5'
@@ -307,11 +317,11 @@ export default function AcceleratorsPage() {
               </div>
             );
           })}
-        </div>
+        </GsapStaggerSection>
       </section>
 
       {/* Advanced Future Accelerators Showcase */}
-      <section className="p-6 bg-canvas-sub border-3 border-black shadow-[6px_6px_0px_#000] space-y-4">
+      <section className="p-6 bg-canvas-sub border-3 border-black shadow-[6px_6px_0px_#000] space-y-4 cern-offscreen-section">
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 border-b-2 border-black pb-3">
           <div>
             <span className="text-[10px] font-mono font-bold text-cern-cyan uppercase tracking-wider block">

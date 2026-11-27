@@ -8,6 +8,7 @@ import { CitationDrawer } from '@/components/provenance/CitationDrawer';
 import { MissionsDrawer } from '@/components/ui/MissionsDrawer';
 import { MissMinutesCompanion } from '@/components/ui/MissMinutesCompanion';
 import { MotionProvider } from '@/components/motion/MotionProvider';
+import { ScrollBeamProgress } from '@/components/motion/CernMotionPrimitives';
 
 export const metadata: Metadata = {
   title: 'CERN-X | The Interactive Digital Universe of CERN',
@@ -29,8 +30,17 @@ export default function RootLayout({
     <html lang="en" className="dark">
       <body className="min-h-screen flex flex-col bg-canvas text-text-primary antialiased selection:bg-cern-cyan selection:text-black">
         <MotionProvider>
+          <a
+            href="#main-content"
+            className="sr-only focus:not-sr-only focus:fixed focus:top-2 focus:left-2 focus:z-[70] focus:px-3 focus:py-2 focus:bg-cern-cyan focus:text-black focus:font-mono focus:text-xs focus:font-bold focus:border-2 focus:border-black focus:shadow-[3px_3px_0px_#000]"
+          >
+            Skip to main content
+          </a>
+          <ScrollBeamProgress />
           <TopBar />
-          <main className="flex-1 flex flex-col">{children}</main>
+          <main id="main-content" tabIndex={-1} className="flex-1 flex flex-col outline-none">
+            {children}
+          </main>
           <Footer />
           <CommandPalette />
           <CitationDrawer />

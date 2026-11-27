@@ -76,12 +76,12 @@ flowchart LR
 | `/projects` | **CERN Projects & 3D Atlas** | Interactive Three.js 3D underground facility complex, collider circumference overlay (`LHC`, `FCC-hh`, `HL-LHC`), knowledge graph, and 22+ projects |
 | `/accelerators` | **Accelerator Complex** | Injector specs (`Linac4` through `FCC`), embedded **LHC Dynamics**, and **Courant-Snyder Beam Optics** sandboxes |
 | `/experiments` | **Flagship & Fixed-Target Labs** | `ATLAS`, `CMS`, `ALICE`, `LHCb`, `ISOLDE`, `ALPHA`, `CAST`, `FASER`, `MoEDAL`, `AWAKE`, and `n_TOF` |
-| `/detectors` | **3D Detector Digital Twins** | Toggleable `ATLAS` / `CMS` / `ALICE` / `LHCb` subdetector layers, LEGO calorimeter towers, $\text{PbWO}_4$ crystal & $\text{Nb}_3\text{Sn}$ 3D lattice viewer |
-| `/simulations` | **33 Interactive Physics Labs** | Categorized single-row scrollable `tablist` across **5 domains** + per-module interactive `ⓘ` Technical Term Info Cards |
-| `/engineering` | **Cryo, Vacuum & RF Twin** | 3D Dipole Cryostat, $1.9\text{ K}$ superfluid $\text{He-II}$ transition, UHV beam lifetime, and $400.79\text{ MHz}$ RF phase surfing |
+| `/detectors` | **3D Detector Digital Twins** | Toggleable `ATLAS` / `CMS` / `ALICE` / `LHCb` subdetector layers, **Open Data 3D Handoff** (`Inspect 3D`), LEGO calorimeter towers, $\text{PbWO}_4$ & $\text{Nb}_3\text{Sn}$ 3D lattice |
+| `/simulations` | **33 Interactive Physics Labs** | Lazy code-split `tablist` across **5 domains**, **3-Step ELI5 Story + Myth-Buster**, **Interactive Physics Bet Arena (`Beam Credits`)**, `ⓘ` Technical Terms, and **`.py`/`.ipynb` Export** |
+| `/engineering` | **Cryo, Vacuum & RF Twin** | 3D Dipole Cryostat, **$1.9\text{ K}$ Superfluid $\text{He-II}$ Quantized Vortex GLSL Twin**, UHV beam lifetime, and $400.79\text{ MHz}$ RF phase surfing |
 | `/computing` | **WLCG Exascale Grid Simulator** | Multi-tier Tier-0 / Tier-1 / Tier-2 discrete-event throughput, tape archival, and HL-LHC pile-up queue dynamics |
 | `/ai-lab` | **LHC-TriggerMind ML Lab** | Live browser neural-network inference (with `INT8` mode) and **SHAP Explainability** attribution benchmark on ATLAS Higgs data |
-| `/open-data` | **Real CERN Open Data Lab** | Authentic $Z^0 \to \mu^+\mu^-$ dimuon invariant-mass spectrum explorer, HEPData overlays, and interactive $p_T$ / $|\eta|$ cutflow table |
+| `/open-data` | **Real CERN Open Data Lab** | Authentic $Z^0 \to \mu^+\mu^-$ dimuon spectrum, live **`/api/cern-live` CERN Open Data Portal** stream + 1-click **`Inspect 3D`** detector handoff |
 | `/learn` | **Subatomic Dictionary & Timeline** | 3-depth glossary (`Beginner` / `Undergrad` / `Researcher`) with KaTeX math, Standard Model 3D periodic explorer, and CERN history timeline |
 | `/methodology` | **End-to-End Methodology & Proofs** | 5-stage execution pipeline, **Live Browser Physics Verifier**, full KaTeX ledger, and interactive `data/manifest.json` inspector |
 | `/about` | **Governance & Disclaimer** | Strict No-Fake-Data charter, 3 permitted data classes, fidelity badges, and non-affiliation notice |
@@ -142,12 +142,12 @@ All 8 labs inside **TVA & Marvel Labs** translate recognizable sci-fi interfaces
 
 ---
 
-## 6. Pedagogical Design: ELI5, ⓘ Info Cards & KaTeX
+## 6. Pedagogical Design: ELI5 Stories, Physics Bet Arena, ⓘ Info Cards & Accessibility
 
-- **Global `ELI5` Mode & Depth Switcher**: Switch between **Beginner**, **Undergrad**, and **Researcher** explanations from the header on any page.
-- **Site-Wide `TVA MODE` Switch & Miss Minutes / O.B. Companion**: Toggle the CRT Amber TVA theme globally or ask the floating O.B. Helper for context-sensitive guidance.
-- **`ⓘ` Technical Term Info Cards (`TechnicalTermDeck`)**: Embedded cleanly inside every simulator and every major route (`#tech-glossary-deck`), providing clickable `ⓘ` pills for 34+ symbols ($\beta^*$, $B\rho$, $\eta$, $\lambda(\mu)$, $\Delta m_{32}^2$, $v_2$, $g_D$, $K$-edge, $\text{AMS}$, $5\sigma$) with ELI5 analogies, formal definitions, units, and KaTeX formulas.
-- **Verified KaTeX Throughout**: Every formula renders cleanly via `MathFormula`, `InlineMathText`, and expandable `fx Equation` toggles on `FidelityBadge`.
+- **Global `101 / BSc / PhD` Depth Switcher & Beam Credits**: Switch explanation depth from the header on any page, track your live **`Beam Credits` (`⚡`)**, or toggle site-wide **`TVA MODE`** and the docked **`GUIDE`** companion.
+- **33-Lab ELI5 3-Step Story, Myth-Buster & Interactive Physics Bet Arena (`PhysicsBetArena`)**: Every simulator pairs plain-language step-by-step stories and common misconception busters with an interactive prediction wager (including **Predict Before You Run**) backed by real `SeededRNG` / `@cern-x/sim-core` physics outcomes.
+- **GLSL WebGL Shaders, Scroll-Driven Motion & Accessibility**: Powered by custom **Superfluid He-II Quantized Vortex / Volumetric Tunnel shaders**, GSAP `ScrollTrigger` reveals, CSS `in oklab`/`in oklch` perceptual gradients, `forced-colors: active` contrast fallbacks, skip links, and `reduceMotion` compliance.
+- **`ⓘ` Technical Term Info Cards (`TechnicalTermDeck`) & Verified KaTeX**: Clickable `ⓘ` pills for 34+ symbols paired with `MathFormula`, `InlineMathText`, and expandable `fx Equation` toggles on `FidelityBadge`.
 
 ---
 
@@ -233,9 +233,9 @@ $$
 │   └── web/                          # Next.js 14 App Router UI, KaTeX, Three.js & Canvas simulators
 │       ├── next.config.mjs           # Monorepo webpack aliases, security headers & optional standalone mode
 │       └── src/
-│           ├── app/                  # 13 App Router pages + /api/arxiv + /api/health
-│           ├── components/           # 33 simulators, 3D canvases, TechTermDeck, TopBar, Footer, O.B. Guide
-│           └── lib/                  # Zustand state store, manifest loader, WebAudio sonifier
+│           ├── app/                  # 13 App Router pages + /api/arxiv + /api/cern-live + /api/health
+│           ├── components/           # 33 lazy-split sims, PhysicsBetArena, 3D GLSL canvases, TechTermDeck
+│           └── lib/                  # Zustand store (Beam Credits, level), notebookExporter (.py/.ipynb), WebAudio
 ├── packages/
 │   ├── content-schema/               # Zod schemas validating content & manifest provenance
 │   └── sim-core/                     # Pure TS physics kernel & 27 Vitest unit assertions
@@ -247,7 +247,7 @@ $$
 │   └── benchmarks/                   # TriggerMind trained ONNX & benchmark metrics
 ├── content/                          # Sourced JSON datasets (accelerators, experiments, projects, glossary, particles)
 ├── data/                             # manifest.json provenance registry, Open Data events & HEPData overlays
-├── scripts/                          # verify_manifest.js & verify_routes.js (33-route health probe)
+├── scripts/                          # verify_manifest.js & verify_routes.js (39-route health probe)
 ├── docs/
 │   └── assets/                       # High-DPI architecture diagrams & live UI screenshots
 ├── .github/workflows/ci.yml          # Dual-job CI/CD: Web/Physics + C++17/Python verification
@@ -262,7 +262,7 @@ $$
 ## 10. Verification & Automated Checks
 
 Every commit runs dual CI jobs defined in [`.github/workflows/ci.yml`](.github/workflows/ci.yml):
-1. **`verify-web-and-physics`**: Validates [`data/manifest.json`](data/manifest.json), executes 27 deterministic Vitest physics assertions, compiles monorepo TypeScript (`@cern-x/content-schema` → `@cern-x/sim-core` → `@cern-x/web`), builds Next.js, starts the production server, and verifies HTTP `200` across all 33 routes including `/api/health`.
+1. **`verify-web-and-physics`**: Validates [`data/manifest.json`](data/manifest.json), executes 27 deterministic Vitest physics assertions, compiles monorepo TypeScript (`@cern-x/content-schema` → `@cern-x/sim-core` → `@cern-x/web`), builds Next.js, starts the production server, and verifies HTTP `200` across all 39 routes including `/api/health` and `/api/cern-live`.
 2. **`verify-cpp-and-python`**: Compiles all C++17 kernels with strict `-O2 -Wall -Wextra -Werror`, runs native assertions, and verifies Python RGE, PMNS, and FODO beam-optics scripts.
 
 ---
@@ -288,7 +288,7 @@ npm run start
 | `npm run test:physics` | Runs 27 Vitest physics unit tests in `packages/sim-core` |
 | `npm run typecheck` | Builds workspace declarations and checks strict `tsc --noEmit` across all 3 workspaces |
 | `npm run verify:manifest` | Validates `data/manifest.json` schema integrity |
-| `npm run verify:routes` | Audits HTTP `200` responses across 33 routes & `/api/health` |
+| `npm run verify:routes` | Audits HTTP `200` responses across 39 routes, `/api/health` & `/api/cern-live` |
 | `npm run verify:all` | Runs `verify:manifest && test:physics && typecheck && build` |
 
 ---

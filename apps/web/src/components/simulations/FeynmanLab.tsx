@@ -18,6 +18,8 @@ import {
   Sliders,
   Info,
   HelpCircle,
+  Play,
+  Pause,
 } from 'lucide-react';
 
 interface ReactionPreset {
@@ -148,6 +150,7 @@ export const FeynmanLab: React.FC = () => {
   const [sandboxIncoming, setSandboxIncoming] = useState<string[]>(['e-', 'e+']);
   const [sandboxOutgoing, setSandboxOutgoing] = useState<string[]>(['mu-', 'mu+']);
   const [quizAnswer, setQuizAnswer] = useState<number | null>(null);
+  const [isAnimating, setIsAnimating] = useState<boolean>(true);
   const [pulsePhase, setPulsePhase] = useState<number>(0);
 
   const activePreset = useMemo(
@@ -155,20 +158,20 @@ export const FeynmanLab: React.FC = () => {
     [selectedPresetId]
   );
 
-  // Smooth SVG propagator packet animation loop
+  // Smooth SVG propagator & leg packet animation loop
   useEffect(() => {
-    if (reduceMotion) return;
+    if (reduceMotion || !isAnimating) return;
     let raf: number;
     let start: number | null = null;
     const step = (ts: number) => {
       if (start === null) start = ts;
       const elapsed = (ts - start) / 1000;
-      setPulsePhase((elapsed * 0.45) % 1);
+      setPulsePhase((elapsed * 0.42) % 1);
       raf = requestAnimationFrame(step);
     };
     raf = requestAnimationFrame(step);
     return () => cancelAnimationFrame(raf);
-  }, [reduceMotion]);
+  }, [reduceMotion, isAnimating]);
 
   const currentIncoming = mode === 'presets' ? activePreset.incoming : sandboxIncoming;
   const currentOutgoing = mode === 'presets' ? activePreset.outgoing : sandboxOutgoing;
@@ -232,8 +235,8 @@ export const FeynmanLab: React.FC = () => {
     }
   };
 
-  // Wave path generator for boson lines
-  const buildWavyPath = (x1: number, y1: number, x2: number, y2: number, cycles = 7, amp = 7) => {
+  // Wave path generator for boson lines (supports traveling phase wave)
+  const buildWavyPath = (x1: number, y1: number, x2: number, y2: number, cycles = 7, amp = 7, phase = 0) => {
     const steps = 64;
     let d = `M ${x1} ${y1}`;
     const dx = x2 - x1;
@@ -243,16 +246,14 @@ export const FeynmanLab: React.FC = () => {
     const ny = dx / len;
     for (let i = 1; i <= steps; i++) {
       const t = i / steps;
-      const offset = Math.sin(t * cycles * Math.PI * 2) * amp;
+      const envelope = Math.sin(t * Math.PI);
+      const offset = Math.sin(t * cycles * Math.PI * 2 - phase * Math.PI * 2) * amp * (0.45 + 0.55 * envelope);
       const px = x1 + dx * t + nx * offset;
       const py = y1 + dy * t + ny * offset;
       d += ` L ${px.toFixed(1)} ${py.toFixed(1)}`;
     }
     return d;
   };
-
-  // Interpolate animated pulse coordinate along diagram
-  const pulseX = 70 + pulsePhase * 340;
 
   return (
     <div className="space-y-6">
@@ -428,20 +429,33 @@ export const FeynmanLab: React.FC = () => {
           <div
             className={`p-4 bg-[#070B12] border-3 border-black shadow-[6px_6px_0px_#000] relative overflow-hidden`}
           >
-            {/* Top Status Pill */}
-            <div className="flex items-center justify-between mb-2">
+            {/* Top Status Pill & Animation Control */}
+            <div className="flex flex-wrap items-center justify-between gap-2 mb-2">
               <span className="text-[11px] font-mono font-bold text-text-muted uppercase">
                 Space-Time Diagram (Time →)
               </span>
-              {conservation.valid ? (
-                <span className="px-2.5 py-0.5 bg-emerald-400 text-black font-mono font-black text-[11px] border-2 border-black flex items-center gap-1">
-                  <CheckCircle2 className="w-3.5 h-3.5" /> ALLOWED S-MATRIX AMPLITUDE
-                </span>
-              ) : (
-                <span className="px-2.5 py-0.5 bg-red-500 text-black font-mono font-black text-[11px] border-2 border-black flex items-center gap-1 animate-pulse">
-                  <XCircle className="w-3.5 h-3.5" /> FORBIDDEN / KINEMATICALLY BLOCKED
-                </span>
-              )}
+              <div className="flex items-center gap-2">
+                {!reduceMotion && (
+                  <button
+                    type="button"
+                    onClick={() => setIsAnimating((v) => !v)}
+                    aria-label={isAnimating ? 'Pause Feynman propagator motion' : 'Play Feynman propagator motion'}
+                    className="px-2 py-0.5 bg-canvas-sub hover:bg-canvas-raised text-white font-mono font-bold text-[10px] border-2 border-black flex items-center gap-1 cursor-pointer"
+                  >
+                    {isAnimating ? <Pause className="w-3 h-3 text-cern-cyan" /> : <Play className="w-3 h-3 text-emerald-400" />}
+                    <span>{isAnimating ? 'PAUSE' : 'PLAY'}</span>
+                  </button>
+                )}
+                {conservation.valid ? (
+                  <span className="px-2.5 py-0.5 bg-emerald-400 text-black font-mono font-black text-[11px] border-2 border-black flex items-center gap-1">
+                    <CheckCircle2 className="w-3.5 h-3.5" /> ALLOWED S-MATRIX AMPLITUDE
+                  </span>
+                ) : (
+                  <span className="px-2.5 py-0.5 bg-red-500 text-black font-mono font-black text-[11px] border-2 border-black flex items-center gap-1 animate-pulse">
+                    <XCircle className="w-3.5 h-3.5" /> FORBIDDEN / KINEMATICALLY BLOCKED
+                  </span>
+                )}
+              </div>
             </div>
 
             {/* Interactive SVG Diagram */}
@@ -558,7 +572,15 @@ export const FeynmanLab: React.FC = () => {
                     ) : (
                       <>
                         <path
-                          d={buildWavyPath(v1x, v1y, v2x, v2y, 6, 7)}
+                          d={buildWavyPath(
+                            v1x,
+                            v1y,
+                            v2x,
+                            v2y,
+                            6,
+                            7,
+                            !reduceMotion && isAnimating && conservation.valid ? pulsePhase * 2 : 0
+                          )}
                           fill="none"
                           stroke={propColor}
                           strokeWidth="3.5"
@@ -636,25 +658,75 @@ export const FeynmanLab: React.FC = () => {
                     })}
 
                     {/* Vertices */}
-                    <circle cx={v1x} cy={v1y} r="7" fill="#FFE600" stroke="#000" strokeWidth="2.5" />
+                    <circle
+                      cx={v1x}
+                      cy={v1y}
+                      r={!reduceMotion && isAnimating && conservation.valid && pulsePhase >= 0.3 && pulsePhase <= 0.44 ? 10 : 7}
+                      fill="#FFE600"
+                      stroke="#000"
+                      strokeWidth="2.5"
+                    />
                     <circle
                       cx={v2x}
                       cy={v2y}
-                      r="7"
+                      r={!reduceMotion && isAnimating && conservation.valid && pulsePhase >= 0.6 && pulsePhase <= 0.74 ? 10 : 7}
                       fill={conservation.valid ? '#00E5FF' : '#EF4444'}
                       stroke="#000"
                       strokeWidth="2.5"
                     />
 
-                    {/* Animated Energy Packet Pulse along timeline */}
-                    {!reduceMotion && conservation.valid && (
-                      <circle
-                        cx={Math.min(Math.max(pulseX, 60), 420)}
-                        cy={v1y}
-                        r="5"
-                        fill="#FFFFFF"
-                        opacity="0.9"
-                      />
+                    {/* Living Quantum Amplitude Packets along incoming -> mediator -> outgoing legs */}
+                    {!reduceMotion && isAnimating && conservation.valid && (
+                      <>
+                        {pulsePhase < 0.36 &&
+                          currentIncoming.map((id, idx) => {
+                            const yStart = currentIncoming.length === 1 ? 120 : idx === 0 ? 50 : 190;
+                            const u = pulsePhase / 0.36;
+                            const px = 48 + (v1x - 48) * u;
+                            const py = yStart + (v1y - yStart) * u;
+                            return (
+                              <circle
+                                key={`pkt-in-${idx}`}
+                                cx={px}
+                                cy={py}
+                                r="5.5"
+                                fill={id === 'g' ? '#F97316' : '#00E5FF'}
+                                stroke="#FFFFFF"
+                                strokeWidth="1.5"
+                              />
+                            );
+                          })}
+                        {pulsePhase >= 0.34 && pulsePhase <= 0.68 && (
+                          <circle
+                            cx={v1x + (v2x - v1x) * ((pulsePhase - 0.34) / 0.34)}
+                            cy={v1y}
+                            r="6.5"
+                            fill="#FFE600"
+                            stroke="#FFFFFF"
+                            strokeWidth="2"
+                          />
+                        )}
+                        {pulsePhase > 0.65 &&
+                          currentOutgoing.map((id, idx) => {
+                            const count = currentOutgoing.length;
+                            const yEnd =
+                              count === 1 ? 120 : count === 2 ? (idx === 0 ? 50 : 190) : idx === 0 ? 40 : idx === 1 ? 120 : 200;
+                            const u = (pulsePhase - 0.65) / 0.35;
+                            const px = v2x + (432 - v2x) * u;
+                            const py = v2y + (yEnd - v2y) * u;
+                            return (
+                              <circle
+                                key={`pkt-out-${idx}`}
+                                cx={px}
+                                cy={py}
+                                r="5.5"
+                                fill={id === 'gamma' ? '#FFE600' : '#A855F7'}
+                                stroke="#FFFFFF"
+                                strokeWidth="1.5"
+                              />
+                            );
+                          })}
+                      </>
                     )}
                   </>
                 );

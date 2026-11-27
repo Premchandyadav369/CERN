@@ -28,9 +28,22 @@ import {
 import {
   calculateElectroweakPhase,
   calculatePrimakoffConversion,
+  calculateSacredTimelineVacuum,
+  calculateSuperconductingMagnetMetrics,
+  calculateDisplacedVertexDecay,
+  calculateExtraDimensionKaluzaKlein,
+  calculateDiracMonopoleMetrics,
   HIGGS_VEV_GEV,
   ELECTROWEAK_TC_GEV,
 } from '../src/physics/bsm.js';
+import {
+  calculateSemiEmpiricalBindingEnergy,
+  calculateMassSeparatorDeflection,
+  calculateCherenkovCone,
+  calculateSpectralXRayAttenuation,
+  calculateNeutrinoOscillation,
+  calculateLhcFillCycle,
+} from '../src/physics/nuclear.js';
 import { SeededRNG } from '../src/rng/prng.js';
 
 describe('Physics Validation Suite', () => {
@@ -246,6 +259,109 @@ describe('Physics Validation Suite', () => {
       });
       expect(resonant.coherenceFactor).toBeCloseTo(1.0, 4);
       expect(resonant.probability).toBeGreaterThan(detuned.probability * 10);
+    });
+  });
+
+  describe('ISOLDE Nuclear Physics, LHCb Cherenkov & Medipix Spectral K-Edges', () => {
+    it('computes ~8.7 MeV/nucleon peak binding for Fe-56 and detects doubly-magic Sn-132', () => {
+      const fe56 = calculateSemiEmpiricalBindingEnergy(26, 30);
+      expect(fe56.bindingPerNucleonMev).toBeGreaterThan(8.5);
+      expect(fe56.bindingPerNucleonMev).toBeLessThan(9.0);
+      expect(fe56.stabilityRegime).toBe('STABLE_VALLEY');
+
+      const sn132 = calculateSemiEmpiricalBindingEnergy(50, 82);
+      expect(sn132.isProtonMagic).toBe(true);
+      expect(sn132.isNeutronMagic).toBe(true);
+      expect(sn132.isDoublyMagic).toBe(true);
+    });
+
+    it('separates ISOLDE ion isobars strictly by mass-to-charge ratio', () => {
+      const sn132 = calculateMassSeparatorDeflection(132, 1, 50, 0.2414, 1.5, 4.0);
+      const cs137 = calculateMassSeparatorDeflection(137, 1, 50, 0.2414, 1.5, 4.0);
+      expect(cs137.cyclotronRadiusMeters).toBeGreaterThan(sn132.cyclotronRadiusMeters);
+      expect(Math.abs(sn132.focalOffsetMm - cs137.focalOffsetMm)).toBeGreaterThan(30);
+    });
+
+    it('enforces Cherenkov velocity threshold beta > 1/n in LHCb RICH-1', () => {
+      // Kaon mass ~0.4937 GeV/c^2, C4F10 n = 1.0014 -> threshold momentum ~9.3 GeV/c
+      const slowKaon = calculateCherenkovCone(5.0, 0.4937, 1.0014);
+      const fastPion = calculateCherenkovCone(5.0, 0.1396, 1.0014);
+      expect(slowKaon.emitsCherenkov).toBe(false);
+      expect(fastPion.emitsCherenkov).toBe(true);
+      expect(fastPion.thetaCherenkovDeg).toBeGreaterThan(2.0);
+    });
+
+    it('models Iodine (33.17 keV) and Gold (80.72 keV) K-edge attenuation jumps for Medipix3', () => {
+      const belowI = calculateSpectralXRayAttenuation(32.0, 'iodine_contrast');
+      const aboveI = calculateSpectralXRayAttenuation(34.0, 'iodine_contrast');
+      expect(belowI.kEdgeActive).toBe(false);
+      expect(aboveI.kEdgeActive).toBe(true);
+      expect(aboveI.muCmInverse).toBeGreaterThan(belowI.muCmInverse * 2.5);
+
+      const belowAu = calculateSpectralXRayAttenuation(79.0, 'gold_marker');
+      const aboveAu = calculateSpectralXRayAttenuation(82.0, 'gold_marker');
+      expect(belowAu.kEdgeActive).toBe(false);
+      expect(aboveAu.kEdgeActive).toBe(true);
+      expect(aboveAu.muCmInverse).toBeGreaterThan(belowAu.muCmInverse * 2.0);
+    });
+
+    it('conserves 3-flavor neutrino probability and peaks nu_mu -> nu_tau oscillation at first L/E maximum', () => {
+      const zeroDist = calculateNeutrinoOscillation(0.01, 5.0);
+      expect(zeroDist.probNuMuSurvival).toBeGreaterThan(0.99);
+      const sum0 = zeroDist.probNuMuSurvival + zeroDist.probNuMuToNuTau + zeroDist.probNuMuToNuE;
+      expect(sum0).toBeCloseTo(1.0, 5);
+
+      // Peak oscillation at firstMaxBaselineKm (e.g. L ≈ 505 km for E = 1 GeV -> CNGS-scale ~732 km at ~1.5 GeV)
+      const peak = calculateNeutrinoOscillation(zeroDist.firstMaxBaselineKm, 5.0);
+      expect(peak.probNuMuToNuTau).toBeGreaterThan(0.9);
+      const sumPeak = peak.probNuMuSurvival + peak.probNuMuToNuTau + peak.probNuMuToNuE;
+      expect(sumPeak).toBeCloseTo(1.0, 5);
+    });
+
+    it('computes ~350-380 MJ nominal LHC stored beam energy and stable luminosity leveling burn-off', () => {
+      const stable = calculateLhcFillCycle(4.0, 2748, 1.2e0, 6800, 2.2, 2.0, 12.0);
+      expect(stable.phase).toBe('STABLE_BEAMS');
+      expect(stable.storedEnergyBeamMJ).toBeGreaterThan(340);
+      expect(stable.storedEnergyBeamMJ).toBeLessThan(390);
+      expect(stable.instantaneousLumiE34).toBeLessThanOrEqual(2.0);
+      expect(stable.integratedLumiPbInv).toBeGreaterThan(150);
+    });
+
+    it('classifies CERN PDG Higgs/Top masses into METASTABLE vs STABLE vs REDLINE electroweak vacuum regimes', () => {
+      const cernUniverse = calculateSacredTimelineVacuum(125.25, 172.69, 0.1179);
+      expect(cernUniverse.regime).toBe('METASTABLE');
+      expect(cernUniverse.instabilityScaleLog10Gev).toBeGreaterThan(9.5);
+      expect(cernUniverse.instabilityScaleLog10Gev).toBeLessThan(12.5);
+      expect(cernUniverse.runningCouplingSamples.length).toBeGreaterThan(10);
+
+      const lockedStable = calculateSacredTimelineVacuum(133.0, 171.0, 0.1195);
+      expect(lockedStable.regime).toBe('STABLE');
+      expect(lockedStable.stabilityMarginGev).toBeGreaterThan(0);
+
+      const redlineCollapse = calculateSacredTimelineVacuum(108.0, 178.0, 0.115);
+      expect(redlineCollapse.regime).toBe('REDLINE');
+      expect(redlineCollapse.branchRiskFraction).toBeGreaterThan(0.7);
+    });
+
+    it('computes superconducting magnet energy density, relativistic LLP decay length, ADD scale & Dirac g_D^2 boost', () => {
+      const nb3sn = calculateSuperconductingMagnetMetrics(12.0, 28, 1.9, 'Nb3Sn');
+      expect(nb3sn.energyDensityMjM3).toBeCloseTo(57.295, 1);
+      expect(nb3sn.quenched).toBe(false);
+
+      const overLimit = calculateSuperconductingMagnetMetrics(15.0, 28, 4.2, 'NbTi');
+      expect(overLimit.quenched).toBe(true);
+
+      const llp = calculateDisplacedVertexDecay(5000, 10, 100); // ~1.5m proper -> ~15m boosted
+      expect(llp.boostedDecayLengthM).toBeGreaterThan(10);
+      expect(llp.probInsideTracker + llp.probInsideCalorimeter + llp.probInsideMuonSpec).toBeLessThanOrEqual(1.0);
+
+      const addN2 = calculateExtraDimensionKaluzaKlein(2, 500);
+      expect(addN2.effectivePlanckTev).toBeGreaterThan(0.5);
+      expect(addN2.effectivePlanckTev).toBeLessThan(10.0);
+
+      const mono = calculateDiracMonopoleMetrics(1, 3.8, 100);
+      expect(mono.effectiveChargeRatio).toBeCloseTo(68.518, 1);
+      expect(mono.ionizingLossRatioVsProton).toBeGreaterThan(4500);
     });
   });
 });

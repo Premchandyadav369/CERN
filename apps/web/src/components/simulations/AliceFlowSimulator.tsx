@@ -424,7 +424,7 @@ export function AliceFlowSimulator() {
         <div>
           <div className="flex items-center gap-2">
             <h3 className="text-base font-display font-extrabold text-white">
-              /// ALICE: Heavy-Ion QGP &amp; Elliptic Flow (v₂) Sandbox ///
+              ALICE: Heavy-Ion QGP &amp; Elliptic Flow (v₂) Sandbox
             </h3>
             <FidelityBadge
               type="ANALYTIC"

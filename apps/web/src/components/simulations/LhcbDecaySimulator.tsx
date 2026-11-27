@@ -546,7 +546,7 @@ export function LhcbDecaySimulator() {
         <div>
           <div className="flex items-center gap-2">
             <h3 className="text-base font-display font-extrabold text-white">
-              /// LHCb: Rare Decays &amp; Lepton Universality (R_K / R_K*) Lab ///
+              LHCb: Rare Decays &amp; Lepton Universality (R_K / R_K*) Lab
             </h3>
             <FidelityBadge
               type="ANALYTIC"

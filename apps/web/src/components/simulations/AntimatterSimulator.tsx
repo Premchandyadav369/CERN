@@ -3,6 +3,7 @@
 import React, { useState, useEffect, useRef, useMemo } from 'react';
 import { FidelityBadge } from '@/components/provenance/FidelityBadge';
 import { Eli5Card } from '@/components/ui/Eli5Card';
+import { Antimatter3DTrapCanvas } from '@/components/simulations/Antimatter3DTrapCanvas';
 import {
   Atom,
   RotateCcw,
@@ -40,6 +41,7 @@ interface ParticleTrack {
 export function AntimatterSimulator() {
   // Mode: 'drop' (ALPHA-g Gravitational Drop) | 'lifecycle' (AD/ELENA Factory Pipeline)
   const [activeView, setActiveView] = useState<'drop' | 'lifecycle'>('drop');
+  const [trapRenderMode, setTrapRenderMode] = useState<'3d' | '2d'>('3d');
 
   // ALPHA-g Physical Parameters
   const [deltaB_uT, setDeltaB_uT] = useState<number>(0.0); // Magnetic balance bias in microTesla (-50 to +50 uT)
@@ -452,7 +454,7 @@ export function AntimatterSimulator() {
         <div>
           <div className="flex items-center gap-2">
             <h3 className="text-base font-display font-extrabold text-white">
-              /// Antimatter Factory: AD / ELENA &amp; ALPHA-g Gravitational Drop ///
+              Antimatter Factory: AD / ELENA &amp; ALPHA-g Gravitational Drop
             </h3>
             <FidelityBadge
               type="ANALYTIC"
@@ -698,16 +700,38 @@ export function AntimatterSimulator() {
 
               {/* Main Visualizer: ALPHA-g Chamber + Vertex Histogram */}
               <div className="bg-canvas-sub p-4 border-2 border-black shadow-[4px_4px_0px_#000] grid grid-cols-1 md:grid-cols-12 gap-4">
-                {/* 2D Canvas of ALPHA-g Vertical Trap (7 cols) */}
+                {/* 3D Trap / 2D Canvas of ALPHA-g Vertical Trap (7 cols) */}
                 <div className="md:col-span-7 flex flex-col items-center">
                   <div className="w-full flex items-center justify-between pb-2 mb-2 border-b-2 border-black text-[11px] font-mono">
                     <span className="font-bold text-white flex items-center gap-1.5">
                       <Flame className="w-3.5 h-3.5 text-cern-magenta" />
                       ALPHA-g Vertical Cryostat (25 cm)
                     </span>
-                    <span className="text-text-muted font-bold">Pion Starbursts</span>
+                    <div className="flex items-center border border-black bg-canvas-surface text-[10px]">
+                      <button
+                        onClick={() => setTrapRenderMode('3d')}
+                        className={`px-2 py-0.5 font-bold uppercase ${trapRenderMode === '3d' ? 'bg-cern-magenta text-white' : 'text-text-secondary'}`}
+                      >
+                        3D Trap
+                      </button>
+                      <button
+                        onClick={() => setTrapRenderMode('2d')}
+                        className={`px-2 py-0.5 font-bold uppercase ${trapRenderMode === '2d' ? 'bg-cern-cyan text-black' : 'text-text-secondary'}`}
+                      >
+                        2D Starburst
+                      </button>
+                    </div>
                   </div>
 
+                  {trapRenderMode === '3d' ? (
+                    <Antimatter3DTrapCanvas
+                      deltaB_uT={deltaB_uT}
+                      temperatureK={temperatureK}
+                      gravityRatio={gravityRatio}
+                      rampProgress={rampProgress}
+                      fBottomTheory={theory.f_bottom_theory}
+                    />
+                  ) : (
                   <div className="relative w-full h-80 bg-black border-2 border-black overflow-hidden flex items-center justify-center">
                     <canvas
                       ref={canvasRef}
@@ -723,6 +747,7 @@ export function AntimatterSimulator() {
                       </div>
                     )}
                   </div>
+                  )}
                 </div>
 
                 {/* Vertex Height Histogram dN/dz (5 cols) */}
@@ -803,7 +828,7 @@ export function AntimatterSimulator() {
         <div className="space-y-6">
           <div className="p-4 bg-canvas-sub border-2 border-black shadow-[4px_4px_0px_#000] space-y-3">
             <span className="text-xs font-mono font-bold text-cern-cyan uppercase">
-              /// The CERN Antimatter Deceleration &amp; Trapping Cascade ///
+              The CERN Antimatter Deceleration &amp; Trapping Cascade
             </span>
             <p className="text-xs text-text-secondary leading-relaxed font-sans max-w-4xl">
               Antiprotons are naturally created at relativistic speeds. To measure their fundamental properties,

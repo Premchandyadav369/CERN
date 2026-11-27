@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import {
   calculateFromTotalEnergy,
   PROTON_MASS_GEV,
@@ -13,6 +13,8 @@ import {
 import { Value } from '@/components/provenance/Value';
 import { FidelityBadge } from '@/components/provenance/FidelityBadge';
 import { Eli5Card } from '@/components/ui/Eli5Card';
+import { MathFormula } from '@/components/ui/MathFormula';
+import { useGlobalStore } from '@/lib/store';
 import { Lhc3DRingCanvas } from './Lhc3DRingCanvas';
 import { Play, Pause, RotateCcw, Sliders, Info, Zap, Activity, Download } from 'lucide-react';
 
@@ -24,6 +26,19 @@ export const LhcSimulator: React.FC = () => {
   const [bunchIntensityE11, setBunchIntensityE11] = useState<number>(1.15); // x 10^11
   const [betaStarM, setBetaStarM] = useState<number>(0.3); // 30 cm
   const [isRunning, setIsRunning] = useState<boolean>(true);
+
+  useEffect(() => {
+    if (typeof window === 'undefined') return;
+    const p = new URLSearchParams(window.location.search);
+    const e = Number(p.get('energy'));
+    if (Number.isFinite(e) && e >= 450 && e <= 70000) setBeamEnergyGev(e);
+    const b = Number(p.get('bunches'));
+    if (Number.isFinite(b) && b >= 1 && b <= 2808) setBunches(b);
+    const bs = Number(p.get('betaStar'));
+    if (Number.isFinite(bs) && bs >= 0.1 && bs <= 1.5) setBetaStarM(bs);
+    const pt = p.get('particle');
+    if (pt === 'proton' || pt === 'lead') setParticleType(pt);
+  }, []);
 
   const massGev = particleType === 'proton' ? PROTON_MASS_GEV : LEAD208_MASS_GEV;
   const chargeZ = particleType === 'proton' ? 1 : 82;
@@ -55,6 +70,13 @@ export const LhcSimulator: React.FC = () => {
   // Average pile-up <mu> = (L * sigma_inel) / (n_b * frev)
   const sigmaInelMb = 80e-27; // 80 mb in cm^2
   const pileup = (lumi * sigmaInelMb) / (bunches * frev);
+
+  const completeMission = useGlobalStore((s) => s.completeMission);
+  useEffect(() => {
+    if (particleType === 'proton' && beamEnergyGev >= 6800 && dipoleFieldTesla <= 8.35) {
+      completeMission('mission-lhc-beam');
+    }
+  }, [particleType, beamEnergyGev, dipoleFieldTesla, completeMission]);
 
   // Export JSON
   const exportJson = () => {
@@ -119,7 +141,7 @@ export const LhcSimulator: React.FC = () => {
         <div className="space-y-4">
           <div className="flex items-center justify-between pb-2 border-b-2 border-black bg-canvas-sub -mx-4 -mt-4 p-3 mb-2">
             <h3 className="text-xs font-mono font-bold text-white flex items-center gap-1.5 uppercase tracking-wider">
-              <Sliders className="w-4 h-4 text-cern-cyan" /> /// Parameters ///
+              <Sliders className="w-4 h-4 text-cern-cyan" /> Parameters
             </h3>
             <button
               onClick={() => {
@@ -241,6 +263,12 @@ export const LhcSimulator: React.FC = () => {
               className="w-full cursor-pointer"
             />
           </div>
+
+          <MathFormula
+            tex="B = \frac{p}{0.2998\,q\,\rho}"
+            label="Magnetic Rigidity Law:"
+            derivation="Keeping 6.8 TeV protons on a 2,804 m bending radius requires ~8.09–8.33 Tesla dipole magnets."
+          />
         </div>
 
         {/* Run / Pause & Export Controls */}
@@ -283,7 +311,7 @@ export const LhcSimulator: React.FC = () => {
           <div className="flex items-center gap-2">
             <Zap className="w-4 h-4 text-cern-cyan" />
             <h3 className="font-mono text-xs uppercase tracking-wider text-white font-bold">
-              /// LHC BEAM CIRCULATION &amp; COLLISION DYNAMICS ///
+              LHC BEAM CIRCULATION &amp; COLLISION DYNAMICS
             </h3>
           </div>
           <FidelityBadge type="ANALYTIC" formula="B = p / (0.29979 * rho)" />
@@ -334,7 +362,7 @@ export const LhcSimulator: React.FC = () => {
         <div className="space-y-4">
           <div className="pb-2 border-b-2 border-black bg-canvas-sub -mx-4 -mt-4 p-3 mb-2">
             <h3 className="text-xs font-mono font-bold text-white uppercase flex items-center gap-1.5 tracking-wider">
-              <Info className="w-4 h-4 text-cern-cyan" /> /// Inspector ///
+              <Info className="w-4 h-4 text-cern-cyan" /> Inspector
             </h3>
           </div>
 
@@ -368,7 +396,7 @@ export const LhcSimulator: React.FC = () => {
             </div>
 
             <div className="p-3 bg-canvas-sub border-2 border-black shadow-[2px_2px_0px_#000] text-xs text-text-secondary leading-relaxed font-sans">
-              <strong className="text-white block font-mono uppercase mb-1">/// Sanity Check ///</strong>
+              <strong className="text-white block font-mono uppercase mb-1">Sanity Check</strong>
               Nominal LHC 7 TeV proton requires an 8.33 T dipole field across 1,232 superconducting Nb-Ti magnets cooled to 1.9 K.
             </div>
           </div>

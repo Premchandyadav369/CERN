@@ -5,6 +5,9 @@ import { ProtonJourneyStepper } from '@/components/home/ProtonJourneyStepper';
 import { RingMap } from '@/components/home/RingMap';
 import { PipelineView } from '@/components/pipeline/PipelineView';
 import { Value } from '@/components/provenance/Value';
+import { InlineMathText } from '@/components/ui/MathFormula';
+import { TechnicalTermDeck } from '@/components/ui/TechTermInfo';
+import { NumberTicker, GsapStaggerSection, SpotlightMotionCard } from '@/components/motion/CernMotionPrimitives';
 import {
   Compass,
   Cpu,
@@ -37,7 +40,7 @@ export default function HomePage() {
           <div className="flex items-center gap-2">
             <Radio className="w-4 h-4 text-cern-cyan animate-pulse" />
             <span className="text-xs font-mono font-bold uppercase text-white tracking-wider">
-              /// CERN Control Centre (CCC) · Live Operational Baselines ///
+              CERN Control Centre (CCC) · Live Operational Baselines
             </span>
           </div>
           <span className="text-xs font-mono text-emerald-400 font-bold hidden sm:flex items-center gap-1.5 px-2 py-0.5 border border-black bg-canvas-surface shadow-[1px_1px_0px_#000]">
@@ -47,37 +50,41 @@ export default function HomePage() {
         </div>
 
         <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-          <div className="p-4 bg-canvas-surface border-2 border-black shadow-[4px_4px_0px_#000] hover:shadow-[6px_6px_0px_#00E5FF] hover:-translate-x-0.5 hover:-translate-y-0.5 transition-all">
+          <SpotlightMotionCard className="p-4 bg-canvas-surface border-2 border-black shadow-[4px_4px_0px_#000] hover:shadow-[6px_6px_0px_#00E5FF]">
             <span className="text-[11px] font-mono text-text-muted block font-bold uppercase">Run 3 Beam Energy</span>
-            <div className="mt-1">
-              <Value manifestId="lhc-nominal-beam-energy-run3" value={6.8} unit="TeV" digits={1} />
+            <div className="mt-1 flex items-center justify-between gap-2">
+              <NumberTicker value={6.8} decimals={1} suffix=" TeV" className="text-xl font-mono font-black text-cern-cyan" />
+              <Value manifestId="lhc-nominal-beam-energy-run3" value="Ref" />
             </div>
             <span className="text-[10px] font-mono text-text-muted block mt-1.5 font-bold">13.6 TeV Center-of-Mass</span>
-          </div>
+          </SpotlightMotionCard>
 
-          <div className="p-4 bg-canvas-surface border-2 border-black shadow-[4px_4px_0px_#000] hover:shadow-[6px_6px_0px_#4C7DFF] hover:-translate-x-0.5 hover:-translate-y-0.5 transition-all">
+          <SpotlightMotionCard delay={0.05} className="p-4 bg-canvas-surface border-2 border-black shadow-[4px_4px_0px_#000] hover:shadow-[6px_6px_0px_#4C7DFF]">
             <span className="text-[11px] font-mono text-text-muted block font-bold uppercase">Main Dipole Field</span>
-            <div className="mt-1">
-              <Value manifestId="lhc-dipole-field-nominal" value={8.33} unit="T" digits={2} />
+            <div className="mt-1 flex items-center justify-between gap-2">
+              <NumberTicker value={8.33} decimals={2} suffix=" T" className="text-xl font-mono font-black text-cern-accent" />
+              <Value manifestId="lhc-dipole-field-nominal" value="Ref" />
             </div>
             <span className="text-[10px] font-mono text-text-muted block mt-1.5 font-bold">Nb-Ti Superconducting Coil</span>
-          </div>
+          </SpotlightMotionCard>
 
-          <div className="p-4 bg-canvas-surface border-2 border-black shadow-[4px_4px_0px_#000] hover:shadow-[6px_6px_0px_#FF0055] hover:-translate-x-0.5 hover:-translate-y-0.5 transition-all">
+          <SpotlightMotionCard delay={0.1} className="p-4 bg-canvas-surface border-2 border-black shadow-[4px_4px_0px_#000] hover:shadow-[6px_6px_0px_#FF0055]">
             <span className="text-[11px] font-mono text-text-muted block font-bold uppercase">Higgs Boson Mass</span>
-            <div className="mt-1">
-              <Value manifestId="higgs-boson-mass-pdg" value={125.25} unit="GeV" digits={2} />
+            <div className="mt-1 flex items-center justify-between gap-2">
+              <NumberTicker value={125.25} decimals={2} suffix=" GeV" className="text-xl font-mono font-black text-cern-magenta" />
+              <Value manifestId="higgs-boson-mass-pdg" value="PDG" />
             </div>
             <span className="text-[10px] font-mono text-text-muted block mt-1.5 font-bold">PDG 2024 Reference</span>
-          </div>
+          </SpotlightMotionCard>
 
-          <div className="p-4 bg-canvas-surface border-2 border-black shadow-[4px_4px_0px_#000] hover:shadow-[6px_6px_0px_#FFE600] hover:-translate-x-0.5 hover:-translate-y-0.5 transition-all">
+          <SpotlightMotionCard delay={0.15} className="p-4 bg-canvas-surface border-2 border-black shadow-[4px_4px_0px_#000] hover:shadow-[6px_6px_0px_#FFE600]">
             <span className="text-[11px] font-mono text-text-muted block font-bold uppercase">AI Flagship AMS</span>
-            <div className="mt-1">
-              <Value manifestId="triggermind-xgboost-benchmark" value={3.339} digits={3} />
+            <div className="mt-1 flex items-center justify-between gap-2">
+              <NumberTicker value={3.339} decimals={3} className="text-xl font-mono font-black text-[#FFE600]" />
+              <Value manifestId="triggermind-xgboost-benchmark" value="Lab" />
             </div>
             <span className="text-[10px] font-mono text-text-muted block mt-1.5 font-bold">TriggerMind XGBoost L1</span>
-          </div>
+          </SpotlightMotionCard>
         </div>
       </section>
 
@@ -142,7 +149,7 @@ export default function HomePage() {
       <section className="space-y-4 pt-4">
         <div>
           <span className="text-xs font-mono uppercase text-cern-cyan tracking-wider font-bold">
-            /// SCIENTIFIC DOMAINS &amp; LABORATORIES ///
+            SCIENTIFIC DOMAINS &amp; LABORATORIES
           </span>
           <h2 className="text-2xl font-display font-extrabold text-white mt-0.5">
             Interactive Research Hubs
@@ -152,7 +159,7 @@ export default function HomePage() {
           </p>
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
+        <GsapStaggerSection className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
           {/* Accelerators Card */}
           <Link
             href="/accelerators"
@@ -172,8 +179,7 @@ export default function HomePage() {
                   Accelerators &amp; Beam Physics
                 </h3>
                 <p className="text-xs text-text-secondary mt-1.5 leading-relaxed font-sans">
-                  Relativistic kinematics, magnetic rigidity $B\rho$, RF cavity acceleration, and bunch
-                  crossing luminosity modeling.
+                  <InlineMathText text="Relativistic kinematics, magnetic rigidity $B\rho$, RF cavity acceleration, and bunch crossing luminosity modeling." />
                 </p>
               </div>
             </div>
@@ -417,11 +423,101 @@ export default function HomePage() {
               </div>
             </div>
             <div className="text-xs font-mono text-purple-400 font-bold pt-2 border-t-2 border-black flex items-center justify-between">
-              <span>Axions &amp; LHC Recoil Imbalance</span>
+                      <span>Axions &amp; LHC Recoil Imbalance</span>
               <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
             </div>
           </Link>
-        </div>
+
+          {/* Complete CERN Projects & 3D Complex Atlas Card */}
+          <Link
+            href="/projects"
+            className="p-5 bg-canvas-surface border-2 border-black shadow-[4px_4px_0px_#00E5FF] hover:shadow-[6px_6px_0px_#00E5FF] hover:-translate-x-0.5 hover:-translate-y-0.5 active:translate-x-[2px] active:translate-y-[2px] active:shadow-none transition-all space-y-3 group flex flex-col justify-between"
+          >
+            <div className="space-y-3">
+              <div className="flex items-center justify-between">
+                <div className="p-2.5 bg-black border-2 border-black text-cern-cyan shadow-[2px_2px_0px_#00E5FF]">
+                  <Compass className="w-5 h-5" />
+                </div>
+                <span className="px-2 py-0.5 text-[10px] font-mono font-bold bg-cern-cyan text-black border-2 border-black uppercase shadow-[1px_1px_0px_#000]">
+                  3D Site Atlas
+                </span>
+              </div>
+              <div>
+                <h3 className="text-lg font-display font-bold text-white group-hover:text-cern-cyan transition-colors">
+                  All CERN Projects &amp; 3D Tunnel Map
+                </h3>
+                <p className="text-xs text-text-secondary mt-1.5 leading-relaxed font-sans">
+                  3D underground LHC + 91 km FCC ring topology and complete directory of 22 CERN
+                  facilities, WWW history, ROOT, Geant4, and spin-offs.
+                </p>
+              </div>
+            </div>
+            <div className="text-xs font-mono text-cern-cyan font-bold pt-2 border-t-2 border-black flex items-center justify-between">
+              <span>22 Projects &amp; 3D Geo-Tunnels</span>
+              <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
+            </div>
+          </Link>
+
+          {/* 3D Standard Model & Mass Scale Lab Card */}
+          <Link
+            href="/simulations?module=sm-3d"
+            className="p-5 bg-canvas-surface border-2 border-black shadow-[4px_4px_0px_#FFE600] hover:shadow-[6px_6px_0px_#FFE600] hover:-translate-x-0.5 hover:-translate-y-0.5 active:translate-x-[2px] active:translate-y-[2px] active:shadow-none transition-all space-y-3 group flex flex-col justify-between"
+          >
+            <div className="space-y-3">
+              <div className="flex items-center justify-between">
+                <div className="p-2.5 bg-black border-2 border-black text-[#FFE600] shadow-[2px_2px_0px_#FFE600]">
+                  <Atom className="w-5 h-5" />
+                </div>
+                <span className="px-2 py-0.5 text-[10px] font-mono font-bold bg-[#FFE600] text-black border-2 border-black uppercase shadow-[1px_1px_0px_#000]">
+                  3D Quantum
+                </span>
+              </div>
+              <div>
+                <h3 className="text-lg font-display font-bold text-white group-hover:text-[#FFE600] transition-colors">
+                  3D Standard Model Explorer
+                </h3>
+                <p className="text-xs text-text-secondary mt-1.5 leading-relaxed font-sans">
+                  Complete 17-particle table with live 3D quantum wave states, color-charge quark knots,
+                  and Higgs Yukawa mass hierarchy visualization.
+                </p>
+              </div>
+            </div>
+            <div className="text-xs font-mono text-[#FFE600] font-bold pt-2 border-t-2 border-black flex items-center justify-between">
+              <span>Quarks, Leptons, Bosons &amp; Higgs</span>
+              <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
+            </div>
+          </Link>
+
+          {/* ISOLDE Nuclear & Medipix3 Spin-Off Card */}
+          <Link
+            href="/simulations?module=isolde"
+            className="p-5 bg-canvas-surface border-2 border-black shadow-[4px_4px_0px_#FF0055] hover:shadow-[6px_6px_0px_#FF0055] hover:-translate-x-0.5 hover:-translate-y-0.5 active:translate-x-[2px] active:translate-y-[2px] active:shadow-none transition-all space-y-3 group flex flex-col justify-between"
+          >
+            <div className="space-y-3">
+              <div className="flex items-center justify-between">
+                <div className="p-2.5 bg-black border-2 border-black text-cern-magenta shadow-[2px_2px_0px_#FF0055]">
+                  <Database className="w-5 h-5" />
+                </div>
+                <span className="px-2 py-0.5 text-[10px] font-mono font-bold bg-cern-magenta text-white border-2 border-black uppercase shadow-[1px_1px_0px_#000]">
+                  ISOLDE + Spin-Offs
+                </span>
+              </div>
+              <div>
+                <h3 className="text-lg font-display font-bold text-white group-hover:text-cern-magenta transition-colors">
+                  ISOLDE Nuclear &amp; Medipix3 Labs
+                </h3>
+                <p className="text-xs text-text-secondary mt-1.5 leading-relaxed font-sans">
+                  Explore magic-shell isotopes on the Segrè chart, steer A/q beams through GPS dipole
+                  magnets, and scan spectral color X-ray K-edges.
+                </p>
+              </div>
+            </div>
+            <div className="text-xs font-mono text-cern-magenta font-bold pt-2 border-t-2 border-black flex items-center justify-between">
+              <span>Nuclear Landscape &amp; RICH PID</span>
+              <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
+            </div>
+          </Link>
+        </GsapStaggerSection>
       </section>
 
       {/* 6. Scientific Provenance & Verification Guarantee */}
@@ -444,7 +540,7 @@ export default function HomePage() {
 
         <div className="flex items-center gap-3 shrink-0 font-mono text-xs">
           <Link
-            href="/about"
+            href="/methodology"
             className="px-4 py-2.5 bg-canvas-sub hover:bg-black text-white border-2 border-black shadow-[3px_3px_0px_#000] font-bold uppercase transition-all active:translate-x-[1px] active:translate-y-[1px] active:shadow-none"
           >
             Methodology &amp; Limits
@@ -460,6 +556,8 @@ export default function HomePage() {
           </a>
         </div>
       </section>
+
+      <TechnicalTermDeck contextId="page-home" heading="CERN Core Vocabulary (ⓘ Interactive Symbol Cards)" />
     </div>
   );
 }

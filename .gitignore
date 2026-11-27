@@ -20,6 +20,9 @@ yarn-error.log*
 # Testing
 coverage/
 
+# TypeScript incremental cache
+*.tsbuildinfo
+
 # OS metadata
 .DS_Store
 Thumbs.db

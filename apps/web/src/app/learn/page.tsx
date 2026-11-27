@@ -2,10 +2,11 @@
 
 import React, { useState } from 'react';
 import glossaryData from '../../../../../content/glossary.json';
-import particlesData from '../../../../../content/particles.json';
 import { TimelineView } from '@/components/timeline/TimelineView';
 import { ScienceLiteratureBridge } from '@/components/knowledge/ScienceLiteratureBridge';
+import { StandardModelLab } from '@/components/simulations/StandardModelLab';
 import { Eli5Card } from '@/components/ui/Eli5Card';
+import { MathFormula } from '@/components/ui/MathFormula';
 import { useGlobalStore, UserLevel } from '@/lib/store';
 import { BookOpen, Atom, Calendar, HelpCircle, Layers, CheckCircle2, FileText } from 'lucide-react';
 
@@ -133,8 +134,8 @@ export default function LearnPage() {
                   </span>
                 </div>
 
-                <div className="p-2.5 bg-canvas-sub border-2 border-black shadow-[2px_2px_0px_#000] font-mono text-xs text-[#FFE600] font-bold">
-                  {item.equationLatex}
+                <div className="p-3 bg-canvas-sub border-2 border-black shadow-[2px_2px_0px_#000]">
+                  <MathFormula tex={item.equationLatex} displayMode />
                 </div>
 
                 {/* Depth-tailored explanation */}
@@ -174,85 +175,8 @@ export default function LearnPage() {
         </div>
       )}
 
-      {/* Tab 2: Particles Explorer */}
-      {activeTab === 'particles' && (
-        <div className="space-y-4">
-          <Eli5Card
-            title="Nature's Fundamental Lego Set"
-            analogy="Everything in the cosmos—from distant stars to everyday objects—is assembled from just 12 matter bricks (quarks and leptons) held together by force messengers."
-            keyPoints={[
-              "Up and Down quarks combine inside protons and neutrons; electrons orbit outside to form atoms.",
-              "Heavier copies (like muons and top quarks) are unstable and decay back into lighter particles in tiny fractions of a second.",
-              "The Higgs field is an invisible cosmic ocean that gives particles their mass as they push through it."
-            ]}
-            whatToTry="Click on any particle to inspect its rest mass, electric charge, spin, and official PDG 2024 branching fractions!"
-            doi="10.1103/PhysRevD.110.030001"
-            citationLabel="Particle Data Group (PDG 2024 Review of Particle Physics)"
-          />
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-          {particlesData.map((part) => (
-            <div
-              key={part.id}
-              className="p-5 bg-canvas-surface border-3 border-black shadow-[5px_5px_0px_0px_#000000] hover:shadow-[5px_5px_0px_0px_#FF0055] transition-all space-y-3 flex flex-col justify-between"
-            >
-              <div className="space-y-2">
-                <div className="flex items-center justify-between">
-                  <span className="text-xs font-mono font-black uppercase text-[#FFE600]">{part.type}</span>
-                  <span className="font-mono text-base font-black text-cern-cyan">{part.symbol}</span>
-                </div>
-
-                <h3 className="text-lg font-display font-black uppercase text-text-primary">{part.name}</h3>
-
-                <div className="space-y-1 text-xs font-mono">
-                  <div className="flex justify-between py-1 border-b-2 border-black/30">
-                    <span className="text-text-muted font-bold">Rest Mass:</span>
-                    <span className="text-text-primary font-bold">{part.massGev} GeV/c²</span>
-                  </div>
-                  <div className="flex justify-between py-1 border-b-2 border-black/30">
-                    <span className="text-text-muted font-bold">Electric Charge:</span>
-                    <span className="text-text-secondary font-bold">{part.charge} e</span>
-                  </div>
-                  <div className="flex justify-between py-1 border-b-2 border-black/30">
-                    <span className="text-text-muted font-bold">Spin:</span>
-                    <span className="text-text-secondary font-bold">{part.spin}</span>
-                  </div>
-                  {part.discoveryYear && (
-                    <div className="flex justify-between py-1">
-                      <span className="text-text-muted font-bold">Discovered:</span>
-                      <span className="text-text-secondary font-bold">
-                        {part.discoveryYear} ({part.discoveredAt})
-                      </span>
-                    </div>
-                  )}
-                </div>
-
-                {part.decayModes.length > 0 && (
-                  <div className="pt-2">
-                    <span className="text-[10px] font-mono uppercase text-text-muted block mb-1 font-bold">
-                      Key Decay Channels
-                    </span>
-                    <div className="p-2 bg-canvas-sub border-2 border-black shadow-[2px_2px_0px_#000] space-y-1 text-[11px] font-mono text-text-secondary">
-                      {part.decayModes.slice(0, 3).map((dm) => (
-                        <div key={dm.channel} className="flex justify-between font-bold">
-                          <span>→ {dm.channel}</span>
-                          <span className="text-cern-accent">
-                            {(dm.branchingRatio * 100).toFixed(1)}%
-                          </span>
-                        </div>
-                      ))}
-                    </div>
-                  </div>
-                )}
-              </div>
-
-              <div className="pt-2 border-t-2 border-black text-[10px] font-mono text-text-muted">
-                <span>{part.source}</span>
-              </div>
-            </div>
-          ))}
-          </div>
-        </div>
-      )}
+      {/* Tab 2: 3D Standard Model & Particles Explorer */}
+      {activeTab === 'particles' && <StandardModelLab />}
 
       {/* Tab 3: Timeline */}
       {activeTab === 'timeline' && <TimelineView />}

@@ -1,12 +1,15 @@
 'use client';
 
-import React, { useState } from 'react';
+import React, { useState, useEffect, useMemo } from 'react';
 import atlasEventsData from '../../../../../data/real_events/sample_atlas_events.json';
 import cmsEventsData from '../../../../../data/real_events/sample_cms_events.json';
+import dimuonSliceData from '../../../../../data/real_events/processed_dimuon_slice.json';
 import { Value } from '@/components/provenance/Value';
 import { FidelityBadge } from '@/components/provenance/FidelityBadge';
 import { Eli5Card } from '@/components/ui/Eli5Card';
-import { Layers, Eye, EyeOff, Info, Disc, Zap, Activity } from 'lucide-react';
+import { Detector3DEventCanvas } from '@/components/detectors/Detector3DEventCanvas';
+import { DetectorLego3DCanvas } from '@/components/detectors/DetectorLego3DCanvas';
+import { Layers, Eye, EyeOff, Info, Disc, Zap, Activity, Box } from 'lucide-react';
 
 interface SubsystemToggle {
   id: string;
@@ -18,8 +21,19 @@ interface SubsystemToggle {
 
 export const DetectorTwin: React.FC = () => {
   const [detector, setDetector] = useState<'atlas' | 'cms'>('atlas');
+  const [viewMode, setViewMode] = useState<'3d' | 'lego' | '2d'>('3d');
   const [selectedEventIndex, setSelectedEventIndex] = useState<number>(0);
   const [selectedObjectId, setSelectedObjectId] = useState<string | null>(null);
+  const [dimuonOverrideId, setDimuonOverrideId] = useState<string | null>(null);
+
+  useEffect(() => {
+    if (typeof window === 'undefined') return;
+    const params = new URLSearchParams(window.location.search);
+    const det = params.get('detector');
+    if (det === 'cms' || det === 'atlas') setDetector(det);
+    const dId = params.get('dimuonId');
+    if (dId) setDimuonOverrideId(dId);
+  }, []);
 
   // Subsystem active filters
   const [subsystems, setSubsystems] = useState<SubsystemToggle[]>([
@@ -41,7 +55,50 @@ export const DetectorTwin: React.FC = () => {
   const isMuonActive = subsystems.find((s) => s.id === 'muon')?.active ?? true;
 
   const currentEvents = detector === 'atlas' ? atlasEventsData.events : cmsEventsData.events;
-  const activeEvent = currentEvents[selectedEventIndex] || currentEvents[0];
+
+  const injectedDimuonEvent = useMemo(() => {
+    if (!dimuonOverrideId) return null;
+    const match = (dimuonSliceData.sample_events as Array<{
+      id: string;
+      runNumber: number;
+      process: string;
+      muon1: { pt: number; eta: number; phi: number; charge: number };
+      muon2: { pt: number; eta: number; phi: number; charge: number };
+      reconstructedMass: number;
+    }>).find((e) => e.id === dimuonOverrideId);
+    if (!match) return null;
+    return {
+      id: match.id,
+      runNumber: match.runNumber,
+      eventNumber: Number(match.id.replace(/\D/g, '')) || 1000006,
+      sqrtSGev: 13000,
+      process: `${match.process} (Open Data Slice)`,
+      metGev: 0,
+      reconstructedMassGev: match.reconstructedMass,
+      physicsObjects: [
+        {
+          id: 'mu-od-1',
+          type: 'MUON',
+          ptGev: match.muon1.pt,
+          eta: match.muon1.eta,
+          phi: match.muon1.phi,
+          energyGev: Number((match.muon1.pt * Math.cosh(match.muon1.eta)).toFixed(1)),
+          charge: match.muon1.charge,
+        },
+        {
+          id: 'mu-od-2',
+          type: 'MUON',
+          ptGev: match.muon2.pt,
+          eta: match.muon2.eta,
+          phi: match.muon2.phi,
+          energyGev: Number((match.muon2.pt * Math.cosh(match.muon2.eta)).toFixed(1)),
+          charge: match.muon2.charge,
+        },
+      ],
+    };
+  }, [dimuonOverrideId]);
+
+  const activeEvent = injectedDimuonEvent || currentEvents[selectedEventIndex] || currentEvents[0];
 
   // Filter physics objects based on active subdetectors
   const visibleObjects = activeEvent.physicsObjects.filter((obj) => {
@@ -73,7 +130,7 @@ export const DetectorTwin: React.FC = () => {
         <div className="space-y-4">
           <div className="flex items-center justify-between pb-2 border-b-2 border-black bg-canvas-sub -mx-4 -mt-4 p-3 mb-2">
             <h3 className="text-xs font-mono font-bold text-white uppercase flex items-center gap-1.5 tracking-wider">
-              <Layers className="w-4 h-4 text-cern-cyan" /> /// Subdetectors ///
+              <Layers className="w-4 h-4 text-cern-cyan" /> Subdetectors
             </h3>
             <span className="text-[10px] font-mono text-black font-bold bg-emerald-400 px-2 py-0.5 border-2 border-black shadow-[2px_2px_0px_#000]">
               REAL DATA
@@ -91,6 +148,7 @@ export const DetectorTwin: React.FC = () => {
                   setDetector('atlas');
                   setSelectedEventIndex(0);
                   setSelectedObjectId(null);
+                  setDimuonOverrideId(null);
                 }}
                 className={`py-2 px-1 border-2 border-black font-mono font-bold transition-all cursor-pointer ${
                   detector === 'atlas'
@@ -105,6 +163,7 @@ export const DetectorTwin: React.FC = () => {
                   setDetector('cms');
                   setSelectedEventIndex(0);
                   setSelectedObjectId(null);
+                  setDimuonOverrideId(null);
                 }}
                 className={`py-2 px-1 border-2 border-black font-mono font-bold transition-all cursor-pointer ${
                   detector === 'cms'
@@ -129,6 +188,7 @@ export const DetectorTwin: React.FC = () => {
                   onClick={() => {
                     setSelectedEventIndex(idx);
                     setSelectedObjectId(null);
+                    setDimuonOverrideId(null);
                   }}
                   className={`w-full text-left p-2.5 border-2 border-black text-xs font-mono transition-all cursor-pointer ${
                     idx === selectedEventIndex
@@ -192,20 +252,72 @@ export const DetectorTwin: React.FC = () => {
         </div>
       </div>
 
-      {/* CENTER: Event Display Viewport (Transverse Projection) */}
+      {/* CENTER: Event Display Viewport (3D Barrel + 2D Transverse Projection) */}
       <div className="flex-1 flex flex-col justify-between bg-canvas border-2 border-black shadow-[4px_4px_0px_#000] p-4 relative min-h-[460px]">
         {/* Header */}
-        <div className="flex items-center justify-between pb-3 border-b-2 border-black bg-canvas-sub -mx-4 -mt-4 p-3 mb-2">
+        <div className="flex flex-wrap items-center justify-between gap-2 pb-3 border-b-2 border-black bg-canvas-sub -mx-4 -mt-4 p-3 mb-2">
           <div className="flex items-center gap-2">
-            <Disc className="w-4 h-4 text-cern-cyan" />
+            {viewMode === '3d' ? (
+              <Box className="w-4 h-4 text-cern-cyan" />
+            ) : (
+              <Disc className="w-4 h-4 text-cern-cyan" />
+            )}
             <h3 className="font-mono text-xs uppercase tracking-wider text-white font-bold">
-              /// {detector.toUpperCase()} TRANSVERSE (R-φ) EVENT DISPLAY ///
+              {detector.toUpperCase()} {viewMode === '3d' ? '3D BARREL EVENT DISPLAY' : viewMode === 'lego' ? '3D η-φ LEGO CALORIMETER' : 'TRANSVERSE (R-φ) DISPLAY'}
             </h3>
           </div>
-          <FidelityBadge type="ILLUSTRATIVE" />
+          <div className="flex items-center gap-2">
+            <div className="flex items-center border-2 border-black bg-canvas-surface text-[10px] font-mono">
+              <button
+                onClick={() => setViewMode('3d')}
+                className={`px-2 py-0.5 font-bold uppercase transition-colors ${
+                  viewMode === '3d' ? 'bg-cern-cyan text-black' : 'text-text-secondary hover:text-white'
+                }`}
+              >
+                3D Barrel
+              </button>
+              <button
+                onClick={() => setViewMode('lego')}
+                className={`px-2 py-0.5 font-bold uppercase transition-colors ${
+                  viewMode === 'lego' ? 'bg-[#FFE600] text-black' : 'text-text-secondary hover:text-white'
+                }`}
+              >
+                3D η-φ Lego
+              </button>
+              <button
+                onClick={() => setViewMode('2d')}
+                className={`px-2 py-0.5 font-bold uppercase transition-colors ${
+                  viewMode === '2d' ? 'bg-cern-cyan text-black' : 'text-text-secondary hover:text-white'
+                }`}
+              >
+                2D Cutaway
+              </button>
+            </div>
+            <FidelityBadge type="ILLUSTRATIVE" />
+          </div>
         </div>
 
-        {/* 2D Cutaway Projection Display */}
+        {/* 3D WebGL Event Display OR 3D Lego Plot OR 2D SVG Cutaway */}
+        {viewMode === '3d' ? (
+          <Detector3DEventCanvas
+            detector={detector}
+            visibleObjects={visibleObjects}
+            selectedObjectId={selectedObjectId}
+            onSelectObject={setSelectedObjectId}
+            isTrackerActive={isTrackerActive}
+            isEcalActive={isEcalActive}
+            isHcalActive={isHcalActive}
+            isMuonActive={isMuonActive}
+            metGev={activeEvent.metGev}
+          />
+        ) : viewMode === 'lego' ? (
+          <DetectorLego3DCanvas
+            visibleObjects={visibleObjects}
+            selectedObjectId={selectedObjectId}
+            onSelectObject={setSelectedObjectId}
+            metGev={activeEvent.metGev}
+          />
+        ) : (
         <div className="w-full h-80 flex items-center justify-center relative select-none">
           <svg viewBox="-200 -200 400 400" className="w-80 h-80">
             {/* Concentric Detector Cylinders */}
@@ -314,6 +426,7 @@ export const DetectorTwin: React.FC = () => {
             )}
           </svg>
         </div>
+        )}
 
         {/* Bottom Legend & Event Readouts */}
         <div className="pt-3 border-t-2 border-black flex flex-wrap items-center justify-between gap-2 text-xs font-mono text-text-muted">
@@ -333,7 +446,7 @@ export const DetectorTwin: React.FC = () => {
         <div className="space-y-4">
           <div className="pb-2 border-b-2 border-black bg-canvas-sub -mx-4 -mt-4 p-3 mb-2">
             <h3 className="text-xs font-mono font-bold text-white uppercase flex items-center gap-1.5 tracking-wider">
-              <Info className="w-4 h-4 text-cern-accent" /> /// Object Inspector ///
+              <Info className="w-4 h-4 text-cern-accent" /> Object Inspector
             </h3>
           </div>
 
@@ -375,7 +488,7 @@ export const DetectorTwin: React.FC = () => {
 
           {/* Detector Comparison Note */}
           <div className="p-3 bg-canvas-sub border-2 border-black shadow-[2px_2px_0px_#000] text-[11px] text-text-secondary leading-relaxed">
-            <strong className="text-white block font-mono uppercase mb-1">/// ATLAS vs CMS ///</strong>
+            <strong className="text-white block font-mono uppercase mb-1">ATLAS vs CMS</strong>
             ATLAS uses an air-core toroid for outer muon tracking and
             accordion LAr calorimetry. CMS uses a single high-field 3.8 T solenoid enclosing PbWO4 crystal
             calorimeters. Both provide independent validation of discoveries.

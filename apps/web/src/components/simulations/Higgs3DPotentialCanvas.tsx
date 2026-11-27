@@ -43,7 +43,7 @@ export const Higgs3DPotentialCanvas: React.FC<Higgs3DPotentialCanvasProps> = ({
 
     let renderer: THREE.WebGLRenderer;
     try {
-      renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true });
+      renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true, preserveDrawingBuffer: true });
     } catch {
       setWebglFailed(true);
       return;
@@ -284,7 +284,7 @@ export const Higgs3DPotentialCanvas: React.FC<Higgs3DPotentialCanvasProps> = ({
         onPointerMove={handlePointerMove}
         onPointerUp={handlePointerUp}
         onPointerCancel={handlePointerUp}
-        className="w-full h-full cursor-grab active:cursor-grabbing"
+        className="w-full h-full cursor-grab active:cursor-grabbing touch-none"
         title="Drag to tilt & inspect the 3D Mexican Hat scalar potential"
       />
       <div className="absolute top-2.5 left-2.5 pointer-events-none flex items-center gap-1.5 px-2 py-0.5 bg-black/85 border border-black text-[10px] font-mono font-bold text-[#FFE600]">

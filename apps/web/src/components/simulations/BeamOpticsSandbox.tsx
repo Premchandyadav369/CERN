@@ -311,7 +311,7 @@ export function BeamOpticsSandbox() {
         <div>
           <div className="flex items-center gap-2">
             <h3 className="text-base font-display font-extrabold text-white">
-              /// Beam Optics Sandbox: FODO Lattice &amp; Courant-Snyder Envelope ///
+              Beam Optics Sandbox: FODO Lattice &amp; Courant-Snyder Envelope
             </h3>
             <FidelityBadge type="ANALYTIC" formula="Courant-Snyder transfer matrix" />
           </div>
@@ -509,7 +509,7 @@ export function BeamOpticsSandbox() {
           <div className="bg-canvas-sub p-4 border-2 border-black shadow-[4px_4px_0px_#000]">
             <div className="flex items-center justify-between mb-3 border-b-2 border-black pb-2">
               <span className="text-xs font-mono uppercase font-bold text-white">
-                /// Beam Envelope &sigma;(s) Across 1 FODO Cell ///
+                Beam Envelope &sigma;(s) Across 1 FODO Cell
               </span>
               <span className="text-[11px] font-mono text-cern-cyan font-bold">
                 QF &rarr; Drift &rarr; QD &rarr; Drift &rarr; QF

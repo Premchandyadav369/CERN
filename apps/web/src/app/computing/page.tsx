@@ -3,6 +3,7 @@
 import React from 'react';
 import { GridSimulator } from '@/components/computing/GridSimulator';
 import { Eli5Card } from '@/components/ui/Eli5Card';
+import { TechnicalTermDeck } from '@/components/ui/TechTermInfo';
 import { Server, Database, Network, ShieldCheck } from 'lucide-react';
 
 export default function ComputingPage() {
@@ -12,7 +13,7 @@ export default function ComputingPage() {
       <div className="p-6 bg-canvas-sub border-3 border-black shadow-[6px_6px_0px_0px_#000000]">
         <div className="flex items-center gap-2 mb-3">
           <span className="text-xs font-mono uppercase text-black font-bold tracking-wider px-2.5 py-1 bg-cern-cyan border-2 border-black shadow-[2px_2px_0px_#000]">
-            /// DISTRIBUTED SYSTEMS &amp; EXASCALE COMPUTING ///
+            DISTRIBUTED SYSTEMS &amp; EXASCALE COMPUTING
           </span>
           <span className="text-[10px] font-mono px-2 py-1 bg-emerald-400 text-black font-bold border-2 border-black shadow-[2px_2px_0px_#000]">
             WLCG Specifications
@@ -50,7 +51,7 @@ export default function ComputingPage() {
       <section className="p-6 bg-canvas-surface border-3 border-black shadow-[6px_6px_0px_0px_#000000] space-y-5">
         <div className="border-b-2 border-black pb-3">
           <h2 className="text-xl font-display font-extrabold text-white">
-            /// The High-Luminosity LHC Computing Frontier ///
+            The High-Luminosity LHC Computing Frontier
           </h2>
           <p className="text-xs text-text-muted mt-1 font-mono">
             Key architectural paradigms scaling storage and throughput for HL-LHC data deluge.
@@ -82,6 +83,8 @@ export default function ComputingPage() {
           </div>
         </div>
       </section>
+
+      <TechnicalTermDeck contextId="page-computing" heading="Trigger, DAQ & WLCG Computing Terms (ⓘ Info Cards)" />
     </div>
   );
 }

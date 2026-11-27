@@ -883,7 +883,7 @@ export const DetectorMaterialViewer: React.FC<{ className?: string }> = ({ class
             {/* Superconducting Comparison Banner (for Nb3Sn) */}
             {selectedMaterial === 'nb3sn' && (
               <div className="p-3 bg-amber-400 text-black border-2 border-black shadow-[3px_3px_0px_#000] space-y-1 text-xs font-mono">
-                <strong className="block uppercase font-black">/// FCC-hh 16 Tesla Magnet Upgrade ///</strong>
+                <strong className="block uppercase font-black">FCC-hh 16 Tesla Magnet Upgrade</strong>
                 <p className="text-[11px] leading-snug">
                   Current LHC NbTi magnets are limited to 8.33 T at 1.9 K. Switching to A15 Nb₃Sn pushes
                   dipole fields to 16 T, reaching 100 TeV center-of-mass energy in a 91 km tunnel.

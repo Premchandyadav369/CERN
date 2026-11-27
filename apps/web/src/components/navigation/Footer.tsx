@@ -22,7 +22,7 @@ export const Footer: React.FC = () => {
               detectors, trigger pipelines, distributed computing, and machine learning research.
             </p>
             <div className="p-3 bg-amber-400 border-2 border-black shadow-[4px_4px_0px_#000] text-xs text-black leading-normal">
-              <strong className="text-black uppercase font-mono block mb-0.5 font-extrabold">/// Non-Affiliation Notice ///</strong>
+              <strong className="text-black uppercase font-mono block mb-0.5 font-extrabold">Non-Affiliation Notice</strong>
               CERN-X is an unofficial educational and research initiative. It is NOT affiliated with, sponsored by, or endorsed by CERN.
             </div>
           </div>
@@ -30,11 +30,11 @@ export const Footer: React.FC = () => {
           <div className="p-4 bg-canvas-surface border-2 border-black shadow-[4px_4px_0px_#000]">
             <h4 className="font-mono uppercase font-bold text-white mb-3 text-xs tracking-wider border-b-2 border-black pb-1.5 flex items-center justify-between">
               <span>Governance &amp; Sources</span>
-              <span className="text-[10px] text-cern-cyan">/// 01</span>
+              <span className="text-[10px] text-cern-cyan">01</span>
             </h4>
             <ul className="space-y-2 text-xs font-mono">
               <li>
-                <Link href="/about" className="hover:text-cern-cyan transition-colors flex items-center gap-1 font-bold">
+                <Link href="/methodology" className="hover:text-cern-cyan transition-colors flex items-center gap-1 font-bold">
                   <span>→ Methodology &amp; Limits</span>
                 </Link>
               </li>
@@ -74,12 +74,12 @@ export const Footer: React.FC = () => {
           <div className="p-4 bg-canvas-surface border-2 border-black shadow-[4px_4px_0px_#000]">
             <h4 className="font-mono uppercase font-bold text-white mb-3 text-xs tracking-wider border-b-2 border-black pb-1.5 flex items-center justify-between">
               <span>Standards &amp; Verification</span>
-              <span className="text-emerald-400">/// 02</span>
+              <span className="text-emerald-400">02</span>
             </h4>
             <ul className="space-y-2 text-xs font-mono">
               <li className="flex items-center gap-1.5 text-emerald-400 font-bold">
                 <ShieldCheck className="w-4 h-4" />
-                <span>Physics Tests: 12/12 PASS</span>
+                <span>Physics Tests: 27/27 PASS</span>
               </li>
               <li className="flex items-center gap-1.5 text-cern-cyan font-bold">
                 <GitBranch className="w-4 h-4" />

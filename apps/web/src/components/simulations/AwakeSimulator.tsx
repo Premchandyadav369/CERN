@@ -388,7 +388,7 @@ export function AwakeSimulator() {
         <div>
           <div className="flex items-center gap-2">
             <h3 className="text-base font-display font-extrabold text-white">
-              /// AWAKE: Proton-Driven Plasma Wakefield Accelerator ///
+              AWAKE: Proton-Driven Plasma Wakefield Accelerator
             </h3>
             <FidelityBadge
               type="ANALYTIC"

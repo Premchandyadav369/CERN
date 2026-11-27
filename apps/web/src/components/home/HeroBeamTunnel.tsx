@@ -367,7 +367,7 @@ export const HeroBeamTunnel: React.FC = () => {
                 <div className="flex items-center gap-2">
                   <Sliders className="w-4 h-4 text-cern-cyan" />
                   <span className="font-mono text-xs font-bold text-white uppercase tracking-wider">
-                    /// Interactive Beamline Tuner · {preset.name} ///
+                    Interactive Beamline Tuner · {preset.name}
                   </span>
                 </div>
                 <div className="flex items-center gap-3">

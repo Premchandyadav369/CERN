@@ -10,6 +10,7 @@ import { Sliders, Sparkles, AlertCircle, Eye, RefreshCw, CheckCircle2, Download,
 
 export const DiscoveryExercise: React.FC = () => {
   const reduceMotion = useGlobalStore((s) => s.reduceMotion);
+  const completeMission = useGlobalStore((s) => s.completeMission);
   const [minPt1Gev, setMinPt1Gev] = useState<number>(35);
   const [minPt2Gev, setMinPt2Gev] = useState<number>(25);
   const [seed, setSeed] = useState<number>(42);
@@ -85,6 +86,12 @@ export const DiscoveryExercise: React.FC = () => {
 
   const maxBin = Math.max(...bins, 1);
 
+  useEffect(() => {
+    if (significance >= 5.0) {
+      completeMission('mission-higgs-5sigma');
+    }
+  }, [significance, completeMission]);
+
   // Export CSV
   const exportCsv = () => {
     let csv = 'mass_bin_gev,event_count\n';
@@ -144,7 +151,7 @@ export const DiscoveryExercise: React.FC = () => {
         <div className="space-y-4">
           <div className="flex items-center justify-between pb-2 border-b-2 border-black bg-canvas-sub -mx-4 -mt-4 p-3 mb-2">
             <h3 className="text-xs font-mono font-bold text-white uppercase flex items-center gap-1.5 tracking-wider">
-              <Sliders className="w-4 h-4 text-cern-cyan" /> /// Selection Cuts ///
+              <Sliders className="w-4 h-4 text-cern-cyan" /> Selection Cuts
             </h3>
             <FidelityBadge type="MONTE CARLO" />
           </div>
@@ -334,7 +341,7 @@ export const DiscoveryExercise: React.FC = () => {
         {revealed && (
           <div className="p-4 bg-canvas-sub border-2 border-black shadow-[4px_4px_0px_#00FF66] space-y-2 text-xs leading-relaxed animate-in fade-in duration-150">
             <div className="flex items-center gap-2 text-emerald-400 font-mono font-bold uppercase tracking-wider">
-              <CheckCircle2 className="w-4 h-4" /> /// Truth Revealed: Injected Standard Model Higgs ///
+              <CheckCircle2 className="w-4 h-4" /> Truth Revealed: Injected Standard Model Higgs
             </div>
             <p className="text-text-secondary">
               A synthetic resonance was injected at exactly <strong>125.0 GeV</strong> with a width
@@ -359,7 +366,7 @@ export const DiscoveryExercise: React.FC = () => {
         <div className="space-y-3 text-xs leading-relaxed">
           <div className="pb-2 border-b-2 border-black bg-canvas-sub -mx-4 -mt-4 p-3 mb-2">
             <h3 className="text-xs font-mono font-bold text-white uppercase tracking-wider">
-              /// 5-Sigma Discovery Standard ///
+              5-Sigma Discovery Standard
             </h3>
           </div>
 

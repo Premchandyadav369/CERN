@@ -1,0 +1,12 @@
+node_modules
+.git
+.github
+.next
+dist
+out
+coverage
+*.log
+.env
+.env*.local
+research/.venv
+research/__pycache__

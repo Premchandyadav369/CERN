@@ -3,6 +3,7 @@
 import React, { useEffect } from 'react';
 import { useGlobalStore } from '@/lib/store';
 import { getManifestRecord } from '@/lib/manifest';
+import { MathFormula } from '@/components/ui/MathFormula';
 import { X, ExternalLink, ShieldCheck, AlertTriangle, FileCode } from 'lucide-react';
 
 export const CitationDrawer: React.FC = () => {
@@ -78,7 +79,7 @@ export const CitationDrawer: React.FC = () => {
               {/* Manifest Key */}
               <div className="p-3 bg-canvas-sub border-2 border-black shadow-[4px_4px_0px_#000]">
                 <label className="text-[10px] text-text-muted uppercase font-bold block mb-1">
-                  /// Manifest Key ///
+                  Manifest Key
                 </label>
                 <div className="text-cern-cyan font-bold break-all">
                   {record.id}
@@ -88,7 +89,7 @@ export const CitationDrawer: React.FC = () => {
               {/* Source Link */}
               <div className="p-3 bg-canvas-sub border-2 border-black shadow-[4px_4px_0px_#000]">
                 <label className="text-[10px] text-text-muted uppercase font-bold block mb-1">
-                  /// Canonical Source URL &amp; Record ///
+                  Canonical Source URL &amp; Record
                 </label>
                 <a
                   href={record.sourceUrl}
@@ -104,7 +105,7 @@ export const CitationDrawer: React.FC = () => {
               {record.doiOrRecordId && (
                 <div className="p-3 bg-canvas-sub border-2 border-black shadow-[4px_4px_0px_#000]">
                   <label className="text-[10px] text-text-muted uppercase font-bold block mb-1">
-                    /// DOI / Document Identifier ///
+                    DOI / Document Identifier
                   </label>
                   <div className="text-text-secondary font-bold">
                     {record.doiOrRecordId}
@@ -116,10 +117,10 @@ export const CitationDrawer: React.FC = () => {
               {record.formula && (
                 <div className="p-3 bg-canvas-sub border-2 border-black shadow-[4px_4px_0px_#000]">
                   <label className="text-[10px] text-text-muted uppercase font-bold block mb-1">
-                    /// Physics Equation / Formula ///
+                    Physics Equation / Formula
                   </label>
-                  <div className="p-2.5 bg-black border-2 border-black text-amber-300 font-bold text-xs shadow-[3px_3px_0px_#FFE600]">
-                    {record.formula}
+                  <div className="p-2.5 bg-black border-2 border-black shadow-[3px_3px_0px_#FFE600]">
+                    <MathFormula tex={record.formula} displayMode />
                   </div>
                 </div>
               )}
@@ -163,7 +164,7 @@ export const CitationDrawer: React.FC = () => {
         {/* Footer */}
         <div className="pt-6 border-t-3 border-black text-xs font-mono text-text-muted">
           <p className="leading-relaxed font-bold">
-            /// CERN-X STRICT PROVENANCE POLICY: EVERY NUMBER RENDERED IS TRACEABLE TO AN OFFICIAL RECORD.
+            CERN-X STRICT PROVENANCE POLICY: EVERY NUMBER RENDERED IS TRACEABLE TO AN OFFICIAL RECORD.
           </p>
         </div>
       </div>

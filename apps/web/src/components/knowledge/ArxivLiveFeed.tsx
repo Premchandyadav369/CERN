@@ -542,7 +542,7 @@ export const ArxivLiveFeed: React.FC<{ className?: string }> = ({ className = ''
         <div className="flex flex-wrap items-center justify-between gap-3 mb-3">
           <div className="flex items-center gap-2">
             <span className="text-xs font-mono uppercase bg-cern-cyan text-black px-2.5 py-1 border-2 border-black font-black tracking-wider shadow-[2px_2px_0px_#000]">
-              /// LIVE ARXIV SCIENTIFIC INGESTION ENGINE ///
+              LIVE ARXIV SCIENTIFIC INGESTION ENGINE
             </span>
             <span
               className={`flex items-center gap-1.5 text-[11px] font-mono px-2 py-0.5 border-2 border-black font-bold shadow-[2px_2px_0px_#000] ${

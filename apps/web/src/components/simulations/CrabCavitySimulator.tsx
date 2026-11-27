@@ -336,7 +336,7 @@ export function CrabCavitySimulator() {
         <div>
           <div className="flex items-center gap-2">
             <h3 className="text-base font-display font-extrabold text-white">
-              /// HL-LHC: Crab Cavity &amp; Bunch Rotation Simulator ///
+              HL-LHC: Crab Cavity &amp; Bunch Rotation Simulator
             </h3>
             <FidelityBadge
               type="ANALYTIC"

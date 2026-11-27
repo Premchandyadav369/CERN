@@ -192,7 +192,7 @@ export const RingMap: React.FC = () => {
           <div className="flex items-center gap-2">
             <Compass className="w-4 h-4 text-cern-cyan" />
             <h3 className="font-mono text-xs uppercase tracking-wider text-white font-bold">
-              /// CERN ACCELERATOR COMPLEX &amp; RING SCHEMATIC ///
+              CERN ACCELERATOR COMPLEX &amp; RING SCHEMATIC
             </h3>
           </div>
           <div className="flex items-center gap-2 text-xs font-mono text-text-muted">
@@ -399,7 +399,7 @@ export const RingMap: React.FC = () => {
           {/* Experiments Served */}
           <div>
             <span className="text-[11px] font-mono uppercase text-white block mb-1.5 font-bold">
-              /// Experiments &amp; Facilities Served ///
+              Experiments &amp; Facilities Served
             </span>
             <div className="flex flex-wrap gap-1.5">
               {selectedMachine.experiments.map((exp) => (

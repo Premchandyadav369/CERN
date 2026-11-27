@@ -15,8 +15,14 @@ import {
   BookOpen,
   Sliders,
   ExternalLink,
+  Award,
+  Volume2,
+  VolumeX,
+  Clock,
 } from 'lucide-react';
 import { AppLogo } from '@/components/ui/AppLogo';
+import { OPERATOR_MISSIONS } from '@/lib/store';
+import { playTemPadClick } from '@/lib/sonifier';
 
 export const TopBar: React.FC = () => {
   const pathname = usePathname();
@@ -28,10 +34,17 @@ export const TopBar: React.FC = () => {
   const setDataClassOverlay = useGlobalStore((s) => s.setDataClassOverlay);
   const reduceMotion = useGlobalStore((s) => s.reduceMotion);
   const setReduceMotion = useGlobalStore((s) => s.setReduceMotion);
+  const soundEnabled = useGlobalStore((s) => s.soundEnabled);
+  const toggleSoundEnabled = useGlobalStore((s) => s.toggleSoundEnabled);
+  const tvaMode = useGlobalStore((s) => s.tvaMode);
+  const toggleTvaMode = useGlobalStore((s) => s.toggleTvaMode);
+  const setMissionsOpen = useGlobalStore((s) => s.setMissionsOpen);
+  const completedMissions = useGlobalStore((s) => s.completedMissions);
   const setCommandPaletteOpen = useGlobalStore((s) => s.setCommandPaletteOpen);
 
   const navLinks = [
     { href: '/', label: 'Ring Map' },
+    { href: '/projects', label: 'Projects' },
     { href: '/accelerators', label: 'Accelerators' },
     { href: '/experiments', label: 'Experiments' },
     { href: '/detectors', label: 'Detectors' },
@@ -41,32 +54,33 @@ export const TopBar: React.FC = () => {
     { href: '/ai-lab', label: 'AI Lab' },
     { href: '/open-data', label: 'Open Data' },
     { href: '/learn', label: 'Learn' },
+    { href: '/methodology', label: 'Methodology' },
   ];
 
   return (
     <header className="sticky top-0 z-40 w-full border-b-3 border-black bg-canvas/95 backdrop-blur-md shadow-[0_4px_0_0_#000]">
-      <div className="flex items-center justify-between px-4 lg:px-6 h-14">
+      <div className="flex items-center justify-between px-3 lg:px-6 h-14 overflow-x-hidden">
         {/* Brand & Wordmark */}
-        <div className="flex items-center gap-6">
-          <Link href="/" className="flex items-center gap-2.5 group">
-            <AppLogo size={34} />
-            <span className="font-mono font-bold text-base tracking-wider text-white px-2.5 py-1 border-2 border-black bg-cern-blue shadow-[3px_3px_0px_#00E5FF] group-hover:translate-x-[-1px] group-hover:translate-y-[-1px] group-hover:shadow-[4px_4px_0px_#00E5FF] active:translate-x-[1px] active:translate-y-[1px] active:shadow-none transition-all">
+        <div className="flex items-center gap-4 min-w-0">
+          <Link href="/" className="flex items-center gap-2 group shrink-0">
+            <AppLogo size={32} />
+            <span className="font-mono font-bold text-sm sm:text-base tracking-wider text-white px-2 py-1 border-2 border-black bg-cern-blue shadow-[3px_3px_0px_#00E5FF] group-hover:translate-x-[-1px] group-hover:translate-y-[-1px] group-hover:shadow-[4px_4px_0px_#00E5FF] active:translate-x-[1px] active:translate-y-[1px] active:shadow-none transition-all">
               CERN-X
             </span>
-            <span className="hidden sm:inline-block text-[11px] font-mono font-bold tracking-widest text-cern-cyan bg-canvas-surface px-2 py-0.5 border-2 border-black shadow-[2px_2px_0px_#000]">
+            <span className="hidden 2xl:inline-block text-[11px] font-mono font-bold tracking-widest text-cern-cyan bg-canvas-surface px-2 py-0.5 border-2 border-black shadow-[2px_2px_0px_#000]">
               DIGITAL UNIVERSE
             </span>
           </Link>
 
-          {/* Navigation Links */}
-          <nav className="hidden xl:flex items-center gap-1.5 text-xs font-mono font-bold">
+          {/* Navigation Links (single row on >= 2xl, sleek sub-bar below) */}
+          <nav className="hidden 2xl:flex items-center gap-1 text-xs font-mono font-bold">
             {navLinks.map((link) => {
               const isActive = pathname === link.href || (link.href !== '/' && pathname.startsWith(link.href));
               return (
                 <Link
                   key={link.href}
                   href={link.href}
-                  className={`px-2.5 py-1 rounded-none border-2 transition-all active:translate-x-[1px] active:translate-y-[1px] ${
+                  className={`px-2 py-1 rounded-none border-2 whitespace-nowrap transition-all active:translate-x-[1px] active:translate-y-[1px] ${
                     isActive
                       ? 'bg-cern-blue border-black text-white shadow-[3px_3px_0px_#000]'
                       : 'border-transparent text-text-secondary hover:text-white hover:border-black hover:bg-canvas-raised hover:shadow-[3px_3px_0px_#000]'
@@ -80,11 +94,11 @@ export const TopBar: React.FC = () => {
         </div>
 
         {/* Right Utility Bar */}
-        <div className="flex items-center gap-2.5">
+        <div className="flex items-center gap-1.5 sm:gap-2 shrink-0">
           {/* Live Accelerator Status Beacon */}
-          <div className="hidden lg:flex items-center gap-1.5 px-2.5 py-1 bg-canvas-surface border-2 border-black shadow-[3px_3px_0px_#000] text-[11px] font-mono text-emerald-400 font-bold">
+          <div className="hidden 2xl:flex items-center gap-1.5 px-2.5 py-1 bg-canvas-surface border-2 border-black shadow-[3px_3px_0px_#000] text-[11px] font-mono text-emerald-400 font-bold whitespace-nowrap">
             <span className="w-2 h-2 bg-emerald-400 border border-black shadow-[1px_1px_0px_#000] animate-pulse" />
-            <span className="tracking-wider">LHC: BEAM 1 &amp; 2 (6.8 TeV)</span>
+            <span className="tracking-wider">LHC: 6.8 TeV</span>
           </div>
 
           {/* Command Palette Trigger */}
@@ -151,6 +165,47 @@ export const TopBar: React.FC = () => {
             <span className="hidden xl:inline text-[11px]">MOTION</span>
           </button>
 
+          {/* TVA Retro CRT Theme Switch */}
+          <button
+            type="button"
+            role="switch"
+            aria-checked={tvaMode}
+            onClick={() => {
+              playTemPadClick();
+              toggleTvaMode();
+            }}
+            className={`flex items-center gap-1 px-2 py-1 text-xs font-mono font-black border-2 border-black shadow-[3px_3px_0px_#000] active:translate-x-[1px] active:translate-y-[1px] active:shadow-none transition-all cursor-pointer ${
+              tvaMode
+                ? 'bg-[#FFB000] text-black'
+                : 'bg-canvas-surface text-[#FFB000] hover:bg-canvas-raised'
+            }`}
+            title={tvaMode ? 'Disable TVA Retro CRT Theme' : 'Activate Marvel TVA Retro CRT Theme across platform'}
+          >
+            <Clock className="w-3.5 h-3.5" />
+            <span className="hidden lg:inline text-[11px]">TVA</span>
+          </button>
+
+          {/* Operator Missions Button */}
+          <button
+            onClick={() => setMissionsOpen(true)}
+            className="flex items-center gap-1.5 px-2.5 py-1 text-xs font-mono font-bold border-2 border-black bg-[#FFE600] text-black shadow-[3px_3px_0px_#000] active:translate-x-[1px] active:translate-y-[1px] active:shadow-none transition-all"
+            title="Open CERN Operator Missions & Badges"
+          >
+            <Award className="w-3.5 h-3.5" />
+            <span className="hidden md:inline">{completedMissions.length}/{OPERATOR_MISSIONS.length}</span>
+          </button>
+
+          {/* Opt-in Collider Sonification Toggle */}
+          <button
+            onClick={toggleSoundEnabled}
+            className={`p-1.5 border-2 border-black shadow-[2px_2px_0px_#000] transition-all ${
+              soundEnabled ? 'bg-cern-cyan text-black' : 'bg-canvas-surface text-text-muted hover:text-white'
+            }`}
+            title={soundEnabled ? 'Collider Audio ON (click to mute)' : 'Enable optional Collider Audio pulses'}
+          >
+            {soundEnabled ? <Volume2 className="w-3.5 h-3.5" /> : <VolumeX className="w-3.5 h-3.5" />}
+          </button>
+
           {/* Data Class Overlay Toggle */}
           <button
             onClick={() => setDataClassOverlay(!dataClassOverlay)}
@@ -167,8 +222,8 @@ export const TopBar: React.FC = () => {
         </div>
       </div>
 
-      {/* Mobile Nav Sub-bar */}
-      <div className="xl:hidden flex items-center overflow-x-auto gap-2 px-4 py-2 border-t-3 border-black bg-canvas-surface text-xs scrollbar-none">
+      {/* Compact Sub-bar below 2xl */}
+      <div className="2xl:hidden flex items-center overflow-x-auto gap-2 px-4 py-2 border-t-3 border-black bg-canvas-surface text-xs scrollbar-none">
         <button
           onClick={toggleEli5Mode}
           className={`whitespace-nowrap flex items-center gap-1.5 px-2.5 py-1 border-2 border-black font-mono font-bold text-xs transition-all active:translate-x-[1px] active:translate-y-[1px] cursor-pointer ${

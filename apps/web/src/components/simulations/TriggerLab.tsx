@@ -260,7 +260,7 @@ export const TriggerLab: React.FC = () => {
         <div className="space-y-4">
           <div className="flex items-center justify-between pb-2 border-b-2 border-black bg-canvas-sub -mx-4 -mt-4 p-3 mb-2">
             <h3 className="text-xs font-mono font-bold text-white uppercase flex items-center gap-1.5 tracking-wider">
-              <Sliders className="w-4 h-4 text-cern-cyan" /> /// Trigger Menu Cuts ///
+              <Sliders className="w-4 h-4 text-cern-cyan" /> Trigger Menu Cuts
             </h3>
             <FidelityBadge type="TOY" />
           </div>
@@ -346,7 +346,7 @@ export const TriggerLab: React.FC = () => {
             <div className="p-3 bg-red-500 text-black border-2 border-black shadow-[3px_3px_0px_#000] text-xs font-mono font-bold flex items-start gap-2">
               <AlertTriangle className="w-5 h-5 shrink-0 text-black mt-0.5" />
               <span>
-                <strong className="text-black uppercase block mb-0.5 font-black">/// Trigger Deadtime Warning ///</strong>
+                <strong className="text-black uppercase block mb-0.5 font-black">Trigger Deadtime Warning</strong>
                 Selected cuts exceed readout bandwidth budget! Increase thresholds to avoid buffer loss.
               </span>
             </div>
@@ -378,7 +378,7 @@ export const TriggerLab: React.FC = () => {
           <div className="flex items-center gap-2">
             <Gauge className="w-4 h-4 text-cern-cyan" />
             <h3 className="font-mono text-xs uppercase tracking-wider text-white font-bold">
-              /// TRIGGER &amp; DAQ BANDWIDTH FILTER PIPELINE ///
+              TRIGGER &amp; DAQ BANDWIDTH FILTER PIPELINE
             </h3>
           </div>
           <span className="text-xs font-mono text-text-muted font-bold">
@@ -493,7 +493,7 @@ export const TriggerLab: React.FC = () => {
         <div className="p-4 bg-canvas-surface border-2 border-black shadow-[3px_3px_0px_#000] space-y-2">
           <div className="flex items-center justify-between mb-1">
             <span className="text-xs font-mono uppercase text-white font-bold">
-              /// Signal Efficiency vs. Background Rejection Trade-Off ///
+              Signal Efficiency vs. Background Rejection Trade-Off
             </span>
             <span className="text-xs font-mono text-emerald-400 font-bold">
               Rejection: {backgroundRejection.toFixed(2)}%
@@ -523,7 +523,7 @@ export const TriggerLab: React.FC = () => {
         <div className="space-y-3">
           <div className="pb-2 border-b-2 border-black bg-canvas-sub -mx-4 -mt-4 p-3 mb-2">
             <h3 className="text-xs font-mono font-bold text-white uppercase tracking-wider">
-              /// The Trigger Challenge ///
+              The Trigger Challenge
             </h3>
           </div>
 
@@ -539,7 +539,7 @@ export const TriggerLab: React.FC = () => {
           </p>
 
           <div className="p-3 bg-amber-400 text-black border-2 border-black shadow-[3px_3px_0px_#000] text-xs leading-relaxed font-sans">
-            <strong className="text-black block font-mono font-bold uppercase mb-1">/// Honesty Note ///</strong>
+            <strong className="text-black block font-mono font-bold uppercase mb-1">Honesty Note</strong>
             Open Data collision files released by CERN only contain events that ALREADY passed the trigger. Unbiased Level-1 trigger rates cannot be derived from open data.
           </div>
         </div>

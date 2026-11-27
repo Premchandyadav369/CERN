@@ -271,3 +271,233 @@ input[type="range"]::-moz-range-thumb {
   background: #00e5ff;
   color: #000000;
 }
+
+/* ========================================================
+   MODERN WEB DESIGN: REGISTERED SPOTLIGHT & MOTION LAYERS
+   ======================================================== */
+@property --spot-inner {
+  syntax: "<length-percentage>";
+  inherits: true;
+  initial-value: 0px;
+}
+@property --spot-outer {
+  syntax: "<length-percentage>";
+  inherits: true;
+  initial-value: 0px;
+}
+
+:where(a, button, input, select, textarea, summary, [tabindex]):focus-visible {
+  outline: 2px solid #00e5ff;
+  outline-offset: 3px;
+}
+
+/* Interactive pointer-tracked spotlight reveal enhancement (purely visual overlay) */
+.cern-spotlight-surface {
+  --mouse-x: 50%;
+  --mouse-y: 50%;
+  --spot-inner: 0px;
+  --spot-outer: 0px;
+  position: relative;
+}
+.cern-spotlight-surface:hover,
+.cern-spotlight-surface:focus-within {
+  --spot-inner: 90px;
+  --spot-outer: 240px;
+}
+.cern-spotlight-layer {
+  pointer-events: none;
+  position: absolute;
+  inset: 0;
+  opacity: 0.9;
+  transition: --spot-inner 200ms ease-out, --spot-outer 200ms ease-out;
+  background: radial-gradient(
+    circle at var(--mouse-x) var(--mouse-y),
+    rgba(0, 229, 255, 0.16) var(--spot-inner, 0px),
+    transparent var(--spot-outer, 0px)
+  );
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .cern-spotlight-layer {
+    transition: none !important;
+  }
+}
+
+/* Native CSS Scroll-Driven Entry Animation with strict feature-detection */
+@media (prefers-reduced-motion: no-preference) {
+  @supports ((animation-timeline: view()) and (animation-range: entry)) {
+    @keyframes cern-scroll-rise {
+      from {
+        opacity: 0.45;
+        transform: translateY(16px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+    .cern-scroll-reveal {
+      animation: cern-scroll-rise linear backwards;
+      animation-timeline: view();
+      animation-range: entry 0% entry 35%;
+    }
+  }
+}
+
+/* Animated Neobrutalist Beam Border Sweep */
+@keyframes cern-beam-sweep {
+  0% { background-position: 0% 50%; }
+  100% { background-position: 200% 50%; }
+}
+.cern-beam-accent-bar {
+  background: linear-gradient(90deg, #00e5ff 0%, #4c7dff 28%, #ff0055 55%, #ffe600 80%, #00e5ff 100%);
+  background-size: 200% 100%;
+}
+@media (prefers-reduced-motion: no-preference) {
+  .cern-beam-accent-bar {
+    animation: cern-beam-sweep 4s linear infinite;
+  }
+}
+
+/* ========================================================
+   MODERN WEB DESIGN: SINGLE-ROW ACCESSIBLE TABLIST & SCROLL FADES
+   ======================================================== */
+@property --fade-start {
+  syntax: "<length>";
+  inherits: false;
+  initial-value: 0px;
+}
+
+@property --fade-end {
+  syntax: "<length>";
+  inherits: false;
+  initial-value: 0px;
+}
+
+.cern-tablist-scroller {
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+}
+
+.cern-tablist-scroller::-webkit-scrollbar {
+  display: none;
+}
+
+@supports (animation-timeline: scroll(self inline)) {
+  @keyframes cern-tab-fade-start {
+    from {
+      --fade-start: 0px;
+    }
+    5% {
+      --fade-start: 2.5rem;
+    }
+    to {
+      --fade-start: 2.5rem;
+    }
+  }
+
+  @keyframes cern-tab-fade-end {
+    from {
+      --fade-end: 2.5rem;
+    }
+    95% {
+      --fade-end: 2.5rem;
+    }
+    to {
+      --fade-end: 0px;
+    }
+  }
+
+  .cern-tablist-scroller {
+    --fade-start: 0px;
+    --fade-end: 2.5rem;
+    mask-image: linear-gradient(
+      to right,
+      transparent,
+      #000 var(--fade-start),
+      #000 calc(100% - var(--fade-end)),
+      transparent
+    );
+    animation:
+      cern-tab-fade-start both linear,
+      cern-tab-fade-end both linear;
+    animation-timeline: scroll(self inline), scroll(self inline);
+  }
+}
+
+[role="tab"][aria-selected="true"] {
+  border-bottom-width: 4px;
+  border-bottom-color: #00e5ff;
+}
+
+/* ========================================================
+   TVA SACRED TIMELINE CRT SCANLINE & NATIVE SLIDER STYLING
+   ======================================================== */
+.cern-tva-scanlines {
+  background-image: repeating-linear-gradient(
+    to bottom,
+    transparent 0 3px,
+    rgba(255, 176, 0, 0.045) 3px 4px
+  );
+}
+
+.cern-tva-slider {
+  accent-color: #ffb000;
+  block-size: 2.25rem;
+}
+
+.cern-tva-slider:focus-visible {
+  outline: 2px solid #ffb000;
+  outline-offset: 4px;
+}
+
+/* ========================================================
+   SITE-WIDE TVA CRT PHOSPHOR THEME OVERRIDE
+   ======================================================== */
+html.cern-tva-theme {
+  color-scheme: dark;
+  --bg-canvas: #0f0803;
+  --bg-surface: #1b1006;
+  --bg-raised: #29180a;
+  --bg-subsurface: #150b04;
+  --primary-cern: #9a4a00;
+  --primary-accent: #ffb000;
+  --beam-cyan: #ffb000;
+  --ion-magenta: #ff334b;
+  --neon-yellow: #ffe082;
+  --antimatter-amber: #ff8c00;
+  --text-primary: #fff4dc;
+  --text-secondary: #f5c77e;
+  --text-muted: #c99247;
+  --text-mono: #ffe082;
+}
+
+html.cern-tva-theme body::after {
+  content: "";
+  pointer-events: none;
+  position: fixed;
+  inset: 0;
+  z-index: 90;
+  background-image: repeating-linear-gradient(
+    to bottom,
+    transparent 0 3px,
+    rgba(255, 176, 0, 0.032) 3px 4px
+  );
+}
+
+/* ========================================================
+   KATEX EQUATION SCROLLBAR & DISPLAY CLEANUP
+   ======================================================== */
+.cern-katex-wrap {
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+}
+.cern-katex-wrap::-webkit-scrollbar {
+  display: none;
+}
+.cern-katex-wrap .katex-display {
+  margin: 0.25rem 0;
+}
+.katex {
+  font-size: 1.03em;
+}

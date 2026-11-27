@@ -1,189 +1,234 @@
 'use client';
 
-import React, { useState } from 'react';
-import { Value } from '@/components/provenance/Value';
-import { GitBranch, Info, ExternalLink, Filter, Search } from 'lucide-react';
+import React, { useState, useEffect, useRef, useMemo } from 'react';
+import * as d3 from 'd3';
+import { GitBranch, Info, ExternalLink, Compass } from 'lucide-react';
 
-interface GraphNode {
+interface GraphNode extends d3.SimulationNodeDatum {
   id: string;
   name: string;
-  type: 'ACCELERATOR' | 'EXPERIMENT' | 'DETECTOR' | 'PARTICLE' | 'COMPUTING';
-  x: number;
-  y: number;
+  type: 'ACCELERATOR' | 'EXPERIMENT' | 'PARTICLE' | 'COMPUTING' | 'SPINOFF';
   description: string;
 }
 
 interface GraphEdge {
-  id: string;
   source: string;
   target: string;
-  relation: 'uses' | 'supplied_by' | 'contains' | 'studies' | 'produces';
+  relation: string;
   evidence: string;
   sourceUrl: string;
 }
 
-const NODES: GraphNode[] = [
-  { id: 'lhc', name: 'Large Hadron Collider', type: 'ACCELERATOR', x: 280, y: 160, description: '27 km superconducting collider operating at 13.6 TeV.' },
-  { id: 'sps', name: 'Super Proton Synchrotron', type: 'ACCELERATOR', x: 120, y: 160, description: '450 GeV pre-accelerator and injector to the LHC.' },
-  { id: 'atlas', name: 'ATLAS Experiment', type: 'EXPERIMENT', x: 440, y: 90, description: 'General-purpose detector studying electroweak and Higgs physics.' },
-  { id: 'cms', name: 'CMS Experiment', type: 'EXPERIMENT', x: 440, y: 230, description: 'General-purpose solenoid detector cross-checking ATLAS discoveries.' },
-  { id: 'higgs', name: 'Higgs Boson (H0)', type: 'PARTICLE', x: 600, y: 160, description: '125.25 GeV scalar boson discovered by ATLAS & CMS in 2012.' },
-  { id: 'wlcg', name: 'WLCG Computing Grid', type: 'COMPUTING', x: 340, y: 310, description: 'Global distributed network of 170+ computing sites processing LHC data.' },
-  { id: 'calorimeter', name: 'LAr Calorimeter', type: 'DETECTOR', x: 550, y: 50, description: 'Liquid argon sampling calorimeter measuring electrons and photons.' },
+const RAW_NODES: Omit<GraphNode, 'x' | 'y' | 'vx' | 'vy'>[] = [
+  { id: 'linac4', name: 'Linac4 (160 MeV)', type: 'ACCELERATOR', description: 'Starts every proton journey by accelerating H⁻ ions to 160 MeV.' },
+  { id: 'psb', name: 'PS Booster (2 GeV)', type: 'ACCELERATOR', description: '4 superimposed rings boosting brightness for PS and ISOLDE.' },
+  { id: 'ps', name: 'Proton Synchrotron', type: 'ACCELERATOR', description: '628 m central hub running since 1959; feeds SPS, AD, EAST, n_TOF.' },
+  { id: 'sps', name: 'SPS (450 GeV)', type: 'ACCELERATOR', description: '6.9 km workhorse injecting LHC and powering North Area & AWAKE.' },
+  { id: 'lhc', name: 'LHC (27 km)', type: 'ACCELERATOR', description: 'World flagship superconducting collider at 13.6 TeV.' },
+  { id: 'hllhc', name: 'HL-LHC / FCC', type: 'ACCELERATOR', description: '12 T Nb₃Sn crab-cavity upgrade & 91 km FCC study.' },
+  { id: 'atlas', name: 'ATLAS', type: 'EXPERIMENT', description: '46 m general-purpose barrel detector at Point 1.' },
+  { id: 'cms', name: 'CMS', type: 'EXPERIMENT', description: 'Compact 3.8 T solenoid & PbWO₄ crystal detector at Point 5.' },
+  { id: 'alice', name: 'ALICE', type: 'EXPERIMENT', description: 'Heavy-ion QGP spectrometer recreating Big Bang soup.' },
+  { id: 'lhcb', name: 'LHCb', type: 'EXPERIMENT', description: 'Forward flavour & RICH spectrometer probing matter-antimatter CP violation.' },
+  { id: 'isolde', name: 'ISOLDE', type: 'EXPERIMENT', description: 'Produces >1,300 rare radioactive nuclei via mass separation.' },
+  { id: 'ad', name: 'AD / ALPHA-g', type: 'EXPERIMENT', description: 'Antimatter Factory decelerating antiprotons to 100 keV.' },
+  { id: 'awake', name: 'AWAKE', type: 'EXPERIMENT', description: 'Proton-driven plasma wakefield accelerator (>1 GV/m).' },
+  { id: 'na62', name: 'NA62 / CLOUD', type: 'EXPERIMENT', description: 'Rare kaon decays & cosmic-ray cloud aerosol nucleation chambers.' },
+  { id: 'higgs', name: 'Higgs H⁰ & Z⁰/W±', type: 'PARTICLE', description: 'Electroweak symmetry breaking bosons discovered at CERN.' },
+  { id: 'qgp', name: 'Quark-Gluon Plasma', type: 'PARTICLE', description: 'Deconfined primordial fluid of quarks and gluons.' },
+  { id: 'wlcg', name: 'WLCG Grid', type: 'COMPUTING', description: '170 computing centres storing >1.5 Exabytes globally.' },
+  { id: 'www', name: 'World Wide Web', type: 'COMPUTING', description: 'Invented by Tim Berners-Lee at CERN in 1989 (HTTP/HTML).' },
+  { id: 'medipix', name: 'Medipix3 / Space', type: 'SPINOFF', description: 'Color spectral medical X-ray & ISS radiation chips from LHC trackers.' },
+  { id: 'medicis', name: 'MEDICIS / Hadron', type: 'SPINOFF', description: 'Targeted radioisotopes (¹⁶¹Tb) & carbon/proton cancer therapy.' },
 ];
 
-const EDGES: GraphEdge[] = [
-  { id: 'e1', source: 'sps', target: 'lhc', relation: 'supplied_by', evidence: 'The SPS accelerates protons to 450 GeV and transfers them into the LHC via the TI2 and TI8 tunnels.', sourceUrl: 'https://home.cern/science/accelerators/large-hadron-collider' },
-  { id: 'e2', source: 'lhc', target: 'atlas', relation: 'contains', evidence: 'ATLAS is located at Interaction Point 1 on the LHC ring in Meyrin, Switzerland.', sourceUrl: 'https://home.cern/science/experiments/atlas' },
-  { id: 'e3', source: 'lhc', target: 'cms', relation: 'contains', evidence: 'CMS is located at Interaction Point 5 on the LHC ring in Cessy, France.', sourceUrl: 'https://home.cern/science/experiments/cms' },
-  { id: 'e4', source: 'atlas', target: 'higgs', relation: 'studies', evidence: 'ATLAS discovered the Higgs boson in 2012 and performs precision couplings measurements in Run 3.', sourceUrl: 'https://pdg.lbl.gov/2024/listings/rpp2024-list-higgs-boson.pdf' },
-  { id: 'e5', source: 'cms', target: 'higgs', relation: 'studies', evidence: 'CMS independently discovered the Higgs boson in diphoton and 4-lepton decay channels in 2012.', sourceUrl: 'https://pdg.lbl.gov/2024/listings/rpp2024-list-higgs-boson.pdf' },
-  { id: 'e6', source: 'atlas', target: 'calorimeter', relation: 'contains', evidence: 'The accordion liquid-argon calorimeter is the primary electromagnetic detector inside ATLAS.', sourceUrl: 'https://cds.cern.ch/record/782076' },
-  { id: 'e7', source: 'atlas', target: 'wlcg', relation: 'produces', evidence: 'ATLAS sends reconstructed AOD and raw collision event files directly to the WLCG Tier-0 tape archive.', sourceUrl: 'https://wlcg.web.cern.ch/' },
+const RAW_EDGES: GraphEdge[] = [
+  { source: 'linac4', target: 'psb', relation: 'injects', evidence: 'Strips electrons from H⁻ into PSB 4 rings.', sourceUrl: 'https://home.cern/science/accelerators/linear-accelerator-4' },
+  { source: 'psb', target: 'ps', relation: 'injects', evidence: 'Transfers 2.0 GeV protons into the PS.', sourceUrl: 'https://home.cern/science/accelerators/proton-synchrotron-booster' },
+  { source: 'psb', target: 'isolde', relation: 'feeds', evidence: '1.4–2.0 GeV protons strike UCx/Ta targets for exotic nuclei.', sourceUrl: 'https://home.cern/science/experiments/isolde' },
+  { source: 'ps', target: 'sps', relation: 'injects', evidence: 'Delivers 25 ns 26 GeV bunch trains to SPS.', sourceUrl: 'https://home.cern/science/accelerators/proton-synchrotron' },
+  { source: 'ps', target: 'ad', relation: 'feeds', evidence: '26 GeV protons strike iridium targets producing antiprotons.', sourceUrl: 'https://home.cern/science/experiments/antimatter-factory' },
+  { source: 'ps', target: 'na62', relation: 'feeds', evidence: 'East Area pions supply CLOUD cosmic-ray aerosol tests.', sourceUrl: 'https://home.cern/science/experiments/cloud' },
+  { source: 'sps', target: 'lhc', relation: 'injects', evidence: 'Injects 450 GeV bunches via TI2 & TI8 tunnels.', sourceUrl: 'https://home.cern/science/accelerators/large-hadron-collider' },
+  { source: 'sps', target: 'awake', relation: 'drives', evidence: '400 GeV bunches create rubidium plasma wakefields.', sourceUrl: 'https://home.cern/science/experiments/awake' },
+  { source: 'sps', target: 'na62', relation: 'feeds', evidence: '400 GeV protons probe rare K+ -> pi+ nu nu-bar at NA62.', sourceUrl: 'https://home.cern/science/experiments/na62' },
+  { source: 'lhc', target: 'hllhc', relation: 'upgrades_to', evidence: 'HL-LHC increases luminosity 5–10x; FCC scales to 91 km.', sourceUrl: 'https://home.cern/science/accelerators/high-luminosity-lhc' },
+  { source: 'lhc', target: 'atlas', relation: 'hosts', evidence: 'Collides beams inside IP1 ATLAS.', sourceUrl: 'https://home.cern/science/experiments/atlas' },
+  { source: 'lhc', target: 'cms', relation: 'hosts', evidence: 'Collides beams inside IP5 CMS.', sourceUrl: 'https://home.cern/science/experiments/cms' },
+  { source: 'lhc', target: 'alice', relation: 'hosts', evidence: 'Heavy Pb-Pb ions collide inside IP2 ALICE.', sourceUrl: 'https://home.cern/science/experiments/alice' },
+  { source: 'lhc', target: 'lhcb', relation: 'hosts', evidence: 'Forward b/c hadron decays recorded at IP8 LHCb.', sourceUrl: 'https://home.cern/science/experiments/lhcb' },
+  { source: 'atlas', target: 'higgs', relation: 'discovered', evidence: 'Jointly observed 125 GeV Higgs boson in 2012.', sourceUrl: 'https://pdg.lbl.gov/' },
+  { source: 'cms', target: 'higgs', relation: 'discovered', evidence: 'Independently observed Higgs in diphoton & ZZ* modes.', sourceUrl: 'https://pdg.lbl.gov/' },
+  { source: 'alice', target: 'qgp', relation: 'recreates', evidence: 'Measures elliptic flow v2 of Quark-Gluon Plasma.', sourceUrl: 'https://home.cern/science/experiments/alice' },
+  { source: 'atlas', target: 'wlcg', relation: 'streams_to', evidence: '1–3 kHz event data archived globally across Tier-0/1/2.', sourceUrl: 'https://wlcg.web.cern.ch/' },
+  { source: 'cms', target: 'wlcg', relation: 'streams_to', evidence: 'Open Data & Run 3 datasets distributed via WLCG.', sourceUrl: 'https://opendata.cern.ch/' },
+  { source: 'wlcg', target: 'www', relation: 'descends_from', evidence: 'Built on global hypertext sharing pioneered by WWW in 1989.', sourceUrl: 'https://home.cern/science/computing/birth-web' },
+  { source: 'lhcb', target: 'medipix', relation: 'spun_off', evidence: 'Silicon hybrid pixel ASICs birthed color medical X-ray chips.', sourceUrl: 'https://medipix.web.cern.ch/' },
+  { source: 'isolde', target: 'medicis', relation: 'powers', evidence: 'Harvests targeted terbium isotopes for cancer radiotherapy.', sourceUrl: 'https://medicis.cern/' },
 ];
 
 export const KnowledgeGraph: React.FC = () => {
-  const [selectedEdge, setSelectedEdge] = useState<GraphEdge | null>(null);
-  const [selectedNode, setSelectedNode] = useState<GraphNode | null>(NODES[0]);
+  const [selectedNodeId, setSelectedNodeId] = useState<string>('lhc');
+  const [pathTargetId, setPathTargetId] = useState<string>('medipix');
+  const [positions, setPositions] = useState<Record<string, { x: number; y: number }>>({});
+
+  // Run deterministic D3 force layout once on mount to compute balanced graph geometry
+  useEffect(() => {
+    const nodes: GraphNode[] = RAW_NODES.map((n, i) => ({
+      ...n,
+      x: 360 + Math.cos(i * 0.6) * 140,
+      y: 200 + Math.sin(i * 0.6) * 110,
+    }));
+    const links = RAW_EDGES.map((e) => ({ source: e.source, target: e.target }));
+
+    const sim = d3
+      .forceSimulation(nodes)
+      .force('link', d3.forceLink(links).id((d: any) => d.id).distance(68))
+      .force('charge', d3.forceManyBody().strength(-240))
+      .force('center', d3.forceCenter(360, 200))
+      .force('collide', d3.forceCollide(30))
+      .stop();
+
+    for (let i = 0; i < 220; i++) sim.tick();
+
+    const posMap: Record<string, { x: number; y: number }> = {};
+    nodes.forEach((n) => {
+      posMap[n.id] = {
+        x: Math.max(54, Math.min(666, n.x || 360)),
+        y: Math.max(36, Math.min(364, n.y || 200)),
+      };
+    });
+    setPositions(posMap);
+  }, []);
+
+  // Undirected BFS Shortest Path Tracer between selectedNodeId and pathTargetId
+  const shortestPath = useMemo(() => {
+    const adj: Record<string, string[]> = {};
+    RAW_NODES.forEach((n) => (adj[n.id] = []));
+    RAW_EDGES.forEach((e) => {
+      adj[e.source]?.push(e.target);
+      adj[e.target]?.push(e.source);
+    });
+
+    const queue: string[][] = [[selectedNodeId]];
+    const visited = new Set([selectedNodeId]);
+    while (queue.length > 0) {
+      const path = queue.shift()!;
+      const curr = path[path.length - 1];
+      if (curr === pathTargetId) return path;
+      for (const nxt of adj[curr] || []) {
+        if (!visited.has(nxt)) {
+          visited.add(nxt);
+          queue.push([...path, nxt]);
+        }
+      }
+    }
+    return [];
+  }, [selectedNodeId, pathTargetId]);
+
+  const pathEdgeSet = useMemo(() => {
+    const set = new Set<string>();
+    for (let i = 0; i < shortestPath.length - 1; i++) {
+      const a = shortestPath[i];
+      const b = shortestPath[i + 1];
+      set.add(`${a}->${b}`);
+      set.add(`${b}->${a}`);
+    }
+    return set;
+  }, [shortestPath]);
+
+  const selectedNode = RAW_NODES.find((n) => n.id === selectedNodeId) || RAW_NODES[0];
+  const connectedEdges = RAW_EDGES.filter((e) => e.source === selectedNodeId || e.target === selectedNodeId);
 
   const getNodeColor = (type: GraphNode['type']) => {
     switch (type) {
-      case 'ACCELERATOR':
-        return '#00E5FF';
-      case 'EXPERIMENT':
-        return '#4C7DFF';
-      case 'PARTICLE':
-        return '#FFB020';
-      case 'DETECTOR':
-        return '#00FF66';
-      case 'COMPUTING':
-        return '#FF0055';
+      case 'ACCELERATOR': return '#00E5FF';
+      case 'EXPERIMENT': return '#4C7DFF';
+      case 'PARTICLE': return '#FFE600';
+      case 'COMPUTING': return '#00FF66';
+      case 'SPINOFF': return '#FF0055';
     }
   };
 
   return (
     <div className="w-full flex flex-col xl:flex-row gap-6 p-4 lg:p-6 bg-canvas-sub border-3 border-black shadow-[6px_6px_0px_#000]">
-      {/* Visual Force-Directed Canvas */}
-      <div className="flex-1 flex flex-col justify-between bg-canvas border-2 border-black shadow-[3px_3px_0px_#000] p-4 relative min-h-[460px]">
-        {/* Header */}
-        <div className="flex items-center justify-between pb-3 border-b-2 border-black bg-canvas-sub -mx-4 -mt-4 p-3.5 mb-2">
+      {/* Force-Directed D3 Canvas */}
+      <div className="flex-1 flex flex-col justify-between bg-canvas border-2 border-black shadow-[3px_3px_0px_#000] p-4 space-y-3">
+        <div className="flex flex-wrap items-center justify-between gap-2 pb-3 border-b-2 border-black bg-canvas-sub -mx-4 -mt-4 p-3.5">
           <div className="flex items-center gap-2">
             <GitBranch className="w-4 h-4 text-cern-cyan" />
             <h3 className="font-mono text-xs uppercase tracking-wider text-white font-bold">
-              /// CERN SCIENTIFIC KNOWLEDGE &amp; EVIDENCE GRAPH ///
+              D3 CERN Scientific Constellation (20 Nodes · Trace Path)
             </h3>
           </div>
-          <span className="text-[11px] font-mono text-cern-cyan font-bold px-2 py-0.5 bg-black border-2 border-black shadow-[2px_2px_0px_#00E5FF]">
-            CLICK NODES OR ARROWS
-          </span>
+          <div className="flex items-center gap-1.5 text-[10px] font-mono">
+            <span className="text-text-muted">Trace to:</span>
+            <select
+              value={pathTargetId}
+              onChange={(e) => setPathTargetId(e.target.value)}
+              className="bg-black text-[#FFE600] border border-black px-2 py-0.5 font-bold"
+            >
+              {RAW_NODES.map((n) => (
+                <option key={n.id} value={n.id}>
+                  {n.name}
+                </option>
+              ))}
+            </select>
+          </div>
         </div>
 
-        {/* SVG Graph Viewport */}
-        <div className="w-full h-80 flex items-center justify-center relative select-none">
-          <svg viewBox="0 0 720 380" className="w-full h-full max-w-2xl">
-            <defs>
-              <marker
-                id="arrowhead"
-                markerWidth="8"
-                markerHeight="6"
-                refX="14"
-                refY="3"
-                orient="auto"
-              >
-                <polygon points="0 0, 8 3, 0 6" fill="#6B7C99" />
-              </marker>
-              <marker
-                id="arrowhead-active"
-                markerWidth="8"
-                markerHeight="6"
-                refX="14"
-                refY="3"
-                orient="auto"
-              >
-                <polygon points="0 0, 8 3, 0 6" fill="#00E5FF" />
-              </marker>
-            </defs>
-
-            {/* Edges */}
-            {EDGES.map((edge) => {
-              const src = NODES.find((n) => n.id === edge.source)!;
-              const tgt = NODES.find((n) => n.id === edge.target)!;
-              const isSelected = selectedEdge?.id === edge.id;
-
-              const midX = (src.x + tgt.x) / 2;
-              const midY = (src.y + tgt.y) / 2;
-
+        <div className="w-full h-[380px] min-h-[340px] bg-[#050811] border border-black relative overflow-hidden">
+          <svg viewBox="0 0 720 400" className="w-full h-full min-h-[340px] block">
+            {RAW_EDGES.map((e, idx) => {
+              const p1 = positions[e.source];
+              const p2 = positions[e.target];
+              if (!p1 || !p2) return null;
+              const onPath = pathEdgeSet.has(`${e.source}->${e.target}`);
+              const touchesSel = e.source === selectedNodeId || e.target === selectedNodeId;
               return (
-                <g
-                  key={edge.id}
-                  onClick={() => setSelectedEdge(edge)}
-                  className="cursor-pointer group"
-                >
-                  <line
-                    x1={src.x}
-                    y1={src.y}
-                    x2={tgt.x}
-                    y2={tgt.y}
-                    stroke={isSelected ? '#00E5FF' : '#2A3B5C'}
-                    strokeWidth={isSelected ? '3' : '2'}
-                    markerEnd={isSelected ? 'url(#arrowhead-active)' : 'url(#arrowhead)'}
-                    className="transition-colors group-hover:stroke-cern-cyan"
-                  />
-                  {/* Relation Label Pill */}
-                  <rect
-                    x={midX - 30}
-                    y={midY - 9}
-                    width="60"
-                    height="18"
-                    fill="#000000"
-                    stroke={isSelected ? '#00E5FF' : '#000000'}
-                    strokeWidth="1.5"
-                  />
-                  <text
-                    x={midX}
-                    y={midY + 3}
-                    fill={isSelected ? '#00E5FF' : '#C8D7F0'}
-                    fontSize="9"
-                    fontFamily="JetBrains Mono"
-                    fontWeight="bold"
-                    textAnchor="middle"
-                  >
-                    {edge.relation}
-                  </text>
-                </g>
+                <line
+                  key={idx}
+                  x1={p1.x}
+                  y1={p1.y}
+                  x2={p2.x}
+                  y2={p2.y}
+                  stroke={onPath ? '#FFE600' : touchesSel ? '#00E5FF' : '#334155'}
+                  strokeWidth={onPath ? 3 : touchesSel ? 2 : 1.2}
+                  strokeOpacity={onPath ? 1 : touchesSel ? 0.85 : 0.45}
+                />
               );
             })}
 
-            {/* Nodes */}
-            {NODES.map((node) => {
-              const isSelected = selectedNode?.id === node.id;
-              const color = getNodeColor(node.type);
-
+            {RAW_NODES.map((n) => {
+              const pos = positions[n.id];
+              if (!pos) return null;
+              const isSelected = n.id === selectedNodeId;
+              const inPath = shortestPath.includes(n.id);
+              const color = getNodeColor(n.type);
               return (
                 <g
-                  key={node.id}
-                  onClick={() => setSelectedNode(node)}
+                  key={n.id}
+                  onClick={() => setSelectedNodeId(n.id)}
                   className="cursor-pointer group"
                 >
                   <circle
-                    cx={node.x}
-                    cy={node.y}
-                    r={isSelected ? '24' : '20'}
-                    fill="#0D1422"
-                    stroke={isSelected ? '#FFFFFF' : color}
-                    strokeWidth={isSelected ? '4' : '2.5'}
-                    className="transition-all group-hover:stroke-white"
+                    cx={pos.x}
+                    cy={pos.y}
+                    r={isSelected ? 15 : inPath ? 12 : 9}
+                    fill={color}
+                    stroke={isSelected || inPath ? '#FFFFFF' : '#000000'}
+                    strokeWidth={isSelected ? 3 : 2}
                   />
                   <text
-                    x={node.x}
-                    y={node.y + 4}
-                    fill="#FFFFFF"
-                    fontSize="10"
-                    fontFamily="JetBrains Mono"
+                    x={pos.x}
+                    y={pos.y + 22}
+                    fill={isSelected || inPath ? '#FFFFFF' : '#94A3B8'}
+                    fontSize="9"
                     fontWeight="bold"
+                    fontFamily="monospace"
                     textAnchor="middle"
                   >
-                    {node.id.toUpperCase()}
+                    {n.name}
                   </text>
                 </g>
               );
@@ -191,94 +236,65 @@ export const KnowledgeGraph: React.FC = () => {
           </svg>
         </div>
 
-        {/* Legend */}
-        <div className="pt-3 border-t-2 border-black flex flex-wrap gap-3 text-[11px] font-mono text-white font-bold">
-          <span className="flex items-center gap-1.5 px-2 py-0.5 bg-canvas-sub border border-black shadow-[1px_1px_0px_#000]">
-            <span className="w-2.5 h-2.5 bg-[#00E5FF] border border-black" /> Accelerators
-          </span>
-          <span className="flex items-center gap-1.5 px-2 py-0.5 bg-canvas-sub border border-black shadow-[1px_1px_0px_#000]">
-            <span className="w-2.5 h-2.5 bg-[#4C7DFF] border border-black" /> Experiments
-          </span>
-          <span className="flex items-center gap-1.5 px-2 py-0.5 bg-canvas-sub border border-black shadow-[1px_1px_0px_#000]">
-            <span className="w-2.5 h-2.5 bg-[#FFB020] border border-black" /> Particles
-          </span>
-          <span className="flex items-center gap-1.5 px-2 py-0.5 bg-canvas-sub border border-black shadow-[1px_1px_0px_#000]">
-            <span className="w-2.5 h-2.5 bg-[#00FF66] border border-black" /> Detectors
-          </span>
-          <span className="flex items-center gap-1.5 px-2 py-0.5 bg-canvas-sub border border-black shadow-[1px_1px_0px_#000]">
-            <span className="w-2.5 h-2.5 bg-[#FF0055] border border-black" /> Computing
-          </span>
+        {/* Shortest Path Chain Strip */}
+        <div className="p-2.5 bg-canvas-surface border-2 border-black text-[11px] font-mono flex flex-wrap items-center gap-1.5">
+          <Compass className="w-3.5 h-3.5 text-[#FFE600]" />
+          <span className="text-text-muted font-bold">Shortest Connection:</span>
+          {shortestPath.map((id, i) => (
+            <React.Fragment key={id}>
+              <span className="px-1.5 py-0.5 bg-black text-[#FFE600] border border-black font-bold">
+                {RAW_NODES.find((n) => n.id === id)?.name}
+              </span>
+              {i < shortestPath.length - 1 && <span className="text-cern-cyan">→</span>}
+            </React.Fragment>
+          ))}
         </div>
       </div>
 
-      {/* RIGHT: Selected Node & Edge Evidence Drawer */}
-      <div className="w-full xl:w-80 flex flex-col justify-between bg-canvas-surface border-3 border-black shadow-[5px_5px_0px_#000] p-4 space-y-4">
+      {/* Side Inspector */}
+      <div className="w-full xl:w-80 bg-canvas-surface border-2 border-black shadow-[4px_4px_0px_#000] p-4 flex flex-col justify-between space-y-4">
         <div className="space-y-4">
-          <div className="pb-2 border-b-2 border-black bg-canvas-sub -mx-4 -mt-4 p-3">
-            <h3 className="text-xs font-mono font-bold text-white uppercase flex items-center gap-1.5 tracking-wider">
-              <Info className="w-4 h-4 text-cern-cyan" /> /// Evidence Inspector ///
+          <div className="pb-2 border-b-2 border-black bg-canvas-sub -mx-4 -mt-4 p-3.5">
+            <h3 className="text-xs font-mono font-bold text-white uppercase flex items-center gap-1.5">
+              <Info className="w-4 h-4 text-cern-cyan" /> Node Inspector
             </h3>
           </div>
 
-          {selectedEdge ? (
-            <div className="space-y-3 text-xs leading-relaxed">
-              <div>
-                <span className="text-[10px] font-mono text-text-muted uppercase block font-bold">
-                  Relationship Edge
-                </span>
-                <div className="font-mono font-bold text-cern-cyan text-sm mt-0.5 px-2 py-1 bg-black border-2 border-black shadow-[2px_2px_0px_#000]">
-                  {selectedEdge.source.toUpperCase()} ──[{selectedEdge.relation}]──&gt;{' '}
-                  {selectedEdge.target.toUpperCase()}
-                </div>
-              </div>
+          <div className="p-3 bg-canvas-sub border-2 border-black space-y-2">
+            <span
+              className="inline-block text-[10px] font-mono font-black px-2 py-0.5 text-black border border-black"
+              style={{ backgroundColor: getNodeColor(selectedNode.type) }}
+            >
+              {selectedNode.type}
+            </span>
+            <h4 className="text-lg font-display font-black text-white">{selectedNode.name}</h4>
+            <p className="text-xs text-text-secondary font-sans leading-relaxed">{selectedNode.description}</p>
+          </div>
 
-              <div>
-                <span className="text-[10px] font-mono text-text-muted uppercase block mb-1 font-bold">
-                  Authoritative Evidence Citation
-                </span>
-                <div className="p-3 bg-canvas-sub border-2 border-black shadow-[3px_3px_0px_#000] text-text-secondary font-sans">
-                  {selectedEdge.evidence}
-                </div>
-              </div>
-
-              <a
-                href={selectedEdge.sourceUrl}
-                target="_blank"
-                rel="noreferrer"
-                className="flex items-center justify-between p-2.5 bg-cern-blue hover:bg-cern-accent border-2 border-black shadow-[3px_3px_0px_#00E5FF] text-white text-xs font-mono font-bold transition-all active:translate-x-[1px] active:translate-y-[1px]"
-              >
-                <span>Verify Source Documentation</span>
-                <ExternalLink className="w-4 h-4 text-cern-cyan" />
-              </a>
-            </div>
-          ) : selectedNode ? (
-            <div className="space-y-3 text-xs leading-relaxed">
-              <div>
-                <div className="flex items-center gap-2 mb-1.5">
-                  <span
-                    className="px-2 py-0.5 text-[10px] font-mono font-bold border-2 border-black shadow-[2px_2px_0px_#000] uppercase"
-                    style={{ backgroundColor: getNodeColor(selectedNode.type), color: '#000000' }}
+          <div className="space-y-2">
+            <span className="text-[10px] font-mono font-bold uppercase text-text-muted block">
+              Direct Causal Links ({connectedEdges.length})
+            </span>
+            <div className="space-y-2 max-h-56 overflow-y-auto pr-1">
+              {connectedEdges.map((edge, idx) => (
+                <div key={idx} className="p-2.5 bg-canvas-sub border-2 border-black text-[11px] font-mono space-y-1">
+                  <div className="text-cern-cyan font-bold">
+                    {edge.source} —[{edge.relation}]→ {edge.target}
+                  </div>
+                  <p className="text-text-secondary font-sans text-[11px]">{edge.evidence}</p>
+                  <a
+                    href={edge.sourceUrl}
+                    target="_blank"
+                    rel="noreferrer"
+                    className="text-emerald-400 hover:underline inline-flex items-center gap-1 font-bold"
                   >
-                    {selectedNode.type}
-                  </span>
+                    <span>CERN Citation</span>
+                    <ExternalLink className="w-3 h-3" />
+                  </a>
                 </div>
-                <h4 className="text-base font-display font-extrabold text-white">
-                  {selectedNode.name}
-                </h4>
-              </div>
-
-              <p className="text-text-secondary font-sans">{selectedNode.description}</p>
-
-              <div className="p-3 bg-canvas-sub border-2 border-black shadow-[3px_3px_0px_#000] text-[11px] font-mono text-text-muted font-bold">
-                Tip: Click any relationship arrow connecting to this entity to view verifiable
-                scientific evidence.
-              </div>
+              ))}
             </div>
-          ) : null}
-        </div>
-
-        <div className="pt-3 border-t-2 border-black text-[11px] font-mono text-text-muted font-bold">
-          <span>/// Graph Integrity: Sourced Claims Only ///</span>
+          </div>
         </div>
       </div>
     </div>

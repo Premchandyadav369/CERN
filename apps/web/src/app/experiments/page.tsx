@@ -4,6 +4,8 @@ import React, { useState } from 'react';
 import Link from 'next/link';
 import experimentsData from '../../../../../content/experiments.json';
 import { Eli5Card } from '@/components/ui/Eli5Card';
+import { TechnicalTermDeck } from '@/components/ui/TechTermInfo';
+import { SpotlightMotionCard, GsapStaggerSection } from '@/components/motion/CernMotionPrimitives';
 import { useGlobalStore } from '@/lib/store';
 import { Value } from '@/components/provenance/Value';
 import { ExternalLink, Layers, ArrowRight, Eye, Atom, CheckCircle2, Search } from 'lucide-react';
@@ -18,6 +20,9 @@ const EXP_ELI5_SUMMARIES: Record<string, string> = {
   cloud: 'Shoots fake cosmic rays into an ultra-clean sky cloud tank to test how outer-space radiation and pollution form raindrops and clouds!',
   'n-tof': 'Races neutrons down a 200-meter underground track to measure how stars forge heavy gold and uranium atoms inside supernovas.',
   faser: 'A sniper telescope tucked half a kilometer behind ATLAS catching ghostly neutrinos and hidden dark-matter particles flying straight out of LHC collisions.',
+  isolde: 'CERN’s isotope forge since 1967: slams 1.4 GeV protons into heavy targets, zaps atoms with lasers, and sorts over 1,300 rare radioactive nuclei with giant magnets!',
+  na62: 'Measures ultra-rare 1-in-10-billion kaon decays and hunts invisible dark photons in the CERN North Area fixed-target beamlines.',
+  'moedal-mapp': 'Hunts exotic one-pole magnets (magnetic monopoles) and milli-charged particles trapped inside plastic sheets & scintillator stacks around Point 8!',
 };
 
 const EXP_SIM_LINKS: Record<string, { href: string; label: string; style: string }> = {
@@ -26,10 +31,13 @@ const EXP_SIM_LINKS: Record<string, { href: string; label: string; style: string
   'antimatter-factory': { href: '/simulations?module=antimatter', label: 'ALPHA-g Sim', style: 'bg-cern-magenta hover:bg-pink-600 text-white' },
   awake: { href: '/simulations?module=awake', label: 'Wakefield Sim', style: 'bg-cern-cyan hover:bg-sky-300 text-black' },
   alice: { href: '/simulations?module=alice', label: 'QGP Flow Sim', style: 'bg-amber-400 hover:bg-amber-300 text-black' },
-  lhcb: { href: '/simulations?module=lhcb', label: 'R_K Decay Sim', style: 'bg-purple-500 hover:bg-purple-400 text-white' },
+  lhcb: { href: '/simulations?module=rich-medipix', label: 'RICH & Flavour Sim', style: 'bg-purple-500 hover:bg-purple-400 text-white' },
   cloud: { href: '/simulations?module=cloud-chamber', label: 'Cloud Chamber', style: 'bg-cern-cyan hover:bg-sky-300 text-black' },
-  'n-tof': { href: '/simulations?module=feynman', label: 'Reaction Lab', style: 'bg-emerald-400 hover:bg-emerald-300 text-black' },
+  'n-tof': { href: '/simulations?module=isolde', label: 'Nuclear Chart Lab', style: 'bg-emerald-400 hover:bg-emerald-300 text-black' },
   faser: { href: '/simulations?module=dark-matter', label: 'Dark Matter Sim', style: 'bg-purple-600 hover:bg-purple-500 text-white' },
+  isolde: { href: '/simulations?module=isolde', label: 'ISOLDE Separator', style: 'bg-amber-400 hover:bg-amber-300 text-black' },
+  na62: { href: '/simulations?module=dark-matter', label: 'Rare/Dark Sim', style: 'bg-emerald-400 hover:bg-emerald-300 text-black' },
+  'moedal-mapp': { href: '/projects', label: 'All CERN Projects', style: 'bg-cern-cyan hover:bg-sky-300 text-black' },
 };
 
 export default function ExperimentsPage() {
@@ -55,7 +63,7 @@ export default function ExperimentsPage() {
       {/* Header */}
       <div className="p-6 bg-canvas-sub border-3 border-black shadow-[6px_6px_0px_0px_#000000]">
         <span className="inline-block px-2.5 py-1 bg-cern-accent text-white font-mono font-bold text-xs border-2 border-black shadow-[2px_2px_0px_#000] uppercase tracking-wider mb-3">
-          /// RESEARCH PROGRAMME CATALOGUE ///
+          RESEARCH PROGRAMME CATALOGUE
         </span>
         <h1 className="text-3xl lg:text-4xl font-display font-extrabold text-white tracking-tight">
           CERN Experimental Ecosystem
@@ -111,12 +119,13 @@ export default function ExperimentsPage() {
       </div>
 
       {/* Experiment Cards Grid */}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+      <GsapStaggerSection className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
         {filteredExperiments.map((exp) => (
-          <div
+          <SpotlightMotionCard
             key={exp.id}
-            className="p-5 bg-canvas-surface border-2 border-black shadow-[4px_4px_0px_#000] hover:shadow-[5px_5px_0px_#00E5FF] hover:-translate-x-0.5 hover:-translate-y-0.5 transition-all flex flex-col justify-between space-y-4"
+            className="gsap-stagger-item p-5 bg-canvas-surface border-2 border-black shadow-[4px_4px_0px_#000] hover:shadow-[5px_5px_0px_#00E5FF] transition-shadow"
           >
+            <div className="h-full flex flex-col justify-between space-y-4">
             <div className="space-y-3">
               <div className="flex items-center justify-between pb-2 border-b-2 border-black">
                 <span className="text-xs font-mono font-bold text-cern-cyan px-2 py-0.5 bg-black border-2 border-black shadow-[2px_2px_0px_#000]">
@@ -197,9 +206,12 @@ export default function ExperimentsPage() {
                 </Link>
               )}
             </div>
-          </div>
+            </div>
+          </SpotlightMotionCard>
         ))}
-      </div>
+      </GsapStaggerSection>
+
+      <TechnicalTermDeck contextId="page-experiments" heading="Experiments & Physics Channels (ⓘ Info Cards)" />
     </div>
   );
 }

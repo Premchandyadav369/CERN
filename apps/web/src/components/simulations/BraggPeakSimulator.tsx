@@ -18,6 +18,7 @@ import {
   Atom,
 } from 'lucide-react';
 import { Eli5Card } from '@/components/ui/Eli5Card';
+import { MathFormula } from '@/components/ui/MathFormula';
 import { useGlobalStore } from '@/lib/store';
 
 export type BeamSpecies = 'proton' | 'carbon' | 'photon';
@@ -784,8 +785,11 @@ export const BraggPeakSimulator: React.FC<{ className?: string }> = ({ className
               <span className="text-[10px] text-cern-cyan font-bold uppercase block">
                 Bethe-Bloch Stopping Power Equation
               </span>
-              <div className="text-[11px] text-[#FFE600] font-bold overflow-x-auto py-1">
-                -dE/dx = 2π N_A r_e² m_e c² ρ (Z/A) (z²/β²) [ ln(2 m_e c² β² γ² T_max / I²) - 2β² ]
+              <div className="py-1">
+                <MathFormula
+                  tex="-\frac{dE}{dx} = 2\pi N_A r_e^2 m_e c^2 \rho \frac{Z}{A}\frac{z^2}{\beta^2}\left[\ln\!\left(\frac{2 m_e c^2 \beta^2 \gamma^2 T_{\max}}{I^2}\right) - 2\beta^2\right]"
+                  displayMode
+                />
               </div>
               <p className="text-[10px] text-text-muted leading-tight">
                 Stopping power scales with 1/β², causing the energy loss rate to skyrocket just before rest.
@@ -901,7 +905,7 @@ export const BraggPeakSimulator: React.FC<{ className?: string }> = ({ className
         <div className="flex flex-wrap items-center justify-between gap-3 pb-3 border-b-2 border-black">
           <div className="flex items-center gap-2">
             <span className="px-2.5 py-1 bg-amber-400 text-black font-mono font-bold text-xs border-2 border-black shadow-[2px_2px_0px_#000] uppercase tracking-wider">
-              /// CERN-MEDICIS ISOTOPE RESEARCH ENGINE ///
+              CERN-MEDICIS ISOTOPE RESEARCH ENGINE
             </span>
             <span className="text-xs font-mono text-emerald-400 bg-black px-2 py-0.5 border border-black font-bold">
               1.4 GeV PS Booster Spallation

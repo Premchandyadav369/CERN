@@ -1,10 +1,16 @@
 'use client';
 
-import React, { useState, useMemo } from 'react';
+import React, { useState, useMemo, useEffect } from 'react';
 import { calculateVacuumMetrics } from '@cern-x/sim-core';
+import { useGlobalStore } from '@/lib/store';
 import { FidelityBadge } from '@/components/provenance/FidelityBadge';
 import { Eli5Card } from '@/components/ui/Eli5Card';
-import { Zap, Snowflake, Wind, Activity, ShieldAlert, CheckCircle2 } from 'lucide-react';
+import { CryoMagnet3DCanvas } from '@/components/engineering/CryoMagnet3DCanvas';
+import { RfCavity3DCanvas } from '@/components/engineering/RfCavity3DCanvas';
+import { MathFormula } from '@/components/ui/MathFormula';
+import { LabExportBar } from '@/components/ui/LabExportBar';
+import { TechnicalTermDeck } from '@/components/ui/TechTermInfo';
+import { Zap, Snowflake, Wind, Activity, ShieldAlert, CheckCircle2, Box } from 'lucide-react';
 
 export default function EngineeringPage() {
   // Module 1 & 2 shared magnet + cryogenics state
@@ -17,8 +23,14 @@ export default function EngineeringPage() {
   // Module 4: RF synchronous phase angle (degrees)
   const [rfPhaseDeg, setRfPhaseDeg] = useState<number>(1.74); // sin(1.74 deg) * 16 MV ~ 0.485 MV -> 485 keV/turn
 
-  // Magnet & Cryo Physics
+  // Module 2 quench state
+  const completeMission = useGlobalStore((s) => s.completeMission);
   const isSuperfluidHeII = temperatureK <= 2.17; // Lambda point of liquid helium
+  useEffect(() => {
+    if (isSuperfluidHeII) {
+      completeMission('mission-quench-recovery');
+    }
+  }, [isSuperfluidHeII, completeMission]);
   // Nb-Ti critical temperature around 9.2 K at 0 T, drops at high field (~2.2-4.2 K margin at 8.3 T)
   // At LHC operational current (11.85 kA), magnets quench cleanly if temperature exceeds ~2.17 K thermal stability margin
   const isQuenched = temperatureK > 2.17 || (magnetCurrentKa > 12.2 && temperatureK > 2.05);
@@ -76,6 +88,27 @@ export default function EngineeringPage() {
         doi="10.5170/CERN-2004-003-V-1"
         citationLabel="LHC Design Report Vol. 1: Magnets, Cryogenics, Vacuum & RF"
       />
+
+      {/* Interactive 3D Superconducting Cryostat & Dipole Twin */}
+      <section className="p-5 bg-canvas-surface border-3 border-black shadow-[6px_6px_0px_#00E5FF] space-y-3">
+        <div className="flex flex-wrap items-center justify-between gap-2 pb-2 border-b-2 border-black">
+          <h2 className="text-base font-display font-black uppercase text-white flex items-center gap-2">
+            <Box className="w-5 h-5 text-cern-cyan" /> 3D Twin-Aperture Nb-Ti Dipole Cryostat (Live Coupled View)
+          </h2>
+          <div className="flex flex-wrap items-center gap-2">
+            <span className="text-[11px] font-mono text-cern-cyan font-bold">
+              I = {magnetCurrentKa.toFixed(2)} kA · T = {temperatureK.toFixed(2)} K · B = {dipoleField}
+            </span>
+            <LabExportBar title="Engineering-3D-Dipole" />
+          </div>
+        </div>
+        <CryoMagnet3DCanvas
+          magnetCurrentKa={magnetCurrentKa}
+          temperatureK={temperatureK}
+          isQuenched={isQuenched}
+          isSuperfluidHeII={isSuperfluidHeII}
+        />
+      </section>
 
       {/* Engineering Systems Sandbox Grid */}
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
@@ -288,6 +321,14 @@ export default function EngineeringPage() {
             Protons ride the rising slope of the RF wave so lagging protons get kicked harder!
           </p>
 
+          <RfCavity3DCanvas rfPhaseDeg={rfPhaseDeg} />
+
+          <MathFormula
+            tex="\Delta E_{\text{turn}} = q V_{\text{RF}} \sin\phi_s"
+            label="Synchronous Energy Gain:"
+            derivation="At phase phi_s = 1.74 degrees with V_RF = 16 MV, protons gain ~485 keV each lap around the 27 km LHC."
+          />
+
           {/* Interactive SVG RF Wave Bucket */}
           <div className="p-2 bg-black border-2 border-black">
             <svg viewBox="0 0 360 95" className="w-full h-24">
@@ -362,6 +403,8 @@ export default function EngineeringPage() {
           </div>
         </div>
       </div>
+
+      <TechnicalTermDeck contextId="page-engineering" heading="Cryogenics, Vacuum & RF Cavity Terms (ⓘ Info Cards)" />
     </div>
   );
 }

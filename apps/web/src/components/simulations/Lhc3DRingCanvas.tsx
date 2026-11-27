@@ -90,7 +90,7 @@ export const Lhc3DRingCanvas: React.FC<Lhc3DRingCanvasProps> = ({
 
     let renderer: THREE.WebGLRenderer;
     try {
-      renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true, powerPreference: 'high-performance' });
+      renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true, preserveDrawingBuffer: true, powerPreference: 'high-performance' });
     } catch {
       setWebglFailed(true);
       return;
@@ -254,6 +254,21 @@ export const Lhc3DRingCanvas: React.FC<Lhc3DRingCanvasProps> = ({
     const sparkPoints = new THREE.Points(sparkGeo, sparkMat);
     scene.add(sparkPoints);
 
+    // Expanding Equatorial Shockwave Rings at IP1 & IP5
+    const shockGeo = new THREE.RingGeometry(0.18, 0.25, 32);
+    shockGeo.rotateX(Math.PI / 2);
+    const shockMat = new THREE.MeshBasicMaterial({
+      color: 0x00e5ff,
+      side: THREE.DoubleSide,
+      transparent: true,
+      opacity: 0.75,
+    });
+    const shockRing1 = new THREE.Mesh(shockGeo, shockMat);
+    const shockRing2 = new THREE.Mesh(shockGeo, shockMat);
+    shockRing1.position.set(Math.cos(ipPositions[0].angle) * RING_RADIUS, 0, Math.sin(ipPositions[0].angle) * RING_RADIUS);
+    shockRing2.position.set(Math.cos(ipPositions[2].angle) * RING_RADIUS, 0, Math.sin(ipPositions[2].angle) * RING_RADIUS);
+    scene.add(shockRing1, shockRing2);
+
     // ResizeObserver for crisp layout transitions
     const resizeObs = new ResizeObserver(() => {
       if (!container) return;
@@ -359,6 +374,12 @@ export const Lhc3DRingCanvas: React.FC<Lhc3DRingCanvasProps> = ({
           }
         }
         sparkGeo.attributes.position.needsUpdate = true;
+
+        const swPhase = (performance.now() * 0.0018) % 1;
+        const swScale = 0.6 + swPhase * (2.6 + Math.min(2.0, mu / 35));
+        shockRing1.scale.setScalar(swScale);
+        shockRing2.scale.setScalar(swScale);
+        shockMat.opacity = Math.max(0.05, 0.78 * (1 - swPhase));
       }
 
       renderer.render(scene, camera);
@@ -380,6 +401,8 @@ export const Lhc3DRingCanvas: React.FC<Lhc3DRingCanvasProps> = ({
       beam2Mat.dispose();
       sparkGeo.dispose();
       sparkMat.dispose();
+      shockGeo.dispose();
+      shockMat.dispose();
       renderer.dispose();
     };
   }, []);
@@ -434,7 +457,7 @@ export const Lhc3DRingCanvas: React.FC<Lhc3DRingCanvasProps> = ({
         onPointerMove={handlePointerMove}
         onPointerUp={handlePointerUp}
         onPointerCancel={handlePointerUp}
-        className="w-full h-80 sm:h-96 cursor-grab active:cursor-grabbing"
+        className="w-full h-80 sm:h-96 cursor-grab active:cursor-grabbing touch-none"
         title="Drag to orbit the 3D superconducting ring in real time"
       />
 

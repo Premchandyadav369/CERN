@@ -7,9 +7,10 @@ import { FidelityBadge } from '@/components/provenance/FidelityBadge';
 import { Eli5Card } from '@/components/ui/Eli5Card';
 import { Cpu, Zap, Activity, CheckCircle2, Sliders, ExternalLink, ShieldCheck, FileCode, ArrowRight, TrendingUp } from 'lucide-react';
 import { ShapExplainabilityLab } from './ShapExplainabilityLab';
+import { LiveNeuralInference } from './LiveNeuralInference';
 
 export const AiLab: React.FC = () => {
-  const [activeTab, setActiveTab] = useState<'benchmarks' | 'shap'>('benchmarks');
+  const [activeTab, setActiveTab] = useState<'benchmarks' | 'shap' | 'live-mlp'>('benchmarks');
   const [latencyBudgetMs, setLatencyBudgetMs] = useState<number>(0.6); // 0.6 ms latency budget
   const [selectedModelName, setSelectedModelName] = useState<string>('Compact XGBoost');
 
@@ -46,8 +47,20 @@ export const AiLab: React.FC = () => {
           >
             <TrendingUp className="w-4 h-4 text-cern-magenta" />
             <span>SHAP Explainability &amp; FPGA Lab</span>
-            <span className="ml-1 text-[10px] bg-cern-magenta text-white font-black px-1.5 py-0.2 border border-black">
-              NEW
+          </button>
+
+          <button
+            onClick={() => setActiveTab('live-mlp')}
+            className={`flex items-center gap-1.5 px-4 py-2 border-2 border-black font-bold uppercase transition-all cursor-pointer ${
+              activeTab === 'live-mlp'
+                ? 'bg-emerald-500 text-black shadow-[2px_2px_0px_#00FF66] -translate-x-0.5 -translate-y-0.5'
+                : 'bg-canvas-surface text-text-secondary hover:text-white shadow-[2px_2px_0px_#000]'
+            }`}
+          >
+            <Zap className="w-4 h-4" />
+            <span>Live Neural Inference</span>
+            <span className="ml-1 text-[10px] bg-black text-emerald-400 font-black px-1.5 py-0.2 border border-black">
+              RUNS IN BROWSER
             </span>
           </button>
         </div>
@@ -214,7 +227,7 @@ export const AiLab: React.FC = () => {
                   {activeBenchmark.medianLatencyMs} ms
                 </div>
                 <span className="text-[10px] text-text-muted mt-0.5 block font-mono">
-                  Throughput: {activeBenchmark.throughputEventsPerSec.toLocaleString()} ev/s
+                  Throughput: {activeBenchmark.throughputEventsPerSec.toLocaleString('en-US')} ev/s
                 </span>
               </div>
 
@@ -323,8 +336,10 @@ export const AiLab: React.FC = () => {
           </div>
         </div>
         </div>
-      ) : (
+      ) : activeTab === 'shap' ? (
         <ShapExplainabilityLab />
+      ) : (
+        <LiveNeuralInference />
       )}
     </div>
   );

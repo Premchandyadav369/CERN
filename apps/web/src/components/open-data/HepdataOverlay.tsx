@@ -43,7 +43,7 @@ export function HepdataOverlay() {
         <div>
           <div className="flex items-center gap-2">
             <h3 className="text-base font-display font-extrabold text-white">
-              /// HEPData Comparator: Published Collaboration Overlay ///
+              HEPData Comparator: Published Collaboration Overlay
             </h3>
             <span className="inline-flex items-center gap-1.5 px-2.5 py-0.5 text-xs font-mono font-bold border-2 border-black shadow-[2px_2px_0px_#000] bg-emerald-400 text-black uppercase">
               <span className="w-1.5 h-1.5 bg-black" />
@@ -240,7 +240,7 @@ export function HepdataOverlay() {
         {/* Metadata & Physics Context Deck (4 cols) */}
         <div className="lg:col-span-4 bg-canvas-sub p-4 border-2 border-black shadow-[4px_4px_0px_#000] space-y-4 text-xs font-mono">
           <div>
-            <span className="text-text-muted uppercase text-[10px] block font-bold">/// Collaboration &amp; Paper ///</span>
+            <span className="text-text-muted uppercase text-[10px] block font-bold">Collaboration &amp; Paper</span>
             <span className="text-white font-bold block mt-0.5">{dataset.title}</span>
             <span className="text-cern-cyan block mt-0.5 font-bold">{dataset.citation}</span>
           </div>
@@ -261,7 +261,7 @@ export function HepdataOverlay() {
           </div>
 
           <div className="p-3 bg-canvas-surface border-2 border-black shadow-[2px_2px_0px_#000] text-[11px] leading-relaxed text-text-secondary space-y-1.5 font-sans">
-            <span className="font-mono font-bold text-white block uppercase">/// Physical Interpretation ///</span>
+            <span className="font-mono font-bold text-white block uppercase">Physical Interpretation</span>
             {selectedDataset === 'atlas_h_yy' ? (
               <p>
                 The clear resonance peak at 125.09 GeV sits atop a steeply falling non-resonant

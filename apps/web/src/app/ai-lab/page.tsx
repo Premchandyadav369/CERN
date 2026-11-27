@@ -3,6 +3,7 @@
 import React from 'react';
 import { AiLab } from '@/components/ai/AiLab';
 import { ShapExplainabilityLab } from '@/components/ai/ShapExplainabilityLab';
+import { TechnicalTermDeck } from '@/components/ui/TechTermInfo';
 import { Cpu, ShieldCheck, Database, FileCode, Activity } from 'lucide-react';
 
 export default function AiLabPage() {
@@ -37,7 +38,7 @@ export default function AiLabPage() {
       <section className="space-y-3" id="shap-lab">
         <div className="flex items-center justify-between pb-2 border-b-2 border-black">
           <h2 className="text-lg font-display font-bold text-white flex items-center gap-2">
-            <Activity className="w-5 h-5 text-cern-cyan" /> /// SHAP ML Explainability &amp; FPGA Attribution Lab ///
+            <Activity className="w-5 h-5 text-cern-cyan" /> SHAP ML Explainability &amp; FPGA Attribution Lab
           </h2>
         </div>
         <ShapExplainabilityLab />
@@ -76,6 +77,8 @@ export default function AiLabPage() {
           </div>
         </div>
       </section>
+
+      <TechnicalTermDeck contextId="page-ai-lab" heading="AI Trigger & Statistical Metrics (ⓘ Info Cards)" />
     </div>
   );
 }

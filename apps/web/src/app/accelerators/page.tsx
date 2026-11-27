@@ -6,6 +6,7 @@ import acceleratorsData from '../../../../../content/accelerators.json';
 import { LhcSimulator } from '@/components/simulations/LhcSimulator';
 import { BeamOpticsSandbox } from '@/components/simulations/BeamOpticsSandbox';
 import { Eli5Card } from '@/components/ui/Eli5Card';
+import { TechnicalTermDeck } from '@/components/ui/TechTermInfo';
 import { Value } from '@/components/provenance/Value';
 import { Zap, Play, ArrowRight, ExternalLink, Activity, Info, Orbit, HeartPulse } from 'lucide-react';
 
@@ -20,7 +21,7 @@ export default function AcceleratorsPage() {
       {/* Page Header */}
       <div className="p-6 bg-canvas-sub border-3 border-black shadow-[6px_6px_0px_0px_#000000]">
         <span className="inline-block px-2.5 py-1 bg-cern-cyan text-black font-mono font-bold text-xs border-2 border-black shadow-[2px_2px_0px_#000] uppercase tracking-wider mb-3">
-          /// ACCELERATOR COMPLEX EXPLORER ///
+          ACCELERATOR COMPLEX EXPLORER
         </span>
         <h1 className="text-3xl lg:text-4xl font-display font-extrabold text-white tracking-tight">
           CERN Accelerator Complex &amp; Beam Dynamics
@@ -49,7 +50,7 @@ export default function AcceleratorsPage() {
       <section className="space-y-3">
         <div className="flex items-center justify-between pb-2 border-b-2 border-black">
           <h2 className="text-lg font-display font-bold text-white flex items-center gap-2">
-            <Zap className="w-5 h-5 text-cern-cyan" /> /// Interactive Beam Physics &amp; LHC Simulator ///
+            <Zap className="w-5 h-5 text-cern-cyan" /> Interactive Beam Physics &amp; LHC Simulator
           </h2>
         </div>
         <LhcSimulator />
@@ -59,7 +60,7 @@ export default function AcceleratorsPage() {
       <section className="space-y-3">
         <div className="flex items-center justify-between pb-2 border-b-2 border-black">
           <h2 className="text-lg font-display font-bold text-white flex items-center gap-2">
-            <Orbit className="w-5 h-5 text-sky-400" /> /// Beam Optics &amp; Alternating Gradient Focusing ///
+            <Orbit className="w-5 h-5 text-sky-400" /> Beam Optics &amp; Alternating Gradient Focusing
           </h2>
         </div>
         <BeamOpticsSandbox />
@@ -99,7 +100,7 @@ export default function AcceleratorsPage() {
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2">
           <div>
             <h2 className="text-xl font-display font-extrabold text-white">
-              /// Catalogue of CERN Accelerators ///
+              Catalogue of CERN Accelerators
             </h2>
             <p className="text-xs text-text-muted font-mono mt-0.5">
               Select any machine below to inspect operational parameters, RF frequency, and bending dipole field.
@@ -203,7 +204,7 @@ export default function AcceleratorsPage() {
               <span className="text-[10px] text-text-muted font-bold block">Circumference / Length</span>
               <span className="text-sm font-bold text-white block mt-0.5">
                 {selectedAccelerator.circumferenceMeters
-                  ? `${selectedAccelerator.circumferenceMeters.toLocaleString()} m`
+                  ? `${selectedAccelerator.circumferenceMeters.toLocaleString('en-US')} m`
                   : 'Fixed Target'}
               </span>
             </div>
@@ -314,7 +315,7 @@ export default function AcceleratorsPage() {
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 border-b-2 border-black pb-3">
           <div>
             <span className="text-[10px] font-mono font-bold text-cern-cyan uppercase tracking-wider block">
-              /// NEXT GENERATION COLLIDERS &amp; ADVANCED R&amp;D ///
+              NEXT GENERATION COLLIDERS &amp; ADVANCED R&amp;D
             </span>
             <h2 className="text-xl font-display font-extrabold text-white mt-1">
               Future Circular Collider (FCC) &amp; Crab Cavities
@@ -361,6 +362,8 @@ export default function AcceleratorsPage() {
           </div>
         </div>
       </section>
+
+      <TechnicalTermDeck contextId="page-accelerators" heading="Accelerator Optics & Magnet Terms (ⓘ Info Cards)" />
     </div>
   );
 }

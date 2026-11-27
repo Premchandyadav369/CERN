@@ -4,7 +4,9 @@ import React, { useState } from 'react';
 import atlasEventsData from '../../../../../data/real_events/sample_atlas_events.json';
 import cmsEventsData from '../../../../../data/real_events/sample_cms_events.json';
 import { HepdataOverlay } from '@/components/open-data/HepdataOverlay';
+import { DimuonSpectrumExplorer } from '@/components/open-data/DimuonSpectrumExplorer';
 import { Eli5Card } from '@/components/ui/Eli5Card';
+import { TechnicalTermDeck } from '@/components/ui/TechTermInfo';
 import { Value } from '@/components/provenance/Value';
 import { Database, ExternalLink, Download, Filter, Search, Play, CheckCircle2, Layers } from 'lucide-react';
 
@@ -67,7 +69,7 @@ export default function OpenDataPage() {
       <div className="p-6 bg-canvas-sub border-3 border-black shadow-[6px_6px_0px_0px_#000000]">
         <div className="flex items-center gap-2 mb-3">
           <span className="text-xs font-mono uppercase text-black font-bold tracking-wider px-2.5 py-1 bg-cern-cyan border-2 border-black shadow-[2px_2px_0px_#000]">
-            /// OPEN SCIENCE &amp; PUBLIC DATASETS ///
+            OPEN SCIENCE &amp; PUBLIC DATASETS
           </span>
           <span className="text-[10px] font-mono px-2 py-1 bg-emerald-400 text-black font-bold border-2 border-black shadow-[2px_2px_0px_#000]">
             CC0-1.0 &amp; CC-BY-4.0
@@ -96,11 +98,14 @@ export default function OpenDataPage() {
         citationLabel="CERN Open Data Portal (CC0 Public Release)"
       />
 
+      {/* Real Dimuon Resonance Spectrum Explorer */}
+      <DimuonSpectrumExplorer />
+
       {/* Published HEPData Overlay Section */}
       <section className="space-y-3">
         <div className="flex items-center justify-between pb-2 border-b-2 border-black">
           <h2 className="text-lg font-display font-bold text-white flex items-center gap-2">
-            <Layers className="w-4 h-4 text-cern-cyan" /> /// HEPData Published Collaboration Measurements ///
+            <Layers className="w-4 h-4 text-cern-cyan" /> HEPData Published Collaboration Measurements
           </h2>
         </div>
         <HepdataOverlay />
@@ -111,7 +116,7 @@ export default function OpenDataPage() {
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
           <div>
             <h2 className="text-xl font-display font-extrabold text-white">
-              /// Client-Side Event Filter &amp; Cutflow ///
+              Client-Side Event Filter &amp; Cutflow
             </h2>
             <p className="text-xs text-text-muted font-mono mt-0.5">
               Select kinematic criteria to filter open data events directly in your browser.
@@ -148,7 +153,7 @@ export default function OpenDataPage() {
           <div className="w-full xl:w-80 bg-canvas-surface p-4 border-2 border-black shadow-[4px_4px_0px_#000] space-y-4">
             <div className="flex items-center justify-between border-b-2 border-black bg-canvas-sub -mx-4 -mt-4 p-3 mb-2">
               <h3 className="text-xs font-mono uppercase font-bold text-white flex items-center gap-1.5 tracking-wider">
-                <Filter className="w-3.5 h-3.5 text-cern-cyan" /> /// Kinematic Cuts ///
+                <Filter className="w-3.5 h-3.5 text-cern-cyan" /> Kinematic Cuts
               </h3>
               <span className="text-[10px] font-mono text-black font-bold bg-emerald-400 px-2 py-0.5 border-2 border-black shadow-[1px_1px_0px_#000]">
                 Active
@@ -272,7 +277,7 @@ export default function OpenDataPage() {
           <div className="flex-1 bg-canvas-surface p-4 border-2 border-black shadow-[4px_4px_0px_#000] overflow-x-auto">
             <div className="flex items-center justify-between pb-2 mb-3 border-b-2 border-black">
               <h3 className="text-xs font-mono uppercase font-bold text-white tracking-wider">
-                /// Filtered Collision Events ({currentDataset.datasetId}) ///
+                Filtered Collision Events ({currentDataset.datasetId})
               </h3>
               <span className="text-xs font-mono text-cern-cyan font-bold px-2 py-0.5 bg-black border-2 border-black shadow-[2px_2px_0px_#00E5FF]">
                 {filteredEvents.length} events matching
@@ -316,6 +321,8 @@ export default function OpenDataPage() {
           </div>
         </div>
       </section>
+
+      <TechnicalTermDeck contextId="page-open-data" heading="Open Data Event Analysis Terms (ⓘ Info Cards)" />
     </div>
   );
 }

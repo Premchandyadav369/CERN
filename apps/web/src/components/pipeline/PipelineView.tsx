@@ -3,6 +3,7 @@
 import React, { useState } from 'react';
 import Link from 'next/link';
 import { Eli5Card } from '@/components/ui/Eli5Card';
+import { MathFormula } from '@/components/ui/MathFormula';
 import { ArrowRight, Activity, Zap, Layers, Cpu, Server, BarChart3, Award, ExternalLink } from 'lucide-react';
 
 interface PipelineStage {
@@ -27,7 +28,7 @@ const STAGES: PipelineStage[] = [
     metricLabel: 'Beam Energy',
     route: '/simulations?module=lhc',
     description: 'Protons extracted from hydrogen gas are boosted through Linac4 (160 MeV), PSB (2.0 GeV), PS (26 GeV), and SPS (450 GeV) before injection into the 27 km superconducting LHC ring.',
-    equation: 'B·ρ = p / (0.299792 · |Z|)',
+    equation: 'B\\rho = \\frac{p}{0.299792\\,|Z|}',
   },
   {
     id: 'collision',
@@ -38,7 +39,7 @@ const STAGES: PipelineStage[] = [
     metricLabel: 'Crossing Frequency',
     route: '/simulations?module=lhc',
     description: '2748 bunches of 115 billion protons cross every 25 nanoseconds inside ATLAS and CMS with center-of-mass collision energy √s = 13.6 TeV.',
-    equation: 'L = (N₁ N₂ n_b f_{rev} γ) / (4π ε_n β*) · F',
+    equation: '\\mathcal{L} = \\frac{N_1 N_2 n_b f_{\\text{rev}} \\gamma}{4\\pi \\varepsilon_n \\beta^*}\\,F',
   },
   {
     id: 'detector',
@@ -49,7 +50,7 @@ const STAGES: PipelineStage[] = [
     metricLabel: 'Readout Channels',
     route: '/detectors?detector=atlas',
     description: 'Debris particles ionize silicon pixels, deposit energy showers in lead-liquid argon calorimeters, and bend in magnetic toroid/solenoid fields.',
-    equation: 'F = q(E + v × B)',
+    equation: '\\vec{F} = q\\left(\\vec{E} + \\vec{v}\\times\\vec{B}\\right)',
   },
   {
     id: 'trigger',
@@ -60,7 +61,7 @@ const STAGES: PipelineStage[] = [
     metricLabel: 'Rejection Rate',
     route: '/simulations?module=trigger',
     description: 'Custom hardware FPGAs (Level-1) decide in 2.5 µs whether to keep collisions, reducing 40 MHz crossings to 100 kHz. Software HLT farms further filter to 1-2 kHz.',
-    equation: 'Rate = ∫ L · (dσ/dp_T) dp_T',
+    equation: 'R = \\int \\mathcal{L}\\,\\frac{d\\sigma}{dp_T}\\,dp_T',
   },
   {
     id: 'storage',
@@ -71,7 +72,7 @@ const STAGES: PipelineStage[] = [
     metricLabel: 'Ingest Rate',
     route: '/computing',
     description: 'Accepted RAW events (~1.5 MB each) stream directly to automated high-density magnetic tape robots and distributed Ceph/EOS disk pools.',
-    equation: 'Throughput = Event Rate × Event Size',
+    equation: '\\Phi_{\\text{DAQ}} = R_{\\text{HLT}} \\times S_{\\text{event}} \\approx 3.75\\text{ GB/s}',
   },
   {
     id: 'wlcg',
@@ -82,7 +83,7 @@ const STAGES: PipelineStage[] = [
     metricLabel: 'Global Centres',
     route: '/computing',
     description: 'RAW data is replicated over 100 Gbps optical fiber to Tier-1 national centres and Tier-2 university supercomputing clusters worldwide.',
-    equation: 'M/M/c Queuing Dynamics',
+    equation: 'W_q \\approx \\frac{P_Q}{c\\mu - \\lambda}\\quad(\\text{M/M/c Queue})',
   },
   {
     id: 'reconstruction',
@@ -93,7 +94,7 @@ const STAGES: PipelineStage[] = [
     metricLabel: 'Output Objects',
     route: '/detectors?detector=atlas',
     description: 'Raw digitized detector hits are reconstructed into particle trajectories, primary collision vertices, isolated leptons, and anti-kT jets.',
-    equation: 'd_{ij} = min(p_{Ti}^{2k}, p_{Tj}^{2k}) ΔR_{ij}^2 / R^2',
+    equation: 'd_{ij} = \\min\\!(p_{Ti}^{-2},\\,p_{Tj}^{-2})\\,\\frac{\\Delta R_{ij}^2}{R^2}',
   },
   {
     id: 'analysis',
@@ -104,7 +105,7 @@ const STAGES: PipelineStage[] = [
     metricLabel: 'TriggerMind',
     route: '/ai-lab',
     description: 'Physicists apply event selection cuts and machine learning algorithms (XGBoost, GNNs) to extract signal resonances over combinatorial background.',
-    equation: 'Z = √[2((s+b)ln(1+s/b) - s)]',
+    equation: 'Z_0 = \\sqrt{2\\left((s+b)\\ln\\!\\left(1+\\frac{s}{b}\\right)-s\\right)}',
   },
   {
     id: 'discovery',
@@ -115,7 +116,7 @@ const STAGES: PipelineStage[] = [
     metricLabel: 'Discovery Threshold',
     route: '/open-data',
     description: 'Statistical significance is established with rigorous systematic error budgets, published in open-access journals, and released to CERN Open Data.',
-    equation: 'p < 2.87 × 10^{-7} (5σ)',
+    equation: 'p < 2.87\\times 10^{-7}\\quad(5\\sigma)',
   },
 ];
 
@@ -130,7 +131,7 @@ export const PipelineView: React.FC = () => {
       <div className="flex flex-col sm:flex-row sm:items-center justify-between pb-3 border-b-2 border-black gap-2">
         <div>
           <span className="text-xs font-mono uppercase text-cern-cyan tracking-wider font-bold">
-            /// END-TO-END SCIENTIFIC WORKFLOW ///
+            END-TO-END SCIENTIFIC WORKFLOW
           </span>
           <h2 className="text-xl font-display font-extrabold text-white mt-0.5">
             From Proton Source to Scientific Discovery
@@ -209,8 +210,8 @@ export const PipelineView: React.FC = () => {
           </p>
 
           {activeStage.equation && (
-            <div className="p-2.5 bg-black border-2 border-black shadow-[2px_2px_0px_#000] font-mono text-xs text-amber-300 w-fit font-bold">
-              {activeStage.equation}
+            <div className="p-2.5 bg-black border-2 border-black shadow-[2px_2px_0px_#000] w-fit">
+              <MathFormula tex={activeStage.equation} />
             </div>
           )}
         </div>

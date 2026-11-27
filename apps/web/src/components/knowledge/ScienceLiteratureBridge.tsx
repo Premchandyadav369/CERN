@@ -503,7 +503,7 @@ export const ScienceLiteratureBridge: React.FC<{
             <div className="flex flex-wrap items-center justify-between gap-3 mb-2">
               <div className="flex items-center gap-2">
                 <span className="text-xs font-mono uppercase bg-cern-cyan text-black px-2.5 py-0.5 border border-black font-bold tracking-wider shadow-[2px_2px_0px_#000]">
-                  /// PEER-REVIEWED RESEARCH &amp; ARXIV CITATION BRIDGE ///
+                  PEER-REVIEWED RESEARCH &amp; ARXIV CITATION BRIDGE
                 </span>
                 <span className="hidden md:inline-block text-[11px] font-mono text-emerald-400 bg-black px-2 py-0.5 border border-emerald-500 font-bold">
                   12/12 SIMULATORS GROUNDED IN PUBLISHED DATA
@@ -598,7 +598,7 @@ export const ScienceLiteratureBridge: React.FC<{
                     {/* Key Experimental Benchmark */}
                     <div className="p-3 bg-canvas-sub border-2 border-black text-xs font-mono shadow-[2px_2px_0px_#000]">
                       <span className="text-[10px] text-amber-400 uppercase font-bold block mb-1">
-                        /// Experimental Benchmark &amp; Discovery Standard ///
+                        Experimental Benchmark &amp; Discovery Standard
                       </span>
                       <span className="text-white font-bold leading-relaxed">
                         {item.keyBenchmark}

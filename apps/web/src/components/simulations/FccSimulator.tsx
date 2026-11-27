@@ -416,7 +416,7 @@ export function FccSimulator() {
         <div>
           <div className="flex items-center gap-2">
             <h3 className="text-base font-display font-extrabold text-white">
-              /// FCC: 91 km Collider Explorer &amp; Synchrotron Power Calculator ///
+              FCC: 91 km Collider Explorer &amp; Synchrotron Power Calculator
             </h3>
             <FidelityBadge
               type="ANALYTIC"
@@ -604,7 +604,7 @@ export function FccSimulator() {
           <div className="p-3 bg-canvas-surface border-2 border-black shadow-[2px_2px_0px_#000] space-y-1">
             <div className="flex justify-between items-center">
               <span className="text-text-muted font-bold">Bending Radius (&rho;):</span>
-              <span className="text-amber-300 font-bold">{bendingRadius_m.toLocaleString()} m</span>
+              <span className="text-amber-300 font-bold">{bendingRadius_m.toLocaleString('en-US')} m</span>
             </div>
             <input
               type="range"

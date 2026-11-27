@@ -237,7 +237,7 @@ export const GridSimulator: React.FC = () => {
                   </div>
                   <div>
                     <span className="text-[10px] text-text-muted block uppercase font-bold">CPU Cores:</span>
-                    <span className="font-bold text-text-primary">{node.cpuCores.toLocaleString()}</span>
+                    <span className="font-bold text-text-primary">{node.cpuCores.toLocaleString('en-US')}</span>
                   </div>
                   <div>
                     <span className="text-[10px] text-text-muted block uppercase font-bold">Queue Load:</span>
@@ -246,7 +246,7 @@ export const GridSimulator: React.FC = () => {
                         isFailed ? 'text-red-400' : isCongested ? 'text-amber-400' : 'text-emerald-400'
                       }`}
                     >
-                      {node.activeJobs.toLocaleString()} jobs
+                      {node.activeJobs.toLocaleString('en-US')} jobs
                     </span>
                   </div>
                 </div>
@@ -282,7 +282,7 @@ export const GridSimulator: React.FC = () => {
           </p>
 
           <div className="p-3 bg-amber-400 text-black border-2 border-black shadow-[2px_2px_0px_#000] text-[11px] leading-relaxed font-mono font-bold">
-            <strong className="text-black block mb-0.5 uppercase">/// Honesty Statement ///</strong>
+            <strong className="text-black block mb-0.5 uppercase">Honesty Statement</strong>
             This module runs a simplified discrete-event queueing model with published network topology numbers. It does not monitor live operational grid telemetry.
           </div>
         </div>

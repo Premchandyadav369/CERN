@@ -454,7 +454,7 @@ export const ShapExplainabilityLab: React.FC<{ className?: string }> = ({ classN
         <div className="flex flex-wrap items-center justify-between gap-3 pb-3 border-b-2 border-black">
           <div>
             <h3 className="text-xl font-display font-extrabold text-white">
-              /// Global Kinematic SHAP Ranking &amp; Beeswarm Summary ///
+              Global Kinematic SHAP Ranking &amp; Beeswarm Summary
             </h3>
             <p className="text-xs text-text-muted font-mono mt-0.5">
               Aggregate feature attributions across 10,800 validation collision events in the LHC-TriggerMind challenge.

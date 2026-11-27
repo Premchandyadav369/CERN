@@ -146,5 +146,48 @@
     "sourceTier": "T1_OFFICIAL",
     "sourceUrl": "https://home.cern/science/experiments/faser",
     "manifestId": "lhc-nominal-beam-energy-run3"
+  },
+  {
+    "id": "isolde",
+    "name": "ISOLDE & CERN-MEDICIS",
+    "tier": "INTERACTIVE",
+    "scientificQuestion": "How do exotic neutron-rich and proton-rich nuclei behave far from the valley of beta stability, and how did r-process nucleosynthesis forge heavy elements?",
+    "accelerator": "PS Booster (1.4 GeV protons) + HIE-ISOLDE Post-Linac",
+    "location": "CERN Meyrin Bldg. 170",
+    "subdetectors": [
+      { "name": "RILIS Laser Ion Source", "role": "Resonant multi-step laser excitation achieving pure Z-selective element ionization." },
+      { "name": "GPS / HRS Magnetic Separators", "role": "Bends ionized isotopes through calibrated dipole magnets sorting A/q to >5,000 resolving power." },
+      { "name": "Miniball & ISOLTRAP", "role": "Precision Penning-trap mass spectrometry and gamma-ray spectroscopy." }
+    ],
+    "sourceTier": "T1_OFFICIAL",
+    "sourceUrl": "https://home.cern/science/experiments/isolde",
+    "manifestId": "lhc-nominal-beam-energy-run3"
+  },
+  {
+    "id": "na62",
+    "name": "NA62 & NA64 Rare-Decay / Dark Sector",
+    "tier": "INTERACTIVE",
+    "scientificQuestion": "Does the ultra-rare decay K+ -> pi+ nu nu-bar deviate from exact Standard Model precision predictions due to heavy new virtual particles, and do dark photons exist?",
+    "accelerator": "SPS (400 GeV extracted proton beam)",
+    "location": "CERN Prévessin North Area (ECN3 / EHN1)",
+    "subdetectors": [
+      { "name": "KTAG Differential Cherenkov", "role": "Tags incoming kaons at 750 MHz with 70 ps timing precision." },
+      { "name": "GTK Silicon Pixel Tracker", "role": "Ultra-thin microchannel-cooled silicon pixel stations." },
+      { "name": "17 m RICH & Liquid Krypton ECAL", "role": "Pion/muon Cherenkov ring separation and hermetic photon veto." }
+    ],
+    "sourceTier": "T1_OFFICIAL",
+    "sourceUrl": "https://home.cern/science/experiments/na62",
+    "manifestId": "lhc-nominal-beam-energy-run3"
+  },
+  {
+    "id": "moedal-mapp",
+    "name": "MoEDAL-MAPP & SND@LHC",
+    "tier": "KNOWLEDGE",
+    "scientificQuestion": "Do isolated magnetic monopoles, highly ionizing stable massive particles, or milli-charged dark-sector particles emerge from LHC Point 8 collisions?",
+    "accelerator": "LHC (Point 8 Cavern & TI18 Tunnel)",
+    "location": "LHCb Cavern / TI18",
+    "sourceTier": "T1_OFFICIAL",
+    "sourceUrl": "https://home.cern/science/experiments/moedal",
+    "manifestId": "lhc-nominal-beam-energy-run3"
   }
 ]

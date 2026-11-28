@@ -146,10 +146,11 @@ All 8 labs inside **TVA & Marvel Labs** translate recognizable sci-fi interfaces
 
 ## 6. Pedagogical Design: ELI5 Stories, Physics Bet Arena, ⓘ Info Cards & Accessibility
 
-- **Global `101 / BSc / PhD` Depth Switcher & Beam Credits**: Switch explanation depth from the header on any page, track your live **`Beam Credits` (`⚡`)**, or toggle site-wide **`TVA MODE`** and the docked **`GUIDE`** companion.
+- **Global `101 / BSc / PhD` Depth Switcher & Beam Credits**: Switch explanation depth from the header on any page, track your live **`Beam Credits` (`CR`)**, or toggle site-wide **`TVA`** mode and the docked **`Guide`** companion.
 - **33-Lab ELI5 3-Step Story, Myth-Buster & Interactive Physics Bet Arena (`PhysicsBetArena`)**: Every simulator pairs plain-language step-by-step stories and common misconception busters with an interactive prediction wager (including **Predict Before You Run**) backed by real `SeededRNG` / `@cern-x/sim-core` physics outcomes.
+- **Groq AI Physics Copilot (`/api/groq`)**: Dual-model AI assistant (`openai/gpt-oss-120b` & `openai/gpt-oss-20b`) with live simulator context injection and automatic deterministic physics fallback when offline or unkeyed.
 - **Operator Shortcuts (`?`) & Lab Snapshot Exports**: Press `?` anywhere for global shift-console keyboard shortcuts, and export framed **PARTON PNG posters**, **`.json` scenario telemetry**, **`.py`**, and **`.ipynb` notebooks** directly from simulators.
-- **GLSL WebGL Shaders, Scroll-Driven Motion & Accessibility**: Powered by custom **Superfluid He-II Quantized Vortex / Volumetric Tunnel shaders**, GSAP `ScrollTrigger` reveals, CSS `in oklab`/`in oklch` perceptual gradients, `forced-colors: active` contrast fallbacks, skip links, and `reduceMotion` compliance.
+- **Control-Room UI Craft & Accessibility**: Built on a cold-ink control-room design system refined with [unslop](https://github.com/heydamir/unslop) by Damir Sokolovsky ([@heydamir](https://x.com/heydamir), CC BY 4.0), featuring custom **Superfluid He-II Quantized Vortex / Volumetric Tunnel shaders**, GSAP `ScrollTrigger` reveals, `forced-colors: active` contrast fallbacks, skip links, and `reduceMotion` compliance.
 - **`ⓘ` Technical Term Info Cards (`TechnicalTermDeck`) & Verified KaTeX**: Clickable `ⓘ` pills for 34+ symbols paired with `MathFormula`, `InlineMathText`, and expandable `fx Equation` toggles on `FidelityBadge`.
 
 ---
@@ -158,7 +159,7 @@ All 8 labs inside **TVA & Marvel Labs** translate recognizable sci-fi interfaces
 
 | Language | Location | Scope |
 | :--- | :--- | :--- |
-| **TypeScript** | [`packages/sim-core`](packages/sim-core/src/index.ts) | Browser/SSR physics engines, Mulberry32 `SeededRNG`, and 27 Vitest assertions |
+| **TypeScript** | [`packages/sim-core`](packages/sim-core/src/index.ts) | Browser/SSR physics engines, Mulberry32 `SeededRNG`, and 29 Vitest assertions |
 | **C++17** | [`research/cpp/l1_trigger_hls.cpp`](research/cpp/l1_trigger_hls.cpp) | Fixed-threshold 40 MHz FPGA Level-1 dimuon & diphoton invariant-mass trigger emulator (`125 ns` pipeline latency) |
 | **C++17** | [`research/cpp/rk4_track_integrator.cpp`](research/cpp/rk4_track_integrator.cpp) | 4th-order Runge-Kutta relativistic cyclotron & Dirac monopole trajectory integrator (`-O3 -Wall -Wextra -Werror`) |
 | **Python** | [`research/scripts/electroweak_vacuum_rge.py`](research/scripts/electroweak_vacuum_rge.py) | NNLO Standard Model Higgs quartic running $\lambda(\mu)$ solver across $10^2 - 10^{19}\text{ GeV}$ |
@@ -236,12 +237,12 @@ $$
 │   └── web/                          # Next.js 14 App Router UI, KaTeX, Three.js & Canvas simulators
 │       ├── next.config.mjs           # Monorepo webpack aliases, security headers & optional standalone mode
 │       └── src/
-│           ├── app/                  # 13 App Router pages + /api/arxiv + /api/cern-live + /api/health
+│           ├── app/                  # 15 App Router pages + /api/arxiv + /api/cern-live + /api/groq + /api/health
 │           ├── components/           # 33 lazy-split sims, PhysicsBetArena, 3D GLSL canvases, TechTermDeck
 │           └── lib/                  # Zustand store (Beam Credits, level), notebookExporter (.py/.ipynb), WebAudio
 ├── packages/
 │   ├── content-schema/               # Zod schemas validating content & manifest provenance
-│   └── sim-core/                     # Pure TS physics kernel & 27 Vitest unit assertions
+│   └── sim-core/                     # Pure TS physics kernel & 29 Vitest unit assertions
 │       ├── src/physics/              # constants, kinematics, rigidity, statistics, feynman, bsm, nuclear
 │       └── tests/                    # Automated physics validation suite
 ├── research/
@@ -250,7 +251,7 @@ $$
 │   └── benchmarks/                   # TriggerMind trained ONNX & benchmark metrics
 ├── content/                          # Sourced JSON datasets (accelerators, experiments, projects, glossary, particles)
 ├── data/                             # manifest.json provenance registry, Open Data events & HEPData overlays
-├── scripts/                          # verify_manifest.js & verify_routes.js (39-route health probe)
+├── scripts/                          # verify_manifest.js & verify_routes.js (42-route health probe)
 ├── docs/
 │   └── assets/                       # High-DPI architecture diagrams & live UI screenshots
 ├── .github/workflows/ci.yml          # Dual-job CI/CD: Web/Physics + C++17/Python verification
@@ -298,8 +299,20 @@ npm run start
 
 ## 12. Deployment Guide & License
 
-PARTON requires **no database and no secrets** to deploy. Full instructions live in [`DEPLOYMENT.md`](DEPLOYMENT.md):
-- **Vercel *(Recommended — Free Hobby Tier)***: Preconfigured via [`vercel.json`](vercel.json) from monorepo root.
+PARTON requires **no database** and runs out-of-the-box with zero required secrets (`GROQ_API_KEY` is optional for live AI Copilot inference; deterministic physics fallback is built in). Full instructions live in [`DEPLOYMENT.md`](DEPLOYMENT.md):
+
+- **Vercel *(Recommended — Free Hobby Tier)***: Preconfigured via [`vercel.json`](vercel.json) from monorepo root:
+
+  | Preset | Value |
+  | :--- | :--- |
+  | **Framework Preset** | `Next.js` |
+  | **Root Directory** | `./` *(keep at monorepo root)* |
+  | **Build Command** | `npm run build` |
+  | **Output Directory** | `apps/web/.next` |
+  | **Install Command** | `npm ci` |
+  | **Node.js Version** | `20.x` |
+  | **Optional Env Vars** | `GROQ_API_KEY`, `GROQ_PRIMARY_MODEL=openai/gpt-oss-120b`, `GROQ_FAST_MODEL=openai/gpt-oss-20b` |
+
 - **Docker / Cloud Run / Fly.io / Railway**: Multi-stage [`Dockerfile`](Dockerfile) with `/api/health` checks (`docker build -t parton . && docker run -p 3000:3000 parton`).
 - **Render**: One-click Blueprint via [`render.yaml`](render.yaml).
 

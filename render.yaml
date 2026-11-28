@@ -1,6 +1,6 @@
 services:
   - type: web
-    name: cern-x
+    name: parton
     runtime: node
     plan: free
     buildCommand: npm ci && npm run verify:all

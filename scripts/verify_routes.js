@@ -43,6 +43,7 @@ const ROUTES = [
   '/detectors?detector=cms',
   '/learn',
   '/methodology',
+  '/brand',
   '/about',
   '/api/health',
   '/api/cern-live',
@@ -71,13 +72,13 @@ function checkRoute(path) {
 }
 
 (async () => {
-  console.log(`[CERN-X Route Smoke] Checking ${ROUTES.length} routes on ${BASE_URL}...`);
+  console.log(`[PARTON Route Smoke] Checking ${ROUTES.length} routes on ${BASE_URL}...`);
   let passed = 0;
   for (const r of ROUTES) {
     const res = await checkRoute(r);
     console.log(`  ${res.ok ? 'PASS' : 'FAIL'} [${res.status}] ${res.path} (${res.bytes} bytes)`);
     if (res.ok) passed++;
   }
-  console.log(`[CERN-X Route Smoke] Summary: ${passed}/${ROUTES.length} routes healthy.`);
+  console.log(`[PARTON Route Smoke] Summary: ${passed}/${ROUTES.length} routes healthy.`);
   if (passed !== ROUTES.length) process.exit(1);
 })();

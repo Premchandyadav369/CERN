@@ -163,18 +163,18 @@ export default function MethodologyPage() {
         </div>
 
         <h1 className="text-3xl lg:text-4xl font-display font-black text-white tracking-tight">
-          How CERN-X Works End-to-End: Physics, Provenance &amp; Verification
+          How PARTON Works End-to-End: Physics, Provenance &amp; Verification
         </h1>
         <p className="text-sm text-text-secondary mt-2 max-w-3xl leading-relaxed font-sans">
-          Complete engineering and scientific methodology behind CERN-X—covering primary CERN/PDG sourcing,
-          our pure TypeScript computational physics kernel, automated 27-test verification gates, KaTeX math rendering,
+          Complete engineering and scientific methodology behind PARTON—covering primary CERN/PDG sourcing,
+          our pure TypeScript computational physics kernel, automated verification gates, KaTeX math rendering,
           and explicit modeling boundaries.
         </p>
       </div>
 
       <Eli5Card
         title="How We Prove Every Chart & Animation Is Real Science (Not a Toy Drawing!)"
-        analogy="Most science websites use pre-recorded videos or random squiggly lines. CERN-X works like a real mini particle lab inside your browser: official CERN numbers enter a locked manifest recipe, pass 27 automated math exams before the website builds, and recalculate every dot live using exact KaTeX physics formulas!"
+        analogy="Most science websites use pre-recorded videos or random squiggly lines. PARTON works like a real mini particle lab inside your browser: official CERN numbers enter a locked manifest recipe, pass automated math exams before the website builds, and recalculate every dot live using exact KaTeX physics formulas!"
         keyPoints={[
           'Zero-Fake-Data Architecture: Every quantity is tagged [REAL], [PUBLISHED], or [COMPUTED].',
           'Shared Physics Kernel: Unit tests check the exact same @cern-x/sim-core code running your interactive sliders.',

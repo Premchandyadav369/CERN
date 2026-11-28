@@ -186,7 +186,7 @@ function SimulationsContent() {
             QUANTITATIVE SIMULATION LABORATORY
           </div>
           <div className="flex flex-wrap items-center gap-2">
-            <LabExportBar title={`CERN-X-${activeTab}`} shareQuery={{ module: activeTab }} />
+            <LabExportBar title={`PARTON-${activeTab}`} shareQuery={{ module: activeTab }} />
             <a
               href="#tech-glossary-deck"
               className="flex items-center gap-1.5 px-3 py-1.5 bg-cern-cyan hover:bg-sky-300 text-black font-mono font-bold text-xs border-2 border-black shadow-[2px_2px_0px_#000] active:translate-x-0.5 active:translate-y-0.5 transition-all"

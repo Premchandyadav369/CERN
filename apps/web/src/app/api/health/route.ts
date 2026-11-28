@@ -6,7 +6,7 @@ export async function GET() {
   return NextResponse.json(
     {
       status: 'ok',
-      service: 'cern-x',
+      service: 'parton',
       version: '1.0.0-alpha',
       timestamp: new Date().toISOString(),
     },

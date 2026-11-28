@@ -532,7 +532,7 @@ export default function HomePage() {
             </h3>
           </div>
           <p className="text-xs text-text-secondary leading-relaxed font-sans">
-            Every numeric constant and simulation boundary in CERN-X is linked to an official CERN
+            Every numeric constant and simulation boundary in PARTON is linked to an official CERN
             Design Report, Particle Data Group review, or CERN Open Data release. Click the provenance
             tag beside any parameter to inspect primary source citations.
           </p>

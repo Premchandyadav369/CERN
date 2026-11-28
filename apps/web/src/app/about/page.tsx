@@ -17,8 +17,11 @@ export default function AboutPage() {
           Scientific Honesty, Sources &amp; Provenance
         </h1>
         <p className="text-sm text-text-secondary mt-2 leading-relaxed font-mono">
-          Documentation of how CERN-X sources information, validates physics calculations, labels
-          simulation fidelity, and ensures reproducible research.
+          Documentation of how PARTON sources information, validates physics calculations, labels
+          simulation fidelity, and ensures reproducible research. Need vector logos or app icons?{' '}
+          <Link href="/brand" className="text-cern-cyan underline font-bold">
+            Open the PARTON Brand &amp; Icon Studio →
+          </Link>
         </p>
       </div>
 
@@ -41,7 +44,7 @@ export default function AboutPage() {
           <AlertTriangle className="w-5 h-5 text-black" /> Non-Affiliation Disclaimer
         </div>
         <p className="text-xs font-mono font-bold text-black leading-relaxed">
-          CERN-X is an independent educational and research platform developed for open science and
+          PARTON is an independent educational and research platform developed for open science and
           algorithmic research. It is <strong>NOT affiliated with, officially endorsed by, or operated by
           CERN</strong> (the European Organization for Nuclear Research). Protected CERN logos, marks, and
           proprietary emblems are strictly avoided.
@@ -54,7 +57,7 @@ export default function AboutPage() {
           1. The Strict &quot;No Fake Data&quot; Policy
         </h2>
         <p className="text-xs text-text-secondary leading-relaxed font-mono">
-          In physics, trust is paramount. Every number, series, event, or metric rendered on CERN-X must
+          In physics, trust is paramount. Every number, series, event, or metric rendered on PARTON must
           strictly belong to one of three data classes:
         </p>
 

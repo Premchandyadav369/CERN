@@ -29,7 +29,7 @@ export async function GET(request: NextRequest) {
     const res = await fetch(apiUrl, {
       signal: controller.signal,
       headers: {
-        'User-Agent': 'CERN-X-Web/1.0 (Educational open science portal; mailto:cern-x@cern.ch)',
+        'User-Agent': 'PARTON-Web/1.0 (Educational open science portal; mailto:parton-lab@users.noreply.github.com)',
       },
     });
     clearTimeout(timeoutId);

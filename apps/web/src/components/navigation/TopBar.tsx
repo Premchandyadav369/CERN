@@ -11,7 +11,7 @@ import {
   Volume2,
   VolumeX,
   Clock,
-  Sparkles,
+  Compass,
   Activity,
   ChevronDown,
   Zap,
@@ -76,8 +76,8 @@ export const TopBar: React.FC = () => {
         {/* Left: Brand & Live Machine Cycle Disclosure */}
         <div className="flex items-center gap-2.5 shrink-0">
           <Link href="/" className="flex items-center gap-2 group shrink-0">
-            <AppLogo size={30} />
-            <span className="font-mono font-bold text-sm sm:text-base tracking-wider text-white px-2 py-0.5 border-2 border-black bg-cern-blue shadow-[3px_3px_0px_#00E5FF] group-hover:-translate-x-px group-hover:-translate-y-px transition-all">
+            <AppLogo size={28} />
+            <span className="font-mono font-semibold text-sm sm:text-base tracking-wide text-white px-2 py-0.5 border-2 border-black bg-cern-blue shadow-[2px_2px_0px_#000] group-hover:-translate-x-px group-hover:-translate-y-px transition-transform duration-150">
               PARTON
             </span>
           </Link>
@@ -138,7 +138,7 @@ export const TopBar: React.FC = () => {
           <button
             type="button"
             onClick={() => setCommandPaletteOpen(true)}
-            className="flex items-center gap-1.5 px-2.5 py-1 text-xs font-mono font-bold bg-canvas-surface hover:bg-canvas-raised border-2 border-black shadow-[2px_2px_0px_#000] hover:shadow-[2px_2px_0px_#00E5FF] text-text-secondary hover:text-white transition-all cursor-pointer"
+            className="flex items-center gap-1.5 px-2.5 py-1 text-xs font-mono font-medium bg-canvas-surface hover:bg-canvas-raised border-2 border-black shadow-[2px_2px_0px_#000] text-text-secondary hover:text-white transition-colors duration-150 cursor-pointer"
             title="Search pages, particles, datasets (Ctrl+K)"
           >
             <Search className="w-3.5 h-3.5 text-cern-cyan" />
@@ -221,7 +221,7 @@ export const TopBar: React.FC = () => {
             <span className="hidden lg:inline text-[11px]">TVA</span>
           </button>
 
-          {/* Docked O.B. / TVA Guide Trigger (replaces floating corner blocker!) */}
+          {/* Docked O.B. / TVA Guide Trigger */}
           <button
             type="button"
             onClick={() => {
@@ -229,25 +229,25 @@ export const TopBar: React.FC = () => {
               toggleCompanion();
             }}
             aria-expanded={companionOpen}
-            className={`flex items-center gap-1 px-2 py-1 text-xs font-mono font-black border-2 border-black shadow-[2px_2px_0px_#000] transition-colors cursor-pointer ${
+            className={`flex items-center gap-1.5 px-2 py-1 text-xs font-mono font-semibold border-2 border-black shadow-[2px_2px_0px_#000] transition-colors duration-150 cursor-pointer ${
               companionOpen
                 ? 'bg-[#FFC947] text-black'
                 : 'bg-[#FFB000] text-black hover:bg-[#FFC947]'
             }`}
             title="Open contextual O.B. / TVA lab guide"
           >
-            <Sparkles className="w-3.5 h-3.5" />
-            <span className="hidden md:inline text-[11px]">GUIDE</span>
+            <Compass className="w-3.5 h-3.5" strokeWidth={1.5} />
+            <span className="hidden md:inline text-[11px]">Guide</span>
           </button>
 
-          {/* Beam Credits Live Balance Pill */}
+          {/* Beam Credits Live Balance */}
           <Link
             href="/simulations"
-            className="hidden sm:flex items-center gap-1 px-2 py-1 text-xs font-mono font-black border-2 border-black bg-black text-[#00FF66] shadow-[2px_2px_0px_#000] hover:bg-zinc-900"
+            className="hidden sm:flex items-center gap-1 px-2 py-1 text-xs font-mono font-semibold border-2 border-black bg-canvas-surface text-emerald-400 shadow-[2px_2px_0px_#000] hover:bg-canvas-raised transition-colors duration-150"
             title="Beam Credits earned from Interactive Physics Bets"
           >
-            <Zap className="w-3.5 h-3.5 text-[#FFE600]" />
-            <span className="text-[11px]">{betCredits}⚡</span>
+            <Zap className="w-3.5 h-3.5 text-cern-cyan" strokeWidth={1.5} />
+            <span className="text-[11px] tabular-nums">{betCredits} CR</span>
           </Link>
 
           {/* Operator Missions Button */}
@@ -303,9 +303,9 @@ export const TopBar: React.FC = () => {
               key={link.href}
               href={link.href}
               aria-current={isActive ? 'page' : undefined}
-              className={`whitespace-nowrap px-2.5 py-1 border-2 text-[11px] font-bold transition-all shrink-0 ${
+              className={`whitespace-nowrap px-2.5 py-1 border-2 text-[11px] font-medium transition-colors duration-150 shrink-0 ${
                 isActive
-                  ? 'bg-cern-blue border-cern-cyan text-white shadow-[2px_2px_0px_#000]'
+                  ? 'bg-cern-blue border-black text-white shadow-[2px_2px_0px_#000]'
                   : 'border-transparent text-text-secondary hover:text-white hover:border-black hover:bg-canvas-raised'
               }`}
             >

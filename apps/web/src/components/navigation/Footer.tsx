@@ -10,42 +10,41 @@ export const Footer: React.FC = () => {
         <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
           <div className="md:col-span-2 space-y-3">
             <div className="flex items-center gap-2">
-              <span className="font-mono font-bold text-sm text-white px-2.5 py-1 border-2 border-black bg-cern-blue shadow-[3px_3px_0px_#00E5FF]">
+              <span className="font-mono font-semibold text-sm text-white px-2.5 py-1 border-2 border-black bg-cern-blue shadow-[2px_2px_0px_#000]">
                 PARTON
               </span>
-              <span className="font-mono text-xs text-text-secondary font-bold">
-                INTERACTIVE PARTICLE PHYSICS DIGITAL TWIN
+              <span className="font-mono text-xs text-text-secondary font-medium">
+                Particle Physics Digital Twin
               </span>
             </div>
             <p className="text-xs text-text-secondary leading-relaxed max-w-lg font-sans">
               PARTON is an open-source scientific digital twin modeling CERN&apos;s accelerator complex,
               experimental detectors, Parton distributions, trigger pipelines, and distributed computing.
             </p>
-            <div className="p-3 bg-amber-400 border-2 border-black shadow-[4px_4px_0px_#000] text-xs text-black leading-normal">
-              <strong className="text-black uppercase font-mono block mb-0.5 font-extrabold">Non-Affiliation Notice</strong>
-              PARTON is an unofficial educational and research initiative. It is NOT affiliated with, sponsored by, or endorsed by CERN.
+            <div className="p-3 bg-amber-400 border-2 border-black shadow-[3px_3px_0px_#000] text-xs text-black leading-normal">
+              <strong className="text-black font-mono block mb-0.5 font-semibold">Non-affiliation notice</strong>
+              PARTON is an unofficial educational and research initiative. It is not affiliated with, sponsored by, or endorsed by CERN.
             </div>
           </div>
 
           <div className="p-4 bg-canvas-surface border-2 border-black shadow-[4px_4px_0px_#000]">
-            <h4 className="font-mono uppercase font-bold text-white mb-3 text-xs tracking-wider border-b-2 border-black pb-1.5 flex items-center justify-between">
-              <span>Governance &amp; Sources</span>
-              <span className="text-[10px] text-cern-cyan">01</span>
+            <h4 className="font-mono font-semibold text-white mb-3 text-xs border-b-2 border-black pb-1.5">
+              Governance &amp; sources
             </h4>
             <ul className="space-y-2 text-xs font-mono">
               <li>
-                <Link href="/methodology" className="hover:text-cern-cyan transition-colors flex items-center gap-1 font-bold">
-                  <span>→ Methodology &amp; Limits</span>
+                <Link href="/methodology" className="hover:text-cern-cyan transition-colors flex items-center gap-1.5 font-medium">
+                  <span>Methodology &amp; limits</span>
                 </Link>
               </li>
               <li>
-                <Link href="/brand" className="hover:text-cern-cyan transition-colors flex items-center gap-1 font-bold">
-                  <span>→ PARTON Logo &amp; App Icons</span>
+                <Link href="/brand" className="hover:text-cern-cyan transition-colors flex items-center gap-1.5 font-medium">
+                  <span>Logo &amp; app icons</span>
                 </Link>
               </li>
               <li>
-                <Link href="/challenges" className="hover:text-[#FFE600] transition-colors flex items-center gap-1 font-bold">
-                  <span>→ Physics Challenges &amp; Law Limits</span>
+                <Link href="/challenges" className="hover:text-cern-cyan transition-colors flex items-center gap-1.5 font-medium">
+                  <span>Physics challenges &amp; law limits</span>
                 </Link>
               </li>
               <li>
@@ -53,9 +52,9 @@ export const Footer: React.FC = () => {
                   href="https://github.com/Premchandyadav369/CERN/blob/main/docs/DATA_AUDIT.md"
                   target="_blank"
                   rel="noreferrer"
-                  className="hover:text-cern-cyan flex items-center gap-1 transition-colors font-bold"
+                  className="hover:text-cern-cyan flex items-center gap-1.5 transition-colors font-medium"
                 >
-                  <span>→ Source Audit Report</span> <ExternalLink className="w-3 h-3 text-cern-cyan" />
+                  <span>Source audit report</span> <ExternalLink className="w-3 h-3 text-text-muted" strokeWidth={1.5} />
                 </a>
               </li>
               <li>
@@ -63,9 +62,9 @@ export const Footer: React.FC = () => {
                   href="https://github.com/Premchandyadav369/CERN/blob/main/data/manifest.json"
                   target="_blank"
                   rel="noreferrer"
-                  className="hover:text-cern-cyan flex items-center gap-1 transition-colors font-bold"
+                  className="hover:text-cern-cyan flex items-center gap-1.5 transition-colors font-medium"
                 >
-                  <span>→ Cryptographic Manifest</span> <ExternalLink className="w-3 h-3 text-cern-cyan" />
+                  <span>Cryptographic manifest</span> <ExternalLink className="w-3 h-3 text-text-muted" strokeWidth={1.5} />
                 </a>
               </li>
               <li>
@@ -73,50 +72,49 @@ export const Footer: React.FC = () => {
                   href="https://github.com/Premchandyadav369/CERN/blob/main/docs/CUT_FEATURES.md"
                   target="_blank"
                   rel="noreferrer"
-                  className="hover:text-cern-cyan flex items-center gap-1 transition-colors font-bold"
+                  className="hover:text-cern-cyan flex items-center gap-1.5 transition-colors font-medium"
                 >
-                  <span>→ Cut Features Report</span>
+                  <span>Cut features report</span>
                 </a>
               </li>
             </ul>
           </div>
 
           <div className="p-4 bg-canvas-surface border-2 border-black shadow-[4px_4px_0px_#000]">
-            <h4 className="font-mono uppercase font-bold text-white mb-3 text-xs tracking-wider border-b-2 border-black pb-1.5 flex items-center justify-between">
-              <span>Standards &amp; Verification</span>
-              <span className="text-emerald-400">02</span>
+            <h4 className="font-mono font-semibold text-white mb-3 text-xs border-b-2 border-black pb-1.5">
+              Standards &amp; verification
             </h4>
             <ul className="space-y-2 text-xs font-mono">
-              <li className="flex items-center gap-1.5 text-emerald-400 font-bold">
-                <ShieldCheck className="w-4 h-4" />
-                <span>Physics Tests: 27/27 PASS</span>
+              <li className="flex items-center gap-1.5 text-emerald-400 font-medium">
+                <ShieldCheck className="w-4 h-4" strokeWidth={1.5} />
+                <span className="tabular-nums">Physics tests: 29/29 pass</span>
               </li>
-              <li className="flex items-center gap-1.5 text-cern-cyan font-bold">
-                <GitBranch className="w-4 h-4" />
-                <span>Deterministic Seeded PRNG</span>
+              <li className="flex items-center gap-1.5 text-text-secondary font-medium">
+                <GitBranch className="w-4 h-4 text-text-muted" strokeWidth={1.5} />
+                <span>Deterministic seeded PRNG</span>
               </li>
               <li>
                 <a
                   href="https://github.com/Premchandyadav369/CERN"
                   target="_blank"
                   rel="noreferrer"
-                  className="hover:text-cern-cyan flex items-center gap-1 transition-colors font-bold"
+                  className="hover:text-cern-cyan flex items-center gap-1.5 transition-colors font-medium"
                 >
-                  <span>→ GitHub Repository</span> <ExternalLink className="w-3 h-3 text-cern-cyan" />
+                  <span>GitHub repository</span> <ExternalLink className="w-3 h-3 text-text-muted" strokeWidth={1.5} />
                 </a>
               </li>
-              <li className="text-text-secondary font-bold">
-                <span>Licence: MIT Open Source</span>
+              <li className="text-text-secondary font-medium">
+                <span>License: MIT open source</span>
               </li>
             </ul>
           </div>
         </div>
 
         {/* Bottom Bar */}
-        <div className="pt-4 border-t-3 border-black flex flex-col sm:flex-row items-center justify-between gap-3 text-xs text-text-muted font-mono font-bold">
+        <div className="pt-4 border-t-3 border-black flex flex-col sm:flex-row items-center justify-between gap-3 text-xs text-text-muted font-mono">
           <span>© 2026 Premchand Yadav. PARTON Open Research &amp; Education.</span>
-          <span className="px-2.5 py-1 bg-black border-2 border-black shadow-[2px_2px_0px_#00E5FF] text-cern-cyan">
-            PRESS ? FOR SHORTCUTS · WCAG 2.2 AA
+          <span className="px-2.5 py-1 bg-canvas-surface border-2 border-black shadow-[2px_2px_0px_#000] text-text-secondary">
+            Press <kbd className="text-cern-cyan font-semibold">?</kbd> for shortcuts · WCAG 2.2 AA
           </span>
         </div>
       </div>

@@ -38,52 +38,52 @@ export default function HomePage() {
       <section className="space-y-3">
         <div className="flex items-center justify-between pb-1">
           <div className="flex items-center gap-2">
-            <Radio className="w-4 h-4 text-cern-cyan" />
-            <span className="text-xs font-mono font-bold uppercase text-white tracking-wider">
-              CERN Control Centre (CCC) · Live Operational Baselines
+            <Radio className="w-4 h-4 text-cern-cyan" strokeWidth={1.5} />
+            <span className="text-xs font-mono font-medium text-text-secondary">
+              CERN Control Centre · Operational Baselines
             </span>
           </div>
-          <span className="text-xs font-mono text-emerald-400 font-bold hidden sm:flex items-center gap-1.5 px-2 py-0.5 border border-black bg-canvas-surface shadow-[1px_1px_0px_#000]">
-            <span className="w-2 h-2 rounded-none bg-emerald-400" aria-hidden="true" />
-            CRYOGENICS 1.9 K NOMINAL
+          <span className="text-xs font-mono text-emerald-400 font-medium hidden sm:flex items-center gap-1.5 px-2.5 py-0.5 border border-black bg-canvas-surface shadow-[1px_1px_0px_#000] tabular-nums">
+            <span className="w-2 h-2 bg-emerald-400" aria-hidden="true" />
+            Cryogenics 1.9 K nominal
           </span>
         </div>
 
         <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-          <SpotlightMotionCard className="p-4 bg-canvas-surface border-2 border-black shadow-[4px_4px_0px_#000] hover:shadow-[6px_6px_0px_#00E5FF]">
-            <span className="text-[11px] font-mono text-text-muted block font-bold uppercase">Run 3 Beam Energy</span>
-            <div className="mt-1 flex items-center justify-between gap-2">
-              <NumberTicker value={6.8} decimals={1} suffix=" TeV" className="text-xl font-mono font-black text-cern-cyan" />
+          <SpotlightMotionCard className="p-4 bg-canvas-surface border-2 border-black shadow-[4px_4px_0px_#000]">
+            <span className="text-xs font-mono text-text-muted block font-medium">Run 3 beam energy</span>
+            <div className="mt-1.5 flex items-center justify-between gap-2">
+              <NumberTicker value={6.8} decimals={1} suffix=" TeV" className="text-2xl font-mono font-semibold text-cern-cyan tabular-nums" />
               <Value manifestId="lhc-nominal-beam-energy-run3" value="Ref" />
             </div>
-            <span className="text-[10px] font-mono text-text-muted block mt-1.5 font-bold">13.6 TeV Center-of-Mass</span>
+            <span className="text-[11px] font-mono text-text-muted block mt-1.5 tabular-nums">13.6 TeV center-of-mass</span>
           </SpotlightMotionCard>
 
-          <SpotlightMotionCard delay={0.05} className="p-4 bg-canvas-surface border-2 border-black shadow-[4px_4px_0px_#000] hover:shadow-[6px_6px_0px_#4C7DFF]">
-            <span className="text-[11px] font-mono text-text-muted block font-bold uppercase">Main Dipole Field</span>
-            <div className="mt-1 flex items-center justify-between gap-2">
-              <NumberTicker value={8.33} decimals={2} suffix=" T" className="text-xl font-mono font-black text-cern-accent" />
+          <SpotlightMotionCard delay={0.04} className="p-4 bg-canvas-surface border-2 border-black shadow-[4px_4px_0px_#000]">
+            <span className="text-xs font-mono text-text-muted block font-medium">Main dipole field</span>
+            <div className="mt-1.5 flex items-center justify-between gap-2">
+              <NumberTicker value={8.33} decimals={2} suffix=" T" className="text-2xl font-mono font-semibold text-white tabular-nums" />
               <Value manifestId="lhc-dipole-field-nominal" value="Ref" />
             </div>
-            <span className="text-[10px] font-mono text-text-muted block mt-1.5 font-bold">Nb-Ti Superconducting Coil</span>
+            <span className="text-[11px] font-mono text-text-muted block mt-1.5">Nb-Ti superconducting coil</span>
           </SpotlightMotionCard>
 
-          <SpotlightMotionCard delay={0.1} className="p-4 bg-canvas-surface border-2 border-black shadow-[4px_4px_0px_#000] hover:shadow-[6px_6px_0px_#FF0055]">
-            <span className="text-[11px] font-mono text-text-muted block font-bold uppercase">Higgs Boson Mass</span>
-            <div className="mt-1 flex items-center justify-between gap-2">
-              <NumberTicker value={125.25} decimals={2} suffix=" GeV" className="text-xl font-mono font-black text-cern-magenta" />
+          <SpotlightMotionCard delay={0.08} className="p-4 bg-canvas-surface border-2 border-black shadow-[4px_4px_0px_#000]">
+            <span className="text-xs font-mono text-text-muted block font-medium">Higgs boson mass</span>
+            <div className="mt-1.5 flex items-center justify-between gap-2">
+              <NumberTicker value={125.25} decimals={2} suffix=" GeV" className="text-2xl font-mono font-semibold text-white tabular-nums" />
               <Value manifestId="higgs-boson-mass-pdg" value="PDG" />
             </div>
-            <span className="text-[10px] font-mono text-text-muted block mt-1.5 font-bold">PDG 2024 Reference</span>
+            <span className="text-[11px] font-mono text-text-muted block mt-1.5 tabular-nums">PDG 2024 reference</span>
           </SpotlightMotionCard>
 
-          <SpotlightMotionCard delay={0.15} className="p-4 bg-canvas-surface border-2 border-black shadow-[4px_4px_0px_#000] hover:shadow-[6px_6px_0px_#FFE600]">
-            <span className="text-[11px] font-mono text-text-muted block font-bold uppercase">AI Flagship AMS</span>
-            <div className="mt-1 flex items-center justify-between gap-2">
-              <NumberTicker value={3.339} decimals={3} className="text-xl font-mono font-black text-[#FFE600]" />
+          <SpotlightMotionCard delay={0.12} className="p-4 bg-canvas-surface border-2 border-black shadow-[4px_4px_0px_#000]">
+            <span className="text-xs font-mono text-text-muted block font-medium">TriggerMind AMS</span>
+            <div className="mt-1.5 flex items-center justify-between gap-2">
+              <NumberTicker value={3.339} decimals={3} className="text-2xl font-mono font-semibold text-white tabular-nums" />
               <Value manifestId="triggermind-xgboost-benchmark" value="Lab" />
             </div>
-            <span className="text-[10px] font-mono text-text-muted block mt-1.5 font-bold">TriggerMind XGBoost L1</span>
+            <span className="text-[11px] font-mono text-text-muted block mt-1.5">XGBoost L1 benchmark</span>
           </SpotlightMotionCard>
         </div>
       </section>
@@ -96,10 +96,10 @@ export default function HomePage() {
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 border-b-3 border-black pb-3">
           <div>
             <div className="flex items-center gap-2">
-              <span className="px-2.5 py-1 text-xs font-mono font-bold bg-cern-blue text-white border-2 border-black shadow-[2px_2px_0px_#000]">
-                MODULE 01
+              <span className="px-2 py-0.5 text-xs font-mono font-medium bg-canvas-raised text-cern-cyan border-2 border-black shadow-[2px_2px_0px_#000]">
+                Module 01
               </span>
-              <h2 className="text-xl font-display font-extrabold text-white">
+              <h2 className="text-xl font-display font-semibold text-white">
                 The CERN Accelerator Complex
               </h2>
             </div>
@@ -109,10 +109,10 @@ export default function HomePage() {
           </div>
           <Link
             href="/accelerators"
-            className="px-3.5 py-2 bg-canvas-surface hover:bg-cern-blue text-white border-2 border-black shadow-[3px_3px_0px_#000] hover:shadow-[3px_3px_0px_#00E5FF] text-xs font-mono font-bold flex items-center gap-1.5 self-start sm:self-auto transition-all active:translate-x-[1px] active:translate-y-[1px]"
+            className="px-3.5 py-2 bg-canvas-surface hover:bg-canvas-raised text-white border-2 border-black shadow-[3px_3px_0px_#000] text-xs font-mono font-medium flex items-center gap-1.5 self-start sm:self-auto transition-[transform,background-color] duration-150 active:translate-x-px active:translate-y-px"
           >
-            <span>Full Accelerators Guide</span>
-            <ArrowRight className="w-3.5 h-3.5 text-cern-cyan" />
+            <span>Accelerators guide</span>
+            <ArrowRight className="w-3.5 h-3.5 text-cern-cyan" strokeWidth={1.5} />
           </Link>
         </div>
         <RingMap />
@@ -123,10 +123,10 @@ export default function HomePage() {
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 border-b-3 border-black pb-3">
           <div>
             <div className="flex items-center gap-2">
-              <span className="px-2.5 py-1 text-xs font-mono font-bold bg-purple-700 text-white border-2 border-black shadow-[2px_2px_0px_#000]">
-                MODULE 02
+              <span className="px-2 py-0.5 text-xs font-mono font-medium bg-canvas-raised text-cern-cyan border-2 border-black shadow-[2px_2px_0px_#000]">
+                Module 02
               </span>
-              <h2 className="text-xl font-display font-extrabold text-white">
+              <h2 className="text-xl font-display font-semibold text-white">
                 End-to-End Scientific Pipeline
               </h2>
             </div>
@@ -136,10 +136,10 @@ export default function HomePage() {
           </div>
           <Link
             href="/open-data"
-            className="px-3.5 py-2 bg-canvas-surface hover:bg-purple-800 text-white border-2 border-black shadow-[3px_3px_0px_#000] hover:shadow-[3px_3px_0px_#FF0055] text-xs font-mono font-bold flex items-center gap-1.5 self-start sm:self-auto transition-all active:translate-x-[1px] active:translate-y-[1px]"
+            className="px-3.5 py-2 bg-canvas-surface hover:bg-canvas-raised text-white border-2 border-black shadow-[3px_3px_0px_#000] text-xs font-mono font-medium flex items-center gap-1.5 self-start sm:self-auto transition-[transform,background-color] duration-150 active:translate-x-px active:translate-y-px"
           >
-            <span>Open Data Explorer</span>
-            <ArrowRight className="w-3.5 h-3.5 text-purple-300" />
+            <span>Open Data explorer</span>
+            <ArrowRight className="w-3.5 h-3.5 text-cern-cyan" strokeWidth={1.5} />
           </Link>
         </div>
         <PipelineView />
@@ -148,10 +148,10 @@ export default function HomePage() {
       {/* 5. Core Domain Exploration Hub Grid */}
       <section className="space-y-4 pt-4">
         <div>
-          <span className="text-xs font-mono uppercase text-cern-cyan tracking-wider font-bold">
-            SCIENTIFIC DOMAINS &amp; LABORATORIES
+          <span className="text-xs font-mono text-cern-cyan font-medium">
+            Scientific domains &amp; laboratories
           </span>
-          <h2 className="text-2xl font-display font-extrabold text-white mt-0.5">
+          <h2 className="text-2xl font-display font-semibold text-white mt-0.5">
             Interactive Research Hubs
           </h2>
           <p className="text-xs text-text-secondary font-sans">
@@ -163,19 +163,17 @@ export default function HomePage() {
           {/* Accelerators Card */}
           <Link
             href="/accelerators"
-            className="p-5 bg-canvas-surface border-2 border-black shadow-[4px_4px_0px_#00E5FF] hover:shadow-[6px_6px_0px_#00E5FF] hover:-translate-x-0.5 hover:-translate-y-0.5 active:translate-x-[2px] active:translate-y-[2px] active:shadow-none transition-all space-y-3 group flex flex-col justify-between"
+            className="p-5 bg-canvas-surface border-2 border-black shadow-[4px_4px_0px_#000] hover:border-cern-cyan/70 hover:-translate-x-0.5 hover:-translate-y-0.5 active:translate-x-px active:translate-y-px transition-[transform,border-color] duration-150 space-y-3 group flex flex-col justify-between"
           >
             <div className="space-y-3">
               <div className="flex items-center justify-between">
-                <div className="p-2.5 bg-black border-2 border-black text-cern-cyan shadow-[2px_2px_0px_#00E5FF]">
-                  <Zap className="w-5 h-5" />
+                <div className="w-9 h-9 flex items-center justify-center bg-canvas-raised border-2 border-black text-text-secondary group-hover:text-cern-cyan transition-colors duration-150">
+                  <Zap className="w-4 h-4" strokeWidth={1.5} />
                 </div>
-                <span className="px-2 py-0.5 text-[10px] font-mono font-bold bg-cern-cyan text-black border-2 border-black uppercase shadow-[1px_1px_0px_#000]">
-                  Physics Sim
-                </span>
+                <span className="text-xs font-mono text-text-muted">Physics sim</span>
               </div>
               <div>
-                <h3 className="text-lg font-display font-bold text-white group-hover:text-cern-cyan transition-colors">
+                <h3 className="text-base font-display font-semibold text-white group-hover:text-cern-cyan transition-colors duration-150">
                   Accelerators &amp; Beam Physics
                 </h3>
                 <p className="text-xs text-text-secondary mt-1.5 leading-relaxed font-sans">
@@ -183,28 +181,26 @@ export default function HomePage() {
                 </p>
               </div>
             </div>
-            <div className="text-xs font-mono text-cern-cyan font-bold pt-2 border-t-2 border-black flex items-center justify-between">
-              <span>7 Accelerators Documented</span>
-              <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
+            <div className="text-xs font-mono text-text-secondary group-hover:text-cern-cyan pt-2 border-t-2 border-black flex items-center justify-between transition-colors duration-150">
+              <span>7 accelerators documented</span>
+              <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform duration-150" strokeWidth={1.5} />
             </div>
           </Link>
 
           {/* Detector Twins Card */}
           <Link
             href="/detectors"
-            className="p-5 bg-canvas-surface border-2 border-black shadow-[4px_4px_0px_#4C7DFF] hover:shadow-[6px_6px_0px_#4C7DFF] hover:-translate-x-0.5 hover:-translate-y-0.5 active:translate-x-[2px] active:translate-y-[2px] active:shadow-none transition-all space-y-3 group flex flex-col justify-between"
+            className="p-5 bg-canvas-surface border-2 border-black shadow-[4px_4px_0px_#000] hover:border-cern-cyan/70 hover:-translate-x-0.5 hover:-translate-y-0.5 active:translate-x-px active:translate-y-px transition-[transform,border-color] duration-150 space-y-3 group flex flex-col justify-between"
           >
             <div className="space-y-3">
               <div className="flex items-center justify-between">
-                <div className="p-2.5 bg-black border-2 border-black text-cern-accent shadow-[2px_2px_0px_#4C7DFF]">
-                  <Layers className="w-5 h-5" />
+                <div className="w-9 h-9 flex items-center justify-center bg-canvas-raised border-2 border-black text-text-secondary group-hover:text-cern-cyan transition-colors duration-150">
+                  <Layers className="w-4 h-4" strokeWidth={1.5} />
                 </div>
-                <span className="px-2 py-0.5 text-[10px] font-mono font-bold bg-cern-accent text-white border-2 border-black uppercase shadow-[1px_1px_0px_#000]">
-                  Digital Twin
-                </span>
+                <span className="text-xs font-mono text-text-muted">Digital twin</span>
               </div>
               <div>
-                <h3 className="text-lg font-display font-bold text-white group-hover:text-cern-accent transition-colors">
+                <h3 className="text-base font-display font-semibold text-white group-hover:text-cern-cyan transition-colors duration-150">
                   ATLAS &amp; CMS Detector Twins
                 </h3>
                 <p className="text-xs text-text-secondary mt-1.5 leading-relaxed font-sans">
@@ -212,28 +208,26 @@ export default function HomePage() {
                 </p>
               </div>
             </div>
-            <div className="text-xs font-mono text-cern-accent font-bold pt-2 border-t-2 border-black flex items-center justify-between">
-              <span>Real 13 TeV Collision Events</span>
-              <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
+            <div className="text-xs font-mono text-text-secondary group-hover:text-cern-cyan pt-2 border-t-2 border-black flex items-center justify-between transition-colors duration-150">
+              <span>Real 13 TeV collision events</span>
+              <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform duration-150" strokeWidth={1.5} />
             </div>
           </Link>
 
           {/* AI Lab Card */}
           <Link
             href="/ai-lab"
-            className="p-5 bg-canvas-surface border-2 border-black shadow-[4px_4px_0px_#FFE600] hover:shadow-[6px_6px_0px_#FFE600] hover:-translate-x-0.5 hover:-translate-y-0.5 active:translate-x-[2px] active:translate-y-[2px] active:shadow-none transition-all space-y-3 group flex flex-col justify-between"
+            className="p-5 bg-canvas-surface border-2 border-black shadow-[4px_4px_0px_#000] hover:border-cern-cyan/70 hover:-translate-x-0.5 hover:-translate-y-0.5 active:translate-x-px active:translate-y-px transition-[transform,border-color] duration-150 space-y-3 group flex flex-col justify-between"
           >
             <div className="space-y-3">
               <div className="flex items-center justify-between">
-                <div className="p-2.5 bg-black border-2 border-black text-amber-400 shadow-[2px_2px_0px_#FFE600]">
-                  <Cpu className="w-5 h-5" />
+                <div className="w-9 h-9 flex items-center justify-center bg-canvas-raised border-2 border-black text-text-secondary group-hover:text-cern-cyan transition-colors duration-150">
+                  <Cpu className="w-4 h-4" strokeWidth={1.5} />
                 </div>
-                <span className="px-2 py-0.5 text-[10px] font-mono font-bold bg-amber-400 text-black border-2 border-black uppercase shadow-[1px_1px_0px_#000]">
-                  Benchmark
-                </span>
+                <span className="text-xs font-mono text-text-muted">Benchmark</span>
               </div>
               <div>
-                <h3 className="text-lg font-display font-bold text-white group-hover:text-amber-400 transition-colors">
+                <h3 className="text-base font-display font-semibold text-white group-hover:text-cern-cyan transition-colors duration-150">
                   AI Lab &amp; LHC-TriggerMind
                 </h3>
                 <p className="text-xs text-text-secondary mt-1.5 leading-relaxed font-sans">
@@ -242,28 +236,26 @@ export default function HomePage() {
                 </p>
               </div>
             </div>
-            <div className="text-xs font-mono text-amber-400 font-bold pt-2 border-t-2 border-black flex items-center justify-between">
-              <span>Research Experiment #001</span>
-              <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
+            <div className="text-xs font-mono text-text-secondary group-hover:text-cern-cyan pt-2 border-t-2 border-black flex items-center justify-between transition-colors duration-150">
+              <span>Research experiment #001</span>
+              <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform duration-150" strokeWidth={1.5} />
             </div>
           </Link>
 
           {/* Computing & WLCG Card */}
           <Link
             href="/computing"
-            className="p-5 bg-canvas-surface border-2 border-black shadow-[4px_4px_0px_#00FF66] hover:shadow-[6px_6px_0px_#00FF66] hover:-translate-x-0.5 hover:-translate-y-0.5 active:translate-x-[2px] active:translate-y-[2px] active:shadow-none transition-all space-y-3 group flex flex-col justify-between"
+            className="p-5 bg-canvas-surface border-2 border-black shadow-[4px_4px_0px_#000] hover:border-cern-cyan/70 hover:-translate-x-0.5 hover:-translate-y-0.5 active:translate-x-px active:translate-y-px transition-[transform,border-color] duration-150 space-y-3 group flex flex-col justify-between"
           >
             <div className="space-y-3">
               <div className="flex items-center justify-between">
-                <div className="p-2.5 bg-black border-2 border-black text-emerald-400 shadow-[2px_2px_0px_#00FF66]">
-                  <Server className="w-5 h-5" />
+                <div className="w-9 h-9 flex items-center justify-center bg-canvas-raised border-2 border-black text-text-secondary group-hover:text-cern-cyan transition-colors duration-150">
+                  <Server className="w-4 h-4" strokeWidth={1.5} />
                 </div>
-                <span className="px-2 py-0.5 text-[10px] font-mono font-bold bg-emerald-400 text-black border-2 border-black uppercase shadow-[1px_1px_0px_#000]">
-                  Exascale
-                </span>
+                <span className="text-xs font-mono text-text-muted">Exascale</span>
               </div>
               <div>
-                <h3 className="text-lg font-display font-bold text-white group-hover:text-emerald-400 transition-colors">
+                <h3 className="text-base font-display font-semibold text-white group-hover:text-cern-cyan transition-colors duration-150">
                   WLCG Grid &amp; Data Centre
                 </h3>
                 <p className="text-xs text-text-secondary mt-1.5 leading-relaxed font-sans">
@@ -272,28 +264,26 @@ export default function HomePage() {
                 </p>
               </div>
             </div>
-            <div className="text-xs font-mono text-emerald-400 font-bold pt-2 border-t-2 border-black flex items-center justify-between">
-              <span>170+ Distributed Tier Nodes</span>
-              <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
+            <div className="text-xs font-mono text-text-secondary group-hover:text-cern-cyan pt-2 border-t-2 border-black flex items-center justify-between transition-colors duration-150">
+              <span>170+ distributed tier nodes</span>
+              <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform duration-150" strokeWidth={1.5} />
             </div>
           </Link>
 
           {/* Discovery Exercise Card */}
           <Link
             href="/simulations?module=discovery"
-            className="p-5 bg-canvas-surface border-2 border-black shadow-[4px_4px_0px_#FF0055] hover:shadow-[6px_6px_0px_#FF0055] hover:-translate-x-0.5 hover:-translate-y-0.5 active:translate-x-[2px] active:translate-y-[2px] active:shadow-none transition-all space-y-3 group flex flex-col justify-between"
+            className="p-5 bg-canvas-surface border-2 border-black shadow-[4px_4px_0px_#000] hover:border-cern-cyan/70 hover:-translate-x-0.5 hover:-translate-y-0.5 active:translate-x-px active:translate-y-px transition-[transform,border-color] duration-150 space-y-3 group flex flex-col justify-between"
           >
             <div className="space-y-3">
               <div className="flex items-center justify-between">
-                <div className="p-2.5 bg-black border-2 border-black text-pink-400 shadow-[2px_2px_0px_#FF0055]">
-                  <Activity className="w-5 h-5" />
+                <div className="w-9 h-9 flex items-center justify-center bg-canvas-raised border-2 border-black text-text-secondary group-hover:text-cern-cyan transition-colors duration-150">
+                  <Activity className="w-4 h-4" strokeWidth={1.5} />
                 </div>
-                <span className="px-2 py-0.5 text-[10px] font-mono font-bold bg-pink-500 text-white border-2 border-black uppercase shadow-[1px_1px_0px_#000]">
-                  5-Sigma Lab
-                </span>
+                <span className="text-xs font-mono text-text-muted">5-sigma lab</span>
               </div>
               <div>
-                <h3 className="text-lg font-display font-bold text-white group-hover:text-pink-400 transition-colors">
+                <h3 className="text-base font-display font-semibold text-white group-hover:text-cern-cyan transition-colors duration-150">
                   Discovery Exercise Lab
                 </h3>
                 <p className="text-xs text-text-secondary mt-1.5 leading-relaxed font-sans">
@@ -302,28 +292,26 @@ export default function HomePage() {
                 </p>
               </div>
             </div>
-            <div className="text-xs font-mono text-pink-400 font-bold pt-2 border-t-2 border-black flex items-center justify-between">
-              <span>5-Sigma Threshold Lab</span>
-              <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
+            <div className="text-xs font-mono text-text-secondary group-hover:text-cern-cyan pt-2 border-t-2 border-black flex items-center justify-between transition-colors duration-150">
+              <span>5-sigma threshold lab</span>
+              <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform duration-150" strokeWidth={1.5} />
             </div>
           </Link>
 
           {/* Learn & Glossary Card */}
           <Link
             href="/learn"
-            className="p-5 bg-canvas-surface border-2 border-black shadow-[4px_4px_0px_#00E5FF] hover:shadow-[6px_6px_0px_#00E5FF] hover:-translate-x-0.5 hover:-translate-y-0.5 active:translate-x-[2px] active:translate-y-[2px] active:shadow-none transition-all space-y-3 group flex flex-col justify-between"
+            className="p-5 bg-canvas-surface border-2 border-black shadow-[4px_4px_0px_#000] hover:border-cern-cyan/70 hover:-translate-x-0.5 hover:-translate-y-0.5 active:translate-x-px active:translate-y-px transition-[transform,border-color] duration-150 space-y-3 group flex flex-col justify-between"
           >
             <div className="space-y-3">
               <div className="flex items-center justify-between">
-                <div className="p-2.5 bg-black border-2 border-black text-sky-400 shadow-[2px_2px_0px_#00E5FF]">
-                  <Atom className="w-5 h-5" />
+                <div className="w-9 h-9 flex items-center justify-center bg-canvas-raised border-2 border-black text-text-secondary group-hover:text-cern-cyan transition-colors duration-150">
+                  <Atom className="w-4 h-4" strokeWidth={1.5} />
                 </div>
-                <span className="px-2 py-0.5 text-[10px] font-mono font-bold bg-sky-400 text-black border-2 border-black uppercase shadow-[1px_1px_0px_#000]">
-                  Dictionary
-                </span>
+                <span className="text-xs font-mono text-text-muted">Dictionary</span>
               </div>
               <div>
-                <h3 className="text-lg font-display font-bold text-white group-hover:text-sky-400 transition-colors">
+                <h3 className="text-base font-display font-semibold text-white group-hover:text-cern-cyan transition-colors duration-150">
                   Physics Glossary &amp; Particles
                 </h3>
                 <p className="text-xs text-text-secondary mt-1.5 leading-relaxed font-sans">
@@ -332,28 +320,26 @@ export default function HomePage() {
                 </p>
               </div>
             </div>
-            <div className="text-xs font-mono text-sky-400 font-bold pt-2 border-t-2 border-black flex items-center justify-between">
-              <span>PDG 2024 Verified Properties</span>
-              <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
+            <div className="text-xs font-mono text-text-secondary group-hover:text-cern-cyan pt-2 border-t-2 border-black flex items-center justify-between transition-colors duration-150">
+              <span>PDG 2024 verified properties</span>
+              <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform duration-150" strokeWidth={1.5} />
             </div>
           </Link>
 
           {/* Feynman S-Matrix & Cloud Chamber Card */}
           <Link
             href="/simulations?module=feynman"
-            className="p-5 bg-canvas-surface border-2 border-black shadow-[4px_4px_0px_#00FF66] hover:shadow-[6px_6px_0px_#00FF66] hover:-translate-x-0.5 hover:-translate-y-0.5 active:translate-x-[2px] active:translate-y-[2px] active:shadow-none transition-all space-y-3 group flex flex-col justify-between"
+            className="p-5 bg-canvas-surface border-2 border-black shadow-[4px_4px_0px_#000] hover:border-cern-cyan/70 hover:-translate-x-0.5 hover:-translate-y-0.5 active:translate-x-px active:translate-y-px transition-[transform,border-color] duration-150 space-y-3 group flex flex-col justify-between"
           >
             <div className="space-y-3">
               <div className="flex items-center justify-between">
-                <div className="p-2.5 bg-black border-2 border-black text-emerald-400 shadow-[2px_2px_0px_#00FF66]">
-                  <GitBranch className="w-5 h-5" />
+                <div className="w-9 h-9 flex items-center justify-center bg-canvas-raised border-2 border-black text-text-secondary group-hover:text-cern-cyan transition-colors duration-150">
+                  <GitBranch className="w-4 h-4" strokeWidth={1.5} />
                 </div>
-                <span className="px-2 py-0.5 text-[10px] font-mono font-bold bg-emerald-400 text-black border-2 border-black uppercase shadow-[1px_1px_0px_#000]">
-                  S-Matrix + Tracks
-                </span>
+                <span className="text-xs font-mono text-text-muted">S-matrix + tracks</span>
               </div>
               <div>
-                <h3 className="text-lg font-display font-bold text-white group-hover:text-emerald-400 transition-colors">
+                <h3 className="text-base font-display font-semibold text-white group-hover:text-cern-cyan transition-colors duration-150">
                   Feynman Lab &amp; Cloud Chamber
                 </h3>
                 <p className="text-xs text-text-secondary mt-1.5 leading-relaxed font-sans">
@@ -362,29 +348,27 @@ export default function HomePage() {
                 </p>
               </div>
             </div>
-            <div className="text-xs font-mono text-emerald-400 font-bold pt-2 border-t-2 border-black flex items-center justify-between">
-              <span>QED, Z⁰ Pole &amp; Cyclotron Tracks</span>
-              <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
+            <div className="text-xs font-mono text-text-secondary group-hover:text-cern-cyan pt-2 border-t-2 border-black flex items-center justify-between transition-colors duration-150">
+              <span>QED, Z⁰ pole &amp; cyclotron tracks</span>
+              <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform duration-150" strokeWidth={1.5} />
             </div>
           </Link>
 
           {/* Higgs Symmetry Breaking Card */}
           <Link
             href="/simulations?module=higgs-ewsb"
-            className="p-5 bg-canvas-surface border-2 border-black shadow-[4px_4px_0px_#FFE600] hover:shadow-[6px_6px_0px_#FFE600] hover:-translate-x-0.5 hover:-translate-y-0.5 active:translate-x-[2px] active:translate-y-[2px] active:shadow-none transition-all space-y-3 group flex flex-col justify-between"
+            className="p-5 bg-canvas-surface border-2 border-black shadow-[4px_4px_0px_#000] hover:border-cern-cyan/70 hover:-translate-x-0.5 hover:-translate-y-0.5 active:translate-x-px active:translate-y-px transition-[transform,border-color] duration-150 space-y-3 group flex flex-col justify-between"
           >
             <div className="space-y-3">
               <div className="flex items-center justify-between">
-                <div className="p-2.5 bg-black border-2 border-black text-[#FFE600] shadow-[2px_2px_0px_#FFE600]">
-                  <Crown className="w-5 h-5" />
+                <div className="w-9 h-9 flex items-center justify-center bg-canvas-raised border-2 border-black text-text-secondary group-hover:text-cern-cyan transition-colors duration-150">
+                  <Crown className="w-4 h-4" strokeWidth={1.5} />
                 </div>
-                <span className="px-2 py-0.5 text-[10px] font-mono font-bold bg-[#FFE600] text-black border-2 border-black uppercase shadow-[1px_1px_0px_#000]">
-                  Origin of Mass
-                </span>
+                <span className="text-xs font-mono text-text-muted">Origin of mass</span>
               </div>
               <div>
-                <h3 className="text-lg font-display font-bold text-white group-hover:text-[#FFE600] transition-colors">
-                  Higgs &quot;Mexican Hat&quot; Symmetry Lab
+                <h3 className="text-base font-display font-semibold text-white group-hover:text-cern-cyan transition-colors duration-150">
+                  Higgs Symmetry Lab
                 </h3>
                 <p className="text-xs text-text-secondary mt-1.5 leading-relaxed font-sans">
                   Cool the Big Bang universe below 159.5 GeV to watch spontaneous electroweak symmetry breaking
@@ -392,28 +376,26 @@ export default function HomePage() {
                 </p>
               </div>
             </div>
-            <div className="text-xs font-mono text-[#FFE600] font-bold pt-2 border-t-2 border-black flex items-center justify-between">
-              <span>V(φ) Potential &amp; Yukawa Tuning</span>
-              <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
+            <div className="text-xs font-mono text-text-secondary group-hover:text-cern-cyan pt-2 border-t-2 border-black flex items-center justify-between transition-colors duration-150">
+              <span>V(φ) potential &amp; Yukawa tuning</span>
+              <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform duration-150" strokeWidth={1.5} />
             </div>
           </Link>
 
           {/* Dark Matter & Hadron Therapy Card */}
           <Link
             href="/simulations?module=dark-matter"
-            className="p-5 bg-canvas-surface border-2 border-black shadow-[4px_4px_0px_#C084FC] hover:shadow-[6px_6px_0px_#C084FC] hover:-translate-x-0.5 hover:-translate-y-0.5 active:translate-x-[2px] active:translate-y-[2px] active:shadow-none transition-all space-y-3 group flex flex-col justify-between"
+            className="p-5 bg-canvas-surface border-2 border-black shadow-[4px_4px_0px_#000] hover:border-cern-cyan/70 hover:-translate-x-0.5 hover:-translate-y-0.5 active:translate-x-px active:translate-y-px transition-[transform,border-color] duration-150 space-y-3 group flex flex-col justify-between"
           >
             <div className="space-y-3">
               <div className="flex items-center justify-between">
-                <div className="p-2.5 bg-black border-2 border-black text-purple-400 shadow-[2px_2px_0px_#C084FC]">
-                  <EyeOff className="w-5 h-5" />
+                <div className="w-9 h-9 flex items-center justify-center bg-canvas-raised border-2 border-black text-text-secondary group-hover:text-cern-cyan transition-colors duration-150">
+                  <EyeOff className="w-4 h-4" strokeWidth={1.5} />
                 </div>
-                <span className="px-2 py-0.5 text-[10px] font-mono font-bold bg-purple-400 text-black border-2 border-black uppercase shadow-[1px_1px_0px_#000]">
-                  Frontier BSM
-                </span>
+                <span className="text-xs font-mono text-text-muted">Frontier BSM</span>
               </div>
               <div>
-                <h3 className="text-lg font-display font-bold text-white group-hover:text-purple-400 transition-colors">
+                <h3 className="text-base font-display font-semibold text-white group-hover:text-cern-cyan transition-colors duration-150">
                   Dark Matter CAST &amp; Mono-Jet Lab
                 </h3>
                 <p className="text-xs text-text-secondary mt-1.5 leading-relaxed font-sans">
@@ -422,28 +404,26 @@ export default function HomePage() {
                 </p>
               </div>
             </div>
-            <div className="text-xs font-mono text-purple-400 font-bold pt-2 border-t-2 border-black flex items-center justify-between">
-                      <span>Axions &amp; LHC Recoil Imbalance</span>
-              <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
+            <div className="text-xs font-mono text-text-secondary group-hover:text-cern-cyan pt-2 border-t-2 border-black flex items-center justify-between transition-colors duration-150">
+              <span>Axions &amp; LHC recoil imbalance</span>
+              <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform duration-150" strokeWidth={1.5} />
             </div>
           </Link>
 
           {/* Complete CERN Projects & 3D Complex Atlas Card */}
           <Link
             href="/projects"
-            className="p-5 bg-canvas-surface border-2 border-black shadow-[4px_4px_0px_#00E5FF] hover:shadow-[6px_6px_0px_#00E5FF] hover:-translate-x-0.5 hover:-translate-y-0.5 active:translate-x-[2px] active:translate-y-[2px] active:shadow-none transition-all space-y-3 group flex flex-col justify-between"
+            className="p-5 bg-canvas-surface border-2 border-black shadow-[4px_4px_0px_#000] hover:border-cern-cyan/70 hover:-translate-x-0.5 hover:-translate-y-0.5 active:translate-x-px active:translate-y-px transition-[transform,border-color] duration-150 space-y-3 group flex flex-col justify-between"
           >
             <div className="space-y-3">
               <div className="flex items-center justify-between">
-                <div className="p-2.5 bg-black border-2 border-black text-cern-cyan shadow-[2px_2px_0px_#00E5FF]">
-                  <Compass className="w-5 h-5" />
+                <div className="w-9 h-9 flex items-center justify-center bg-canvas-raised border-2 border-black text-text-secondary group-hover:text-cern-cyan transition-colors duration-150">
+                  <Compass className="w-4 h-4" strokeWidth={1.5} />
                 </div>
-                <span className="px-2 py-0.5 text-[10px] font-mono font-bold bg-cern-cyan text-black border-2 border-black uppercase shadow-[1px_1px_0px_#000]">
-                  3D Site Atlas
-                </span>
+                <span className="text-xs font-mono text-text-muted">3D site atlas</span>
               </div>
               <div>
-                <h3 className="text-lg font-display font-bold text-white group-hover:text-cern-cyan transition-colors">
+                <h3 className="text-base font-display font-semibold text-white group-hover:text-cern-cyan transition-colors duration-150">
                   All CERN Projects &amp; 3D Tunnel Map
                 </h3>
                 <p className="text-xs text-text-secondary mt-1.5 leading-relaxed font-sans">
@@ -452,28 +432,26 @@ export default function HomePage() {
                 </p>
               </div>
             </div>
-            <div className="text-xs font-mono text-cern-cyan font-bold pt-2 border-t-2 border-black flex items-center justify-between">
-              <span>22 Projects &amp; 3D Geo-Tunnels</span>
-              <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
+            <div className="text-xs font-mono text-text-secondary group-hover:text-cern-cyan pt-2 border-t-2 border-black flex items-center justify-between transition-colors duration-150">
+              <span>22 projects &amp; 3D geo-tunnels</span>
+              <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform duration-150" strokeWidth={1.5} />
             </div>
           </Link>
 
           {/* 3D Standard Model & Mass Scale Lab Card */}
           <Link
             href="/simulations?module=sm-3d"
-            className="p-5 bg-canvas-surface border-2 border-black shadow-[4px_4px_0px_#FFE600] hover:shadow-[6px_6px_0px_#FFE600] hover:-translate-x-0.5 hover:-translate-y-0.5 active:translate-x-[2px] active:translate-y-[2px] active:shadow-none transition-all space-y-3 group flex flex-col justify-between"
+            className="p-5 bg-canvas-surface border-2 border-black shadow-[4px_4px_0px_#000] hover:border-cern-cyan/70 hover:-translate-x-0.5 hover:-translate-y-0.5 active:translate-x-px active:translate-y-px transition-[transform,border-color] duration-150 space-y-3 group flex flex-col justify-between"
           >
             <div className="space-y-3">
               <div className="flex items-center justify-between">
-                <div className="p-2.5 bg-black border-2 border-black text-[#FFE600] shadow-[2px_2px_0px_#FFE600]">
-                  <Atom className="w-5 h-5" />
+                <div className="w-9 h-9 flex items-center justify-center bg-canvas-raised border-2 border-black text-text-secondary group-hover:text-cern-cyan transition-colors duration-150">
+                  <Atom className="w-4 h-4" strokeWidth={1.5} />
                 </div>
-                <span className="px-2 py-0.5 text-[10px] font-mono font-bold bg-[#FFE600] text-black border-2 border-black uppercase shadow-[1px_1px_0px_#000]">
-                  3D Quantum
-                </span>
+                <span className="text-xs font-mono text-text-muted">3D quantum</span>
               </div>
               <div>
-                <h3 className="text-lg font-display font-bold text-white group-hover:text-[#FFE600] transition-colors">
+                <h3 className="text-base font-display font-semibold text-white group-hover:text-cern-cyan transition-colors duration-150">
                   3D Standard Model Explorer
                 </h3>
                 <p className="text-xs text-text-secondary mt-1.5 leading-relaxed font-sans">
@@ -482,28 +460,26 @@ export default function HomePage() {
                 </p>
               </div>
             </div>
-            <div className="text-xs font-mono text-[#FFE600] font-bold pt-2 border-t-2 border-black flex items-center justify-between">
-              <span>Quarks, Leptons, Bosons &amp; Higgs</span>
-              <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
+            <div className="text-xs font-mono text-text-secondary group-hover:text-cern-cyan pt-2 border-t-2 border-black flex items-center justify-between transition-colors duration-150">
+              <span>Quarks, leptons, bosons &amp; Higgs</span>
+              <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform duration-150" strokeWidth={1.5} />
             </div>
           </Link>
 
           {/* ISOLDE Nuclear & Medipix3 Spin-Off Card */}
           <Link
             href="/simulations?module=isolde"
-            className="p-5 bg-canvas-surface border-2 border-black shadow-[4px_4px_0px_#FF0055] hover:shadow-[6px_6px_0px_#FF0055] hover:-translate-x-0.5 hover:-translate-y-0.5 active:translate-x-[2px] active:translate-y-[2px] active:shadow-none transition-all space-y-3 group flex flex-col justify-between"
+            className="p-5 bg-canvas-surface border-2 border-black shadow-[4px_4px_0px_#000] hover:border-cern-cyan/70 hover:-translate-x-0.5 hover:-translate-y-0.5 active:translate-x-px active:translate-y-px transition-[transform,border-color] duration-150 space-y-3 group flex flex-col justify-between"
           >
             <div className="space-y-3">
               <div className="flex items-center justify-between">
-                <div className="p-2.5 bg-black border-2 border-black text-cern-magenta shadow-[2px_2px_0px_#FF0055]">
-                  <Database className="w-5 h-5" />
+                <div className="w-9 h-9 flex items-center justify-center bg-canvas-raised border-2 border-black text-text-secondary group-hover:text-cern-cyan transition-colors duration-150">
+                  <Database className="w-4 h-4" strokeWidth={1.5} />
                 </div>
-                <span className="px-2 py-0.5 text-[10px] font-mono font-bold bg-cern-magenta text-white border-2 border-black uppercase shadow-[1px_1px_0px_#000]">
-                  ISOLDE + Spin-Offs
-                </span>
+                <span className="text-xs font-mono text-text-muted">ISOLDE + spin-offs</span>
               </div>
               <div>
-                <h3 className="text-lg font-display font-bold text-white group-hover:text-cern-magenta transition-colors">
+                <h3 className="text-base font-display font-semibold text-white group-hover:text-cern-cyan transition-colors duration-150">
                   ISOLDE Nuclear &amp; Medipix3 Labs
                 </h3>
                 <p className="text-xs text-text-secondary mt-1.5 leading-relaxed font-sans">
@@ -512,22 +488,22 @@ export default function HomePage() {
                 </p>
               </div>
             </div>
-            <div className="text-xs font-mono text-cern-magenta font-bold pt-2 border-t-2 border-black flex items-center justify-between">
-              <span>Nuclear Landscape &amp; RICH PID</span>
-              <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
+            <div className="text-xs font-mono text-text-secondary group-hover:text-cern-cyan pt-2 border-t-2 border-black flex items-center justify-between transition-colors duration-150">
+              <span>Nuclear landscape &amp; RICH PID</span>
+              <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform duration-150" strokeWidth={1.5} />
             </div>
           </Link>
         </GsapStaggerSection>
       </section>
 
       {/* 6. Scientific Provenance & Verification Guarantee */}
-      <section className="p-6 bg-canvas-surface border-3 border-black shadow-[6px_6px_0px_#00FF66] flex flex-col md:flex-row items-start md:items-center justify-between gap-6">
+      <section className="p-6 bg-canvas-surface border-2 border-black shadow-[4px_4px_0px_#000] flex flex-col md:flex-row items-start md:items-center justify-between gap-6">
         <div className="space-y-2 max-w-2xl">
           <div className="flex items-center gap-2">
-            <span className="p-1.5 bg-emerald-400 text-black border-2 border-black shadow-[2px_2px_0px_#000]">
-              <ShieldCheck className="w-5 h-5" />
+            <span className="w-8 h-8 flex items-center justify-center bg-canvas-raised text-emerald-400 border-2 border-black shadow-[2px_2px_0px_#000]">
+              <ShieldCheck className="w-4 h-4" strokeWidth={1.5} />
             </span>
-            <h3 className="font-display font-extrabold text-lg text-white">
+            <h3 className="font-display font-semibold text-lg text-white">
               Cryptographically Verified Scientific Provenance
             </h3>
           </div>
@@ -541,18 +517,18 @@ export default function HomePage() {
         <div className="flex items-center gap-3 shrink-0 font-mono text-xs">
           <Link
             href="/methodology"
-            className="px-4 py-2.5 bg-canvas-sub hover:bg-black text-white border-2 border-black shadow-[3px_3px_0px_#000] font-bold uppercase transition-all active:translate-x-[1px] active:translate-y-[1px] active:shadow-none"
+            className="px-4 py-2.5 bg-canvas-raised hover:bg-black text-white border-2 border-black shadow-[3px_3px_0px_#000] font-medium transition-colors duration-150 active:translate-x-px active:translate-y-px"
           >
-            Methodology &amp; Limits
+            Methodology &amp; limits
           </Link>
           <a
             href="https://github.com/Premchandyadav369/CERN"
             target="_blank"
             rel="noreferrer"
-            className="px-4 py-2.5 bg-cern-blue hover:bg-cern-accent text-white border-2 border-black shadow-[3px_3px_0px_#00E5FF] font-bold uppercase flex items-center gap-1.5 transition-all active:translate-x-[1px] active:translate-y-[1px] active:shadow-none"
+            className="px-4 py-2.5 bg-cern-cyan hover:bg-[#5df0ff] text-black border-2 border-black shadow-[3px_3px_0px_#000] font-semibold flex items-center gap-1.5 transition-colors duration-150 active:translate-x-px active:translate-y-px"
           >
-            <span>Source Code</span>
-            <ExternalLink className="w-3.5 h-3.5" />
+            <span>Source code</span>
+            <ExternalLink className="w-3.5 h-3.5" strokeWidth={1.5} />
           </a>
         </div>
       </section>

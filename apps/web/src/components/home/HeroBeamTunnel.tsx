@@ -218,114 +218,95 @@ export const HeroBeamTunnel: React.FC = () => {
         />
       </div>
 
-      {/* 2. Cybernetic Control Room Grid Overlay & Vignette */}
+      {/* 2. Control Room Grid Overlay & Calm Text Backdrop */}
       <div
-        className="absolute inset-0 pointer-events-none bg-gradient-to-t from-canvas via-canvas/60 to-canvas/40"
+        className="absolute inset-0 pointer-events-none"
         style={{
           backgroundImage: `
-            radial-gradient(circle at center, transparent 30%, rgba(6, 10, 18, 0.8) 85%, #060a12 100%),
-            linear-gradient(rgba(255, 255, 255, 0.04) 1px, transparent 1px),
-            linear-gradient(90deg, rgba(255, 255, 255, 0.04) 1px, transparent 1px)
+            radial-gradient(circle at center, transparent 32%, rgba(6, 10, 18, 0.82) 85%, #060a12 100%),
+            linear-gradient(rgba(255, 255, 255, 0.03) 1px, transparent 1px),
+            linear-gradient(90deg, rgba(255, 255, 255, 0.03) 1px, transparent 1px)
           `,
           backgroundSize: '100% 100%, 36px 36px, 36px 36px',
         }}
       />
 
       {/* 3. High-Contrast Hero Content */}
-      <div className="relative z-10 w-full flex flex-col justify-between p-6 sm:p-8 lg:p-10 min-h-[640px] lg:min-h-[700px] pointer-events-none">
-        {/* Top Header Bar: Status & Badges */}
+      <div className="relative z-10 w-full flex flex-col justify-between p-6 sm:p-8 lg:p-10 min-h-[600px] lg:min-h-[660px] pointer-events-none">
+        {/* Top Header Bar: Status & Controls */}
         <div className="flex flex-wrap items-center justify-between gap-3 pointer-events-auto">
-          {/* CERN Status Pill */}
-          <div className="flex items-center gap-2 px-3 py-1.5 bg-canvas/90 border-2 border-black shadow-[3px_3px_0px_#000] text-emerald-300 text-xs font-mono font-bold">
-            <span className="relative flex h-2.5 w-2.5">
-              <span className="animate-ping absolute inline-flex h-full w-full rounded-none bg-emerald-400 opacity-75" />
-              <span className="relative inline-flex rounded-none h-2.5 w-2.5 bg-emerald-400 border border-black" />
-            </span>
-            <span className="tracking-wider">LHC RUN 3 : STABLE BEAMS</span>
+          {/* CERN Status Readout */}
+          <div className="flex items-center gap-2 px-3 py-1.5 bg-canvas/90 border-2 border-black shadow-[3px_3px_0px_#000] text-emerald-300 text-xs font-mono font-medium">
+            <span className="inline-flex h-2 w-2 bg-emerald-400 border border-black" aria-hidden="true" />
+            <span className="tabular-nums">LHC Run 3 · Stable beams</span>
             <span className="text-text-muted hidden sm:inline">|</span>
-            <span className="text-text-secondary hidden sm:inline">26.7 km Superconducting Ring</span>
+            <span className="text-text-secondary hidden sm:inline tabular-nums">26.7 km superconducting ring</span>
           </div>
 
-          {/* Provenance & Tests Pill */}
+          {/* Provenance & Tuning Trigger */}
           <div className="flex items-center gap-2">
             {reduceMotion && (
-              <span className="px-2.5 py-1 bg-amber-400 border-2 border-black shadow-[2px_2px_0px_#000] text-xs font-mono font-bold text-black uppercase">
-                Reduced Motion
+              <span className="px-2.5 py-1 bg-amber-400 border-2 border-black shadow-[2px_2px_0px_#000] text-xs font-mono font-semibold text-black">
+                Reduced motion
               </span>
             )}
-            <div className="flex items-center gap-1.5 px-3 py-1.5 bg-canvas/90 border-2 border-black shadow-[3px_3px_0px_#000] text-xs font-mono font-bold text-cern-cyan">
-              <ShieldCheck className="w-4 h-4" />
-              <span className="hidden sm:inline">27/27 PHYSICS TESTS</span>
-              <span className="sm:hidden">27/27</span>
+            <div className="flex items-center gap-1.5 px-3 py-1.5 bg-canvas/90 border-2 border-black shadow-[3px_3px_0px_#000] text-xs font-mono font-medium text-text-secondary tabular-nums">
+              <ShieldCheck className="w-4 h-4 text-emerald-400" strokeWidth={1.5} />
+              <span className="hidden sm:inline">29/29 physics tests</span>
+              <span className="sm:hidden">29/29</span>
             </div>
             <button
               onClick={() => setShowControls(!showControls)}
-              className="flex items-center gap-1.5 px-3 py-1.5 bg-cern-blue text-white border-2 border-black shadow-[3px_3px_0px_#00E5FF] hover:shadow-[4px_4px_0px_#00E5FF] active:translate-x-[1px] active:translate-y-[1px] active:shadow-none text-xs font-mono font-bold transition-all"
+              className="flex items-center gap-1.5 px-3 py-1.5 bg-canvas-surface hover:bg-canvas-raised text-white border-2 border-black shadow-[3px_3px_0px_#000] active:translate-x-px active:translate-y-px active:shadow-none text-xs font-mono font-medium transition-[transform,background-color,box-shadow] duration-150 cursor-pointer"
             >
-              <Sliders className="w-3.5 h-3.5 text-cern-cyan" />
-              <span>Tuning Console</span>
+              <Sliders className="w-3.5 h-3.5 text-cern-cyan" strokeWidth={1.5} />
+              <span>Tuning console</span>
               <ChevronDown
                 className={`w-3.5 h-3.5 transition-transform duration-150 ${
                   showControls ? 'rotate-180' : ''
                 }`}
+                strokeWidth={1.5}
               />
             </button>
           </div>
         </div>
 
         {/* Middle Main Narrative Banner */}
-        <div className="my-auto py-8 max-w-3xl space-y-4">
-          <div className="inline-flex items-center gap-2 px-3 py-1 bg-cern-blue border-2 border-black shadow-[3px_3px_0px_#000] text-white text-xs font-mono font-bold tracking-widest uppercase">
-            <Radio className="w-4 h-4 text-cern-cyan animate-pulse" />
-            27-Kilometre Ultra-High Vacuum Beamline
+        <div className="my-auto py-8 max-w-2xl space-y-4">
+          <div className="inline-flex items-center gap-2 px-3 py-1 bg-canvas-surface border-2 border-black shadow-[2px_2px_0px_#000] text-text-secondary text-xs font-mono font-medium">
+            <Radio className="w-3.5 h-3.5 text-cern-cyan" strokeWidth={1.5} />
+            <span>27 km ultra-high vacuum beamline</span>
           </div>
 
-          <h1 className="text-3xl sm:text-5xl lg:text-6xl font-display font-extrabold tracking-tight text-white leading-[1.08] drop-shadow-[0_4px_0_rgba(0,0,0,1)]">
-            The Interactive <br className="hidden sm:block" />
-            <span className="text-cern-cyan underline decoration-4 decoration-cern-blue underline-offset-8">
-              Digital Universe of CERN
+          <h1 className="text-3xl sm:text-5xl lg:text-6xl font-display font-semibold tracking-tight text-white leading-[1.06]">
+            27 km LHC digital twin and{' '}
+            <span className="text-cern-cyan">
+              particle simulator
             </span>
           </h1>
 
-          <p className="text-sm sm:text-base lg:text-lg text-text-secondary leading-relaxed max-w-2xl bg-canvas/80 p-3 border-2 border-black shadow-[3px_3px_0px_#000]">
-            Explore the particle physics frontier through quantitative digital twins: relativistic
-            beam acceleration, ATLAS &amp; CMS multi-layer detector cutaways, FPGA Level-1 trigger
-            topologies, and the Worldwide LHC Computing Grid.
+          <p className="text-sm sm:text-base text-text-secondary leading-relaxed max-w-xl bg-canvas/85 p-3.5 border-2 border-black shadow-[3px_3px_0px_#000]">
+            Explore relativistic beam acceleration, ATLAS and CMS detector cutaways, FPGA Level-1 trigger
+            topologies, and the Worldwide LHC Computing Grid with verified constants.
           </p>
 
-          {/* Quick Action Navigation CTAs */}
+          {/* Primary and Secondary Action */}
           <div className="flex flex-wrap items-center gap-3 pt-2 pointer-events-auto">
             <Link
               href="/accelerators"
-              className="px-5 py-3 bg-cern-blue hover:bg-cern-accent text-white font-mono font-bold text-xs sm:text-sm flex items-center gap-2 border-2 border-black shadow-[4px_4px_0px_#000] hover:shadow-[5px_5px_0px_#00E5FF] active:translate-x-[2px] active:translate-y-[2px] active:shadow-none transition-all"
+              className="px-5 py-3 bg-cern-cyan hover:bg-[#5df0ff] text-black font-mono font-semibold text-xs sm:text-sm flex items-center gap-2 border-2 border-black shadow-[4px_4px_0px_#000] active:translate-x-[2px] active:translate-y-[2px] active:shadow-none transition-[transform,background-color,box-shadow] duration-150"
             >
-              <Zap className="w-4 h-4 text-cern-cyan" />
-              <span>Launch Accelerator Sim</span>
-              <ArrowRight className="w-4 h-4" />
+              <Zap className="w-4 h-4" strokeWidth={1.5} />
+              <span>Launch accelerator sim</span>
+              <ArrowRight className="w-4 h-4" strokeWidth={1.5} />
             </Link>
 
             <Link
               href="/detectors"
-              className="px-5 py-3 bg-canvas-surface hover:bg-canvas-raised text-white font-mono font-bold text-xs sm:text-sm flex items-center gap-2 border-2 border-black shadow-[4px_4px_0px_#000] hover:shadow-[5px_5px_0px_#4C7DFF] active:translate-x-[2px] active:translate-y-[2px] active:shadow-none transition-all"
+              className="px-5 py-3 bg-canvas-surface hover:bg-canvas-raised text-white font-mono font-medium text-xs sm:text-sm flex items-center gap-2 border-2 border-black shadow-[4px_4px_0px_#000] active:translate-x-[2px] active:translate-y-[2px] active:shadow-none transition-[transform,background-color,box-shadow] duration-150"
             >
-              <Layers className="w-4 h-4 text-cern-accent" />
-              <span>ATLAS &amp; CMS Twins</span>
-            </Link>
-
-            <Link
-              href="/ai-lab"
-              className="px-4 py-3 bg-canvas-surface hover:bg-canvas-raised text-amber-300 hover:text-white font-mono font-bold text-xs sm:text-sm flex items-center gap-2 border-2 border-black shadow-[4px_4px_0px_#000] hover:shadow-[5px_5px_0px_#FFE600] active:translate-x-[2px] active:translate-y-[2px] active:shadow-none transition-all"
-            >
-              <Cpu className="w-4 h-4 text-amber-400" />
-              <span>AI Lab</span>
-            </Link>
-
-            <Link
-              href="/simulations?module=discovery"
-              className="px-4 py-3 bg-canvas-surface hover:bg-canvas-raised text-pink-300 hover:text-white font-mono font-bold text-xs sm:text-sm flex items-center gap-2 border-2 border-black shadow-[4px_4px_0px_#000] hover:shadow-[5px_5px_0px_#FF0055] active:translate-x-[2px] active:translate-y-[2px] active:shadow-none transition-all"
-            >
-              <span className="text-pink-400 font-bold">5σ</span>
-              <span>Discovery Lab</span>
+              <Layers className="w-4 h-4 text-text-secondary" strokeWidth={1.5} />
+              <span>ATLAS &amp; CMS twins</span>
             </Link>
           </div>
         </div>
@@ -334,8 +315,8 @@ export const HeroBeamTunnel: React.FC = () => {
         <div className="space-y-3 pointer-events-auto">
           {/* Preset Selector Ribbon */}
           <div className="flex items-center gap-2 overflow-x-auto pb-1 scrollbar-none">
-            <span className="text-xs font-mono uppercase text-white shrink-0 font-bold hidden sm:inline mr-1 px-2.5 py-1.5 bg-black border-2 border-black shadow-[2px_2px_0px_#000]">
-              Beam Scenario:
+            <span className="text-xs font-mono text-text-secondary shrink-0 font-medium hidden sm:inline mr-1 px-2.5 py-1.5 bg-canvas-surface border-2 border-black shadow-[2px_2px_0px_#000]">
+              Beam scenario
             </span>
             {Object.values(PRESETS).map((p) => {
               const isSelected = p.id === selectedPresetKey;
@@ -343,10 +324,10 @@ export const HeroBeamTunnel: React.FC = () => {
                 <button
                   key={p.id}
                   onClick={() => handleSelectPreset(p.id)}
-                  className={`shrink-0 px-3.5 py-2 text-xs font-mono font-bold transition-all flex items-center gap-2 border-2 border-black active:translate-x-[1px] active:translate-y-[1px] ${
+                  className={`shrink-0 px-3.5 py-2 text-xs font-mono font-medium transition-[transform,background-color,border-color,box-shadow] duration-150 flex items-center gap-2 border-2 border-black active:translate-x-px active:translate-y-px cursor-pointer ${
                     isSelected
-                      ? 'bg-canvas-raised text-white shadow-[4px_4px_0px_#00E5FF] -translate-x-0.5 -translate-y-0.5'
-                      : 'bg-canvas-surface/90 text-text-secondary hover:text-white shadow-[3px_3px_0px_#000]'
+                      ? 'bg-canvas-raised text-white border-cern-cyan shadow-[3px_3px_0px_#000]'
+                      : 'bg-canvas-surface/95 text-text-secondary hover:text-white shadow-[2px_2px_0px_#000]'
                   }`}
                 >
                   <span
@@ -354,7 +335,7 @@ export const HeroBeamTunnel: React.FC = () => {
                     style={{ backgroundColor: p.cableColor }}
                   />
                   <span>{p.name}</span>
-                  <span className="text-[10px] text-text-muted hidden md:inline">({p.energy})</span>
+                  <span className="text-[11px] text-text-muted hidden md:inline tabular-nums">({p.energy})</span>
                 </button>
               );
             })}

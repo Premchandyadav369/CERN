@@ -141,6 +141,26 @@ function loadSavedBets(): SavedBetState {
   }
 }
 
+interface SavedChallengeState {
+  completedChallenges: string[];
+  testedLaws: string[];
+}
+
+function loadSavedChallenges(): SavedChallengeState {
+  if (typeof window === 'undefined') return { completedChallenges: [], testedLaws: [] };
+  try {
+    const raw = window.localStorage.getItem('parton_challenges_v1');
+    if (!raw) return { completedChallenges: [], testedLaws: [] };
+    const parsed = JSON.parse(raw) as Partial<SavedChallengeState>;
+    return {
+      completedChallenges: Array.isArray(parsed.completedChallenges) ? parsed.completedChallenges : [],
+      testedLaws: Array.isArray(parsed.testedLaws) ? parsed.testedLaws : [],
+    };
+  } catch {
+    return { completedChallenges: [], testedLaws: [] };
+  }
+}
+
 export interface GlobalState {
   userLevel: UserLevel;
   setUserLevel: (level: UserLevel) => void;
@@ -180,6 +200,11 @@ export interface GlobalState {
   placePhysicsBet: (id: string, picked: number, correctIndex: number, wager: number) => void;
   resetBets: () => void;
   hydrateBets: () => void;
+  completedChallenges: string[];
+  testedLawViolations: string[];
+  hydrateChallenges: () => void;
+  completeChallenge: (id: string, rewardCredits: number) => void;
+  recordLawViolation: (lawId: string) => void;
 }
 
 export const useGlobalStore = create<GlobalState>((set) => ({
@@ -293,4 +318,56 @@ export const useGlobalStore = create<GlobalState>((set) => ({
     }
     set({ betCredits: 100, betStreak: 0, settledBets: {} });
   },
+  completedChallenges: [],
+  testedLawViolations: [],
+  hydrateChallenges: () => {
+    const saved = loadSavedChallenges();
+    set({
+      completedChallenges: saved.completedChallenges,
+      testedLawViolations: saved.testedLaws,
+    });
+  },
+  completeChallenge: (id, rewardCredits) =>
+    set((state) => {
+      if (state.completedChallenges.includes(id)) return state;
+      const nextChallenges = [...state.completedChallenges, id];
+      const nextCredits = state.betCredits + Math.max(0, rewardCredits);
+      if (typeof window !== 'undefined') {
+        try {
+          window.localStorage.setItem(
+            'parton_challenges_v1',
+            JSON.stringify({
+              completedChallenges: nextChallenges,
+              testedLaws: state.testedLawViolations,
+            })
+          );
+          window.localStorage.setItem(
+            'cernx_bets_v1',
+            JSON.stringify({
+              credits: nextCredits,
+              streak: state.betStreak,
+              settled: state.settledBets,
+            })
+          );
+        } catch {}
+      }
+      return { completedChallenges: nextChallenges, betCredits: nextCredits };
+    }),
+  recordLawViolation: (lawId) =>
+    set((state) => {
+      if (state.testedLawViolations.includes(lawId)) return state;
+      const nextLaws = [...state.testedLawViolations, lawId];
+      if (typeof window !== 'undefined') {
+        try {
+          window.localStorage.setItem(
+            'parton_challenges_v1',
+            JSON.stringify({
+              completedChallenges: state.completedChallenges,
+              testedLaws: nextLaws,
+            })
+          );
+        } catch {}
+      }
+      return { testedLawViolations: nextLaws };
+    }),
 }));

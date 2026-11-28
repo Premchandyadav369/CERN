@@ -1,7 +1,7 @@
 'use client';
 
 import React, { useState } from 'react';
-import { Camera, Share2, Check, FileCode2, BookOpen } from 'lucide-react';
+import { Camera, Share2, Check, FileCode2, BookOpen, Braces } from 'lucide-react';
 import { playParticlePulse } from '@/lib/sonifier';
 
 interface LabExportBarProps {
@@ -12,7 +12,7 @@ interface LabExportBarProps {
 function buildPythonScript(title: string, shareQuery?: Record<string, string | number>): string {
   const paramsJson = JSON.stringify(shareQuery ?? {}, null, 2);
   return `"""
-CERN-X Reproducible Lab Script: ${title}
+PARTON Reproducible Lab Script: ${title}
 Generated: ${new Date().toISOString()}
 Requires: numpy, scipy (or run standalone with Python 3.10+)
 Repository solvers: research/scripts/{electroweak_vacuum_rge,neutrino_pmns_mc,beam_optics}.py
@@ -30,7 +30,7 @@ SPEED_OF_LIGHT_MS = 299792458.0
 LHC_CIRCUMFERENCE_M = 26658.883
 
 def summary():
-    print(f"CERN-X Reproducible Run :: {LAB_TITLE}")
+    print(f"PARTON Reproducible Run :: {LAB_TITLE}")
     print("Captured Scenario Parameters:", json.dumps(PARAMETERS, indent=2))
     print(f"LHC Revolution Frequency f_rev = {SPEED_OF_LIGHT_MS / LHC_CIRCUMFERENCE_M:.2f} Hz")
 
@@ -53,9 +53,9 @@ function buildNotebookJson(title: string, shareQuery?: Record<string, string | n
         cell_type: 'markdown',
         metadata: {},
         source: [
-          `# CERN-X Reproducible Experiment: ${title}\n`,
+          `# PARTON Reproducible Experiment: ${title}\n`,
           '\n',
-          'Exported directly from the **CERN-X Digital Universe** interactive simulation suite.\n',
+          'Exported directly from the **PARTON Physics Digital Twin** interactive simulation suite.\n',
         ],
       },
       {
@@ -93,26 +93,66 @@ export const LabExportBar: React.FC<LabExportBarProps> = ({ title, shareQuery })
     const targetCanvas = canvases.find((c) => c.offsetWidth > 100 && c.offsetHeight > 100) || canvases[0];
     if (!targetCanvas) return;
     try {
-      const dataUrl = targetCanvas.toDataURL('image/png');
+      const poster = document.createElement('canvas');
+      const headerH = 56;
+      const w = Math.max(640, targetCanvas.width);
+      const h = targetCanvas.height + headerH;
+      poster.width = w;
+      poster.height = h;
+      const ctx = poster.getContext('2d');
+      let dataUrl = '';
+
+      if (ctx) {
+        ctx.fillStyle = '#05080F';
+        ctx.fillRect(0, 0, w, h);
+        ctx.fillStyle = '#090E1A';
+        ctx.fillRect(0, 0, w, headerH);
+        ctx.fillStyle = '#00E5FF';
+        ctx.fillRect(0, headerH - 3, w, 3);
+        ctx.font = 'bold 18px monospace';
+        ctx.fillStyle = '#FFFFFF';
+        ctx.fillText(`PARTON // ${title.toUpperCase()}`, 18, 34);
+        ctx.font = 'bold 12px monospace';
+        ctx.fillStyle = '#FFE600';
+        ctx.textAlign = 'right';
+        ctx.fillText(new Date().toISOString().slice(0, 19) + ' UTC', w - 18, 34);
+        ctx.textAlign = 'left';
+        ctx.drawImage(targetCanvas, (w - targetCanvas.width) / 2, headerH);
+        dataUrl = poster.toDataURL('image/png');
+      } else {
+        dataUrl = targetCanvas.toDataURL('image/png');
+      }
+
       const a = document.createElement('a');
       a.href = dataUrl;
-      a.download = `cern-x-${title.toLowerCase().replace(/[^a-z0-9]+/g, '-')}-${Date.now()}.png`;
+      a.download = `parton-${title.toLowerCase().replace(/[^a-z0-9]+/g, '-')}-${Date.now()}.png`;
       a.click();
       playParticlePulse(880, 0.07, 0.05);
     } catch {}
   };
 
-  const downloadFile = (content: string, ext: 'py' | 'ipynb', mime: string) => {
+  const downloadFile = (content: string, ext: 'py' | 'ipynb' | 'json', mime: string) => {
     const slug = title.toLowerCase().replace(/[^a-z0-9]+/g, '-');
     const blob = new Blob([content], { type: mime });
     const url = URL.createObjectURL(blob);
     const a = document.createElement('a');
     a.href = url;
-    a.download = `cern-x-${slug}.${ext}`;
+    a.download = `parton-${slug}.${ext}`;
     a.click();
     URL.revokeObjectURL(url);
     playParticlePulse(660, 0.06, 0.05);
   };
+
+  const telemetryPayload = JSON.stringify(
+    {
+      platform: 'PARTON',
+      module: title,
+      capturedAt: new Date().toISOString(),
+      parameters: shareQuery ?? {},
+    },
+    null,
+    2
+  );
 
   return (
     <div className="flex flex-wrap items-center gap-2 text-xs font-mono">
@@ -144,6 +184,16 @@ export const LabExportBar: React.FC<LabExportBarProps> = ({ title, shareQuery })
       >
         <BookOpen className="w-3.5 h-3.5 text-amber-300" />
         <span>.ipynb</span>
+      </button>
+
+      <button
+        type="button"
+        onClick={() => downloadFile(telemetryPayload, 'json', 'application/json')}
+        className="px-2.5 py-1.5 bg-canvas-surface hover:bg-canvas-raised text-white border-2 border-black shadow-[2px_2px_0px_#000] font-bold flex items-center gap-1.5 transition-all active:translate-x-[1px] active:translate-y-[1px] cursor-pointer"
+        title="Download structured JSON scenario snapshot"
+      >
+        <Braces className="w-3.5 h-3.5 text-purple-300" />
+        <span>.json</span>
       </button>
 
       <button

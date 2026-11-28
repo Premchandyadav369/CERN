@@ -9,6 +9,7 @@ import { MissionsDrawer } from '@/components/ui/MissionsDrawer';
 import { MissMinutesCompanion } from '@/components/ui/MissMinutesCompanion';
 import { MotionProvider } from '@/components/motion/MotionProvider';
 import { ScrollBeamProgress } from '@/components/motion/CernMotionPrimitives';
+import { ShortcutHudModal } from '@/components/ui/ShortcutHudModal';
 
 export const metadata: Metadata = {
   title: 'CERN-X | The Interactive Digital Universe of CERN',
@@ -46,6 +47,7 @@ export default function RootLayout({
           <CitationDrawer />
           <MissionsDrawer />
           <MissMinutesCompanion />
+          <ShortcutHudModal />
         </MotionProvider>
       </body>
     </html>

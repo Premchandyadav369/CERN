@@ -13,6 +13,7 @@ import {
 import { Value } from '@/components/provenance/Value';
 import { FidelityBadge } from '@/components/provenance/FidelityBadge';
 import { Eli5Card } from '@/components/ui/Eli5Card';
+import { LawGuardBanner } from '@/components/ui/LawGuardBanner';
 import { MathFormula } from '@/components/ui/MathFormula';
 import { useGlobalStore } from '@/lib/store';
 import { Lhc3DRingCanvas } from './Lhc3DRingCanvas';
@@ -201,7 +202,7 @@ export const LhcSimulator: React.FC = () => {
             <input
               type="range"
               min={particleType === 'proton' ? 450 : 20000}
-              max={particleType === 'proton' ? 7000 : 70000}
+              max={particleType === 'proton' ? 9200 : 85000}
               step={particleType === 'proton' ? 50 : 500}
               value={beamEnergyGev}
               onChange={(e) => setBeamEnergyGev(Number(e.target.value))}
@@ -407,6 +408,17 @@ export const LhcSimulator: React.FC = () => {
         </div>
       </div>
     </div>
+
+    {dipoleFieldTesla > 8.4 && (
+      <LawGuardBanner
+        lawName="NbTi Dipole Quench & Magnetic Rigidity Ceiling (8.33 T)"
+        severity={dipoleFieldTesla > 8.85 ? 'VIOLATION' : 'WARNING'}
+        whatHappens={`Required field B = ${dipoleFieldTesla.toFixed(2)} T exceeds LHC Run-3 1.9 K NbTi dipole quench limit! Coils transition to normal copper resistance, dumping stored ~362+ MJ beam/magnet energy unless dumped in < 89 μs.`}
+        eli5Explanation="Because the 27-km tunnel size cannot grow, higher-energy protons try to fly straight out of the circle like a fast car on an icy bend! Past ~7.4 TeV per beam, LHC’s existing NbTi magnets cannot grip the track without overheating and quenching."
+        technicalExplanation="Magnetic bending radius ρ = 2803.95 m is fixed by existing tunnel geometry. Exceeding NbTi B_c2(1.9 K) demands either Nb₃Sn high-field upgrades (11–16 T) or a wider radius tunnel like the 90.7 km FCC."
+        formulaTex="B_{\\text{req}} = \\frac{p}{0.299792\\,|Z|\\,\\rho_{\\text{LHC}}} > 8.33\\text{ T}"
+      />
+    )}
     </div>
   );
 };

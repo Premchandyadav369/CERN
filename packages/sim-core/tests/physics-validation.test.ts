@@ -44,6 +44,10 @@ import {
   calculateNeutrinoOscillation,
   calculateLhcFillCycle,
 } from '../src/physics/nuclear.js';
+import {
+  evaluateProtonPdf,
+  evaluateLhcPartonLuminosity,
+} from '../src/physics/parton.js';
 import { SeededRNG } from '../src/rng/prng.js';
 
 describe('Physics Validation Suite', () => {
@@ -362,6 +366,28 @@ describe('Physics Validation Suite', () => {
       const mono = calculateDiracMonopoleMetrics(1, 3.8, 100);
       expect(mono.effectiveChargeRatio).toBeCloseTo(68.518, 1);
       expect(mono.ionizingLossRatioVsProton).toBeGreaterThan(4500);
+    });
+  });
+
+  describe('Parton Distribution Functions (Bjorken-x & DGLAP Evolution)', () => {
+    it('shows gluon sea dominance at small x and u_v > d_v at large valence x', () => {
+      const lowX = evaluateProtonPdf(0.0092, 125); // Higgs ~125 GeV at 13.6 TeV
+      expect(lowX.xGluon).toBeGreaterThan(lowX.xUv * 5);
+      expect(lowX.gluonFraction).toBeGreaterThan(0.7);
+
+      const highX = evaluateProtonPdf(0.45, 125);
+      expect(highX.xUv).toBeGreaterThan(highX.xDv);
+      expect(highX.xUv).toBeGreaterThan(highX.xGluon);
+    });
+
+    it('exhibits DGLAP scaling violations and identifies gluon-gluon Higgs dominance at 13.6 TeV', () => {
+      const lowQ = evaluateProtonPdf(0.005, 5);
+      const highQ = evaluateProtonPdf(0.005, 500);
+      expect(highQ.xGluon).toBeGreaterThan(lowQ.xGluon);
+
+      const higgsMix = evaluateLhcPartonLuminosity(125.25, 13.6);
+      expect(higgsMix.typicalX).toBeCloseTo(125.25 / 13600, 4);
+      expect(higgsMix.ggChannelShare).toBeGreaterThan(0.8);
     });
   });
 });

@@ -6,4 +6,5 @@ export * from './physics/statistics.js';
 export * from './physics/feynman.js';
 export * from './physics/bsm.js';
 export * from './physics/nuclear.js';
+export * from './physics/parton.js';
 export * from './rng/prng.js';

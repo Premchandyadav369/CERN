@@ -1,15 +1,15 @@
-# CERN-X — The Interactive Digital Universe of CERN
+# PARTON — Interactive Particle Physics & Accelerator Digital Twin
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)
-[![Physics Tests: 27/27 PASS](https://img.shields.io/badge/Physics_Tests-27%2F27_PASS-00FF66.svg)](#10-verification--automated-checks)
+[![Physics Tests: 29/29 PASS](https://img.shields.io/badge/Physics_Tests-29%2F29_PASS-00FF66.svg)](#10-verification--automated-checks)
 [![C++17 & Python Kernels](https://img.shields.io/badge/Kernels-TS_%7C_C%2B%2B17_%7C_Python-FFE600.svg)](#7-polyglot-physics-kernels-typescript--c17--python)
 [![Next.js 14](https://img.shields.io/badge/Next.js-14.2-black?logo=next.js)](apps/web/package.json)
 [![Three.js WebGL](https://img.shields.io/badge/3D_Graphics-Three.js-00E5FF)](apps/web/package.json)
 [![Deployment: Ready](https://img.shields.io/badge/Deployment-Vercel_%7C_Docker_%7C_Render-4C7DFF)](DEPLOYMENT.md)
 
-> **IMPORTANT NON-AFFILIATION NOTICE**: **CERN-X** is an independent, open-source educational and computational physics platform. It is **NOT** affiliated with, sponsored by, endorsed by, or operated by the European Organization for Nuclear Research (**CERN**). Protected CERN trademarks and official emblems are not used.
+> **IMPORTANT NON-AFFILIATION NOTICE**: **PARTON** is an independent, open-source educational and computational physics platform. It is **NOT** affiliated with, sponsored by, endorsed by, or operated by the European Organization for Nuclear Research (**CERN**). Protected CERN trademarks and official emblems are not used.
 
-![CERN-X Interactive Control Center Hero](docs/assets/platform-hero.png)
+![PARTON Interactive Control Center Hero](docs/assets/platform-hero.png)
 
 ---
 
@@ -31,7 +31,7 @@
 
 ## 1. Vision & End-to-End Scientific Chain
 
-**CERN-X** transforms CERN's accelerator complex, superconducting cryogenics, subdetectors, real-time trigger electronics, worldwide computing grid, and particle physics discoveries into a **live, browser-executable digital twin**. Instead of pre-rendered videos or static numbers, sliders compute closed-form relativistic laws, magnetic rigidities, quantum amplitudes, and deterministic seeded Monte Carlo ensembles on-the-fly inside [`@cern-x/sim-core`](packages/sim-core/src/index.ts), cross-validated against standalone **C++17** and **Python** research kernels.
+**PARTON** transforms CERN's accelerator complex, superconducting cryogenics, subdetectors, parton scattering dynamics, real-time trigger electronics, worldwide computing grid, and particle physics discoveries into a **live, browser-executable digital twin**. Instead of pre-rendered videos or static numbers, sliders compute closed-form relativistic laws, magnetic rigidities, Bjorken-$x$ parton momentum densities, quantum amplitudes, and deterministic seeded Monte Carlo ensembles on-the-fly inside [`@cern-x/sim-core`](packages/sim-core/src/index.ts), cross-validated against standalone **C++17** and **Python** research kernels.
 
 The platform links the full scientific workflow end-to-end:
 
@@ -43,12 +43,12 @@ $$
 
 ## 2. System Architecture & Visual Gallery
 
-![CERN-X End-to-End Computational & Provenance Architecture](docs/assets/cernx-architecture.png)
+![PARTON End-to-End Computational & Provenance Architecture](docs/assets/cernx-architecture.png)
 
 ```mermaid
 flowchart LR
   S["1. Primary Sources\nCERN Open Data · PDG 2024\nHEPData · arXiv XML"] --> K["2. Polyglot Compute Kernels\n@cern-x/sim-core (TS)\nresearch/cpp (C++17 L1 & RK4)\nresearch/scripts (Py/SciPy)"]
-  K --> G["3. Automated Verification\nverify_manifest.js · 27 Vitest\ng++ -Werror · Python RGE\ntsc --noEmit · 33-Route Probe"]
+  K --> G["3. Automated Verification\nverify_manifest.js · 29 Vitest\ng++ -Werror · Python RGE\ntsc --noEmit · 40-Route Probe"]
   G --> UI["4. Interactive Digital Twin\nNext.js 14 · Three.js WebGL\n60 FPS Canvas · KaTeX\n[i] Info Cards · WebAudio"]
 ```
 
@@ -74,7 +74,7 @@ flowchart LR
 | :--- | :--- | :--- |
 | `/` | **Interactive Control Center** | 3D Hero Beam Tunnel, clickable Geneva Ring Map, Proton Journey Stepper, 9-stage Pipeline View (`KaTeX`), and Provenance Overview |
 | `/projects` | **CERN Projects & 3D Atlas** | Interactive Three.js 3D underground facility complex, collider circumference overlay (`LHC`, `FCC-hh`, `HL-LHC`), knowledge graph, and 22+ projects |
-| `/accelerators` | **Accelerator Complex** | Injector specs (`Linac4` through `FCC`), embedded **LHC Dynamics**, and **Courant-Snyder Beam Optics** sandboxes |
+| `/accelerators` | **Accelerator & Parton Complex** | Injector specs (`Linac4` through `FCC`), **LHC Dynamics**, **Courant-Snyder Beam Optics**, and **Inside-the-Proton Bjorken-$x$ PDF Explorer** |
 | `/experiments` | **Flagship & Fixed-Target Labs** | `ATLAS`, `CMS`, `ALICE`, `LHCb`, `ISOLDE`, `ALPHA`, `CAST`, `FASER`, `MoEDAL`, `AWAKE`, and `n_TOF` |
 | `/detectors` | **3D Detector Digital Twins** | Toggleable `ATLAS` / `CMS` / `ALICE` / `LHCb` subdetector layers, **Open Data 3D Handoff** (`Inspect 3D`), LEGO calorimeter towers, $\text{PbWO}_4$ & $\text{Nb}_3\text{Sn}$ 3D lattice |
 | `/simulations` | **33 Interactive Physics Labs** | Lazy code-split `tablist` across **5 domains**, **3-Step ELI5 Story + Myth-Buster**, **Interactive Physics Bet Arena (`Beam Credits`)**, `ⓘ` Technical Terms, and **`.py`/`.ipynb` Export** |
@@ -84,6 +84,7 @@ flowchart LR
 | `/open-data` | **Real CERN Open Data Lab** | Authentic $Z^0 \to \mu^+\mu^-$ dimuon spectrum, live **`/api/cern-live` CERN Open Data Portal** stream + 1-click **`Inspect 3D`** detector handoff |
 | `/learn` | **Subatomic Dictionary & Timeline** | 3-depth glossary (`Beginner` / `Undergrad` / `Researcher`) with KaTeX math, Standard Model 3D periodic explorer, and CERN history timeline |
 | `/methodology` | **End-to-End Methodology & Proofs** | 5-stage execution pipeline, **Live Browser Physics Verifier**, full KaTeX ledger, and interactive `data/manifest.json` inspector |
+| `/brand` | **PARTON Logo, Icons & PWA Kit** | Full collider emblem & simple app-icon previewer, 16px–512px legibility ladder, 1-click **SVG / PNG (`512px`, `192px`, Banner)** exports |
 | `/about` | **Governance & Disclaimer** | Strict No-Fake-Data charter, 3 permitted data classes, fidelity badges, and non-affiliation notice |
 
 ---
@@ -146,6 +147,7 @@ All 8 labs inside **TVA & Marvel Labs** translate recognizable sci-fi interfaces
 
 - **Global `101 / BSc / PhD` Depth Switcher & Beam Credits**: Switch explanation depth from the header on any page, track your live **`Beam Credits` (`⚡`)**, or toggle site-wide **`TVA MODE`** and the docked **`GUIDE`** companion.
 - **33-Lab ELI5 3-Step Story, Myth-Buster & Interactive Physics Bet Arena (`PhysicsBetArena`)**: Every simulator pairs plain-language step-by-step stories and common misconception busters with an interactive prediction wager (including **Predict Before You Run**) backed by real `SeededRNG` / `@cern-x/sim-core` physics outcomes.
+- **Operator Shortcuts (`?`) & Lab Snapshot Exports**: Press `?` anywhere for global shift-console keyboard shortcuts, and export framed **PARTON PNG posters**, **`.json` scenario telemetry**, **`.py`**, and **`.ipynb` notebooks** directly from simulators.
 - **GLSL WebGL Shaders, Scroll-Driven Motion & Accessibility**: Powered by custom **Superfluid He-II Quantized Vortex / Volumetric Tunnel shaders**, GSAP `ScrollTrigger` reveals, CSS `in oklab`/`in oklch` perceptual gradients, `forced-colors: active` contrast fallbacks, skip links, and `reduceMotion` compliance.
 - **`ⓘ` Technical Term Info Cards (`TechnicalTermDeck`) & Verified KaTeX**: Clickable `ⓘ` pills for 34+ symbols paired with `MathFormula`, `InlineMathText`, and expandable `fx Equation` toggles on `FidelityBadge`.
 
@@ -262,7 +264,7 @@ $$
 ## 10. Verification & Automated Checks
 
 Every commit runs dual CI jobs defined in [`.github/workflows/ci.yml`](.github/workflows/ci.yml):
-1. **`verify-web-and-physics`**: Validates [`data/manifest.json`](data/manifest.json), executes 27 deterministic Vitest physics assertions, compiles monorepo TypeScript (`@cern-x/content-schema` → `@cern-x/sim-core` → `@cern-x/web`), builds Next.js, starts the production server, and verifies HTTP `200` across all 39 routes including `/api/health` and `/api/cern-live`.
+1. **`verify-web-and-physics`**: Validates [`data/manifest.json`](data/manifest.json), executes 29 deterministic Vitest physics assertions, compiles monorepo TypeScript (`@cern-x/content-schema` → `@cern-x/sim-core` → `@cern-x/web`), builds Next.js, starts the production server, and verifies HTTP `200` across all 40 routes including `/brand`, `/api/health`, and `/api/cern-live`.
 2. **`verify-cpp-and-python`**: Compiles all C++17 kernels with strict `-O2 -Wall -Wextra -Werror`, runs native assertions, and verifies Python RGE, PMNS, and FODO beam-optics scripts.
 
 ---
@@ -285,19 +287,19 @@ npm run start
 | `npm run build:packages` | Compiles `@cern-x/content-schema` and `@cern-x/sim-core` declarations & bundles |
 | `npm run build` | Builds workspace packages followed by Next.js production bundle |
 | `npm run start` | Boots the production Next.js server via `@cern-x/web` |
-| `npm run test:physics` | Runs 27 Vitest physics unit tests in `packages/sim-core` |
+| `npm run test:physics` | Runs 29 Vitest physics unit tests in `packages/sim-core` |
 | `npm run typecheck` | Builds workspace declarations and checks strict `tsc --noEmit` across all 3 workspaces |
 | `npm run verify:manifest` | Validates `data/manifest.json` schema integrity |
-| `npm run verify:routes` | Audits HTTP `200` responses across 39 routes, `/api/health` & `/api/cern-live` |
+| `npm run verify:routes` | Audits HTTP `200` responses across 40 routes, `/api/health` & `/api/cern-live` |
 | `npm run verify:all` | Runs `verify:manifest && test:physics && typecheck && build` |
 
 ---
 
 ## 12. Deployment Guide & License
 
-CERN-X requires **no database and no secrets** to deploy. Full instructions live in [`DEPLOYMENT.md`](DEPLOYMENT.md):
+PARTON requires **no database and no secrets** to deploy. Full instructions live in [`DEPLOYMENT.md`](DEPLOYMENT.md):
 - **Vercel *(Recommended — Free Hobby Tier)***: Preconfigured via [`vercel.json`](vercel.json) from monorepo root.
-- **Docker / Cloud Run / Fly.io / Railway**: Multi-stage [`Dockerfile`](Dockerfile) with `/api/health` checks (`docker build -t cern-x . && docker run -p 3000:3000 cern-x`).
+- **Docker / Cloud Run / Fly.io / Railway**: Multi-stage [`Dockerfile`](Dockerfile) with `/api/health` checks (`docker build -t parton . && docker run -p 3000:3000 parton`).
 - **Render**: One-click Blueprint via [`render.yaml`](render.yaml).
 
 Distributed under the [MIT License](LICENSE). All upstream scientific datasets remain governed by CERN Open Data, CC-BY-4.0, CC0, PDG, and IAEA licenses.

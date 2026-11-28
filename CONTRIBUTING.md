@@ -1,6 +1,6 @@
-# Contributing to CERN-X
+# Contributing to PARTON
 
-Thank you for your interest in contributing to CERN-X! Because this platform adheres to strict scientific honesty and zero unverified data policies, please review these guidelines before submitting a pull request.
+Thank you for your interest in contributing to PARTON! Because this platform adheres to strict scientific honesty and zero unverified data policies, please review these guidelines before submitting a pull request.
 
 ---
 

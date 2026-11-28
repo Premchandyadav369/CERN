@@ -1,6 +1,6 @@
-# Deploying CERN-X
+# Deploying PARTON
 
-CERN-X is an **npm workspaces monorepo** (`apps/web`, `packages/sim-core`, `packages/content-schema`) requiring **no database and no API keys** (even `/api/arxiv` proxies the public `export.arxiv.org` API directly).
+PARTON is an **npm workspaces monorepo** (`apps/web`, `packages/sim-core`, `packages/content-schema`) requiring **no database and no API keys** (even `/api/arxiv` proxies the public `export.arxiv.org` API directly).
 
 ## 1. Recommended Hosting Targets
 
@@ -21,8 +21,8 @@ CERN-X is an **npm workspaces monorepo** (`apps/web`, `packages/sim-core`, `pack
 
 ## 3. Option B: Deploy via Docker (`Cloud Run`, `Fly.io`, `Railway`, VPS)
 ```sh
-docker build -t cern-x .
-docker run -p 3000:3000 cern-x
+docker build -t parton .
+docker run -p 3000:3000 parton
 ```
 Health check probe endpoint: `GET /api/health` (returns HTTP `200`).
 
@@ -37,6 +37,6 @@ npm run verify:all
 ```
 This runs:
 1. `npm run verify:manifest` (`scripts/verify_manifest.js`)
-2. `npm run test:physics` (`27` Vitest physics assertions in `@cern-x/sim-core`)
+2. `npm run test:physics` (`29` Vitest physics assertions in `@cern-x/sim-core`)
 3. `npm run typecheck` (TypeScript strict check across all 3 workspaces)
 4. `npm run build` (topological workspace build + Next.js production bundle)

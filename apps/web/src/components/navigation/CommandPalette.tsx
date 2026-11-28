@@ -59,6 +59,7 @@ const SEARCH_ITEMS: SearchItem[] = [
   { id: '43', title: 'End-to-End Methodology, Formulas & Verification', category: 'LEARN', path: '/methodology', description: '5-stage architecture, live browser KaTeX equation verifier, and cryptographic provenance manifest.' },
   { id: '44', title: 'PARTON Brand Logo, App Icons & Downloader', category: 'LEARN', path: '/brand', description: 'Preview collider emblems, installable app icons, and download SVG/PNG brand assets.' },
   { id: '45', title: 'Inside the Proton: Bjorken-x Parton PDF Explorer', category: 'SIMULATION', path: '/accelerators', description: 'Explore valence quarks vs gluon sea momentum densities and DGLAP Q² scaling.' },
+  { id: '46', title: 'Physics Challenges & Law Violation Lab', category: 'SIMULATION', path: '/challenges', description: 'Solve 8 live quantitative missions and explore unbreakable conservation & speed limits (ELI5 + KaTeX).' },
 ];
 
 export const CommandPalette: React.FC = () => {

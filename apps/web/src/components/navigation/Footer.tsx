@@ -44,6 +44,11 @@ export const Footer: React.FC = () => {
                 </Link>
               </li>
               <li>
+                <Link href="/challenges" className="hover:text-[#FFE600] transition-colors flex items-center gap-1 font-bold">
+                  <span>→ Physics Challenges &amp; Law Limits</span>
+                </Link>
+              </li>
+              <li>
                 <a
                   href="https://github.com/Premchandyadav369/CERN/blob/main/docs/DATA_AUDIT.md"
                   target="_blank"

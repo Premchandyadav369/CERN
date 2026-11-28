@@ -64,6 +64,7 @@ export const TopBar: React.FC = () => {
     { href: '/engineering', label: 'Engineering' },
     { href: '/ai-lab', label: 'AI Lab' },
     { href: '/open-data', label: 'Open Data' },
+    { href: '/challenges', label: 'Challenges' },
     { href: '/learn', label: 'Learn' },
     { href: '/methodology', label: 'Methodology' },
   ];

@@ -196,6 +196,14 @@ function SimulationsContent() {
               <span>ⓘ Terms Guide</span>
             </a>
             <Link
+              href="/challenges"
+              className="flex items-center gap-1.5 px-3 py-1.5 bg-[#FFE600] hover:bg-yellow-300 text-black font-mono font-black text-xs border-2 border-black shadow-[2px_2px_0px_#000] active:translate-x-0.5 active:translate-y-0.5 transition-all"
+              title="Solve live Physics Challenges or test Law Violation limits"
+            >
+              <Zap className="w-3.5 h-3.5" />
+              <span>Challenges &amp; Laws</span>
+            </Link>
+            <Link
               href="/methodology"
               className="flex items-center gap-1.5 px-3 py-1.5 bg-canvas-surface hover:bg-canvas-raised text-white font-mono font-bold text-xs border-2 border-black shadow-[2px_2px_0px_#000] active:translate-x-0.5 active:translate-y-0.5 transition-all"
               title="Inspect end-to-end physics methodology and proofs"

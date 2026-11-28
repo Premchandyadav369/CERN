@@ -43,6 +43,7 @@ const ROUTES = [
   '/detectors?detector=cms',
   '/learn',
   '/methodology',
+  '/challenges',
   '/brand',
   '/about',
   '/api/health',

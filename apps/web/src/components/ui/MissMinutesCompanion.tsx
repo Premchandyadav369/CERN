@@ -1,13 +1,15 @@
 'use client';
 
-import React, { useEffect, Suspense } from 'react';
+import React, { useEffect, useState, Suspense } from 'react';
 import Link from 'next/link';
 import { usePathname, useSearchParams } from 'next/navigation';
 import { useGlobalStore } from '@/lib/store';
 import { playTemPadClick } from '@/lib/sonifier';
-import { Clock, X, ArrowRight } from 'lucide-react';
+import { PartonAiCopilot } from '@/components/ai/PartonAiCopilot';
+import { Clock, X, ArrowRight, Sparkles } from 'lucide-react';
 
 function MissMinutesInner() {
+  const [aiOpen, setAiOpen] = useState(false);
   const pathname = usePathname();
   const searchParams = useSearchParams();
   const mod = searchParams.get('module');
@@ -84,10 +86,10 @@ function MissMinutesInner() {
   if (!open) return null;
 
   return (
-    <aside
+      <aside
       role="dialog"
       aria-label="O.B. and TVA Interactive Guide"
-      className="fixed top-16 right-4 z-50 w-80 sm:w-96 bg-[#1A1006] border-3 border-black shadow-[6px_6px_0px_#000] p-4 space-y-3 font-mono cern-tva-scanlines"
+      className="fixed top-16 right-4 z-50 w-80 sm:w-[28rem] max-h-[85vh] overflow-y-auto bg-[#1A1006] border-3 border-black shadow-[6px_6px_0px_#000] p-4 space-y-3 font-mono cern-tva-scanlines"
     >
       <div className="flex items-center justify-between border-b border-[#4A2E10] pb-2">
         <div className="flex items-center gap-2">
@@ -142,7 +144,25 @@ function MissMinutesInner() {
           <span>{tip.nextLabel}</span>
           <ArrowRight className="w-3 h-3" />
         </Link>
+
+        <button
+          type="button"
+          onClick={() => {
+            playTemPadClick();
+            setAiOpen((v) => !v);
+          }}
+          className="px-2.5 py-1.5 bg-cern-cyan hover:bg-sky-300 text-black border-2 border-black text-[11px] font-black flex items-center gap-1 cursor-pointer"
+        >
+          <Sparkles className="w-3 h-3" />
+          <span>{aiOpen ? 'Hide Groq AI' : 'Ask Groq AI'}</span>
+        </button>
       </div>
+
+      {aiOpen && (
+        <div className="pt-2 border-t border-[#4A2E10]">
+          <PartonAiCopilot compact contextOverride={`Route: ${pathname}${mod ? ` · Module: ${mod}` : ''}`} />
+        </div>
+      )}
     </aside>
   );
 }

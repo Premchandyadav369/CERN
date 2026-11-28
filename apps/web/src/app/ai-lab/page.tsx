@@ -3,8 +3,9 @@
 import React from 'react';
 import { AiLab } from '@/components/ai/AiLab';
 import { ShapExplainabilityLab } from '@/components/ai/ShapExplainabilityLab';
+import { PartonAiCopilot } from '@/components/ai/PartonAiCopilot';
 import { TechnicalTermDeck } from '@/components/ui/TechTermInfo';
-import { Cpu, ShieldCheck, Database, FileCode, Activity } from 'lucide-react';
+import { Cpu, ShieldCheck, Database, FileCode, Activity, Sparkles } from 'lucide-react';
 
 export default function AiLabPage() {
   return (
@@ -32,6 +33,16 @@ export default function AiLabPage() {
       {/* Main Interactive AI Lab Sandbox */}
       <section>
         <AiLab />
+      </section>
+
+      {/* Live Groq Physics Copilot & Event Interpreter */}
+      <section className="space-y-3" id="groq-copilot">
+        <div className="flex items-center justify-between pb-2 border-b-2 border-black">
+          <h2 className="text-lg font-display font-bold text-white flex items-center gap-2">
+            <Sparkles className="w-5 h-5 text-cern-cyan" /> GroqCloud LLM Physics Copilot &amp; Event Triage
+          </h2>
+        </div>
+        <PartonAiCopilot contextOverride="AI Lab — TriggerMind MLP, SHAP attribution & HEP event triage" />
       </section>
 
       {/* SHAP ML Explainability Lab Section */}

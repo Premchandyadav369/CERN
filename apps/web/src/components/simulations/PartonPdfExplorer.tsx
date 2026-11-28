@@ -5,7 +5,7 @@ import {
   evaluateProtonPdf,
   evaluateLhcPartonLuminosity,
 } from '@cern-x/sim-core';
-import { setupHiDpiCanvas, observeCanvasVisibility } from '@/lib/cernVisuals';
+import { setupHiDpiCanvas, observeOffscreenVisibility } from '@/lib/cernVisuals';
 import { FidelityBadge } from '@/components/provenance/FidelityBadge';
 import { MathFormula } from '@/components/ui/MathFormula';
 import { LabExportBar } from '@/components/ui/LabExportBar';
@@ -166,7 +166,7 @@ export const PartonPdfExplorer: React.FC = () => {
     let rafId = 0;
     let visible = true;
 
-    const stopObserve = observeCanvasVisibility(canvas, (isVisible) => {
+    const stopObserve = observeOffscreenVisibility(canvas, (isVisible: boolean) => {
       visible = isVisible;
     });
 
@@ -271,7 +271,7 @@ export const PartonPdfExplorer: React.FC = () => {
           </h3>
           <FidelityBadge
             type="ANALYTIC"
-            formulaTex="f_i(x, Q^2) \;\xrightarrow{\text{DGLAP}}\; P_{ij} \otimes f_j"
+            formula="f_i(x, Q^2) \;\xrightarrow{\text{DGLAP}}\; P_{ij} \otimes f_j"
           />
         </div>
         <LabExportBar

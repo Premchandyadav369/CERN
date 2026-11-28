@@ -31,9 +31,9 @@ import {
 type TierFilter = 'ALL' | '101' | 'BSc' | 'PhD';
 
 const LEGAL_REACTIONS = [
-  { id: 'r1', label: 'p + p → μ⁺ + ν_μ  (Broken Baryon)', inIds: ['p', 'p'], outIds: ['mu_plus', 'nu_mu'] },
-  { id: 'r2', label: 'n → p + e⁻ + ν̄_e  (Beta Decay)', inIds: ['n'], outIds: ['p', 'e_minus', 'nu_e_bar'] },
-  { id: 'r3', label: 'e⁻ + e⁺ → μ⁺ + ν_e  (Wrong Flavor)', inIds: ['e_minus', 'e_plus'], outIds: ['mu_plus', 'nu_e'] },
+  { id: 'r1', label: 'p + p → μ⁺ + ν_μ  (Broken Baryon)', inIds: ['p', 'p'], outIds: ['mu+', 'nu_mu'], sqrtS: 14000 },
+  { id: 'r2', label: 'n → p + e⁻ + ν̄_e  (Beta Decay)', inIds: ['n'], outIds: ['p', 'e-', 'nubar_e'], sqrtS: 0.94 },
+  { id: 'r3', label: 'e⁻ + e⁺ → μ⁺ + ν_e  (Wrong Flavor)', inIds: ['e-', 'e+'], outIds: ['mu+', 'nu_e'], sqrtS: 200 },
 ];
 
 export const PhysicsChallengesArena: React.FC = () => {
@@ -86,8 +86,8 @@ export const PhysicsChallengesArena: React.FC = () => {
   const c7Solved = !c7Mag.quenched;
 
   const c8Picked = LEGAL_REACTIONS.find((r) => r.id === c8ReactionId) ?? LEGAL_REACTIONS[0];
-  const c8Cons = validateInteractionConservation(c8Picked.inIds, c8Picked.outIds);
-  const c8Solved = c8Cons.conserved;
+  const c8Cons = validateInteractionConservation(c8Picked.inIds, c8Picked.outIds, c8Picked.sqrtS);
+  const c8Solved = c8Cons.valid;
 
   const handleClaim = (id: string, ready: boolean, reward: number) => {
     if (!ready) {
@@ -159,7 +159,7 @@ export const PhysicsChallengesArena: React.FC = () => {
       techGoal: 'Select the channel conserving Q, baryon number B, and flavor lepton numbers L_e, L_μ, L_τ simultaneously.',
       formula: '\\Delta Q = 0,\\; \\Delta B = 0,\\; \\Delta L_e = \\Delta L_\\mu = 0',
       ready: c8Solved,
-      statusText: c8Cons.conserved ? 'ALL QUANTUM NUMBERS CONSERVED (ALLOWED)' : `VIOLATION: ${c8Cons.violations[0]}`,
+      statusText: c8Cons.valid ? 'ALL QUANTUM NUMBERS CONSERVED (ALLOWED)' : `VIOLATION: ${c8Cons.violations[0]}`,
       control: (
         <div className="flex flex-col gap-1.5">
           {LEGAL_REACTIONS.map((rxn) => (
@@ -176,7 +176,7 @@ export const PhysicsChallengesArena: React.FC = () => {
           ))}
         </div>
       ),
-      warning: !c8Cons.conserved ? `Nature forbids this: ${c8Cons.violations.join('; ')}` : null,
+      warning: !c8Cons.valid ? `Nature forbids this: ${c8Cons.violations.join('; ')}` : null,
     },
     {
       id: 'ch-vacuum-stable',

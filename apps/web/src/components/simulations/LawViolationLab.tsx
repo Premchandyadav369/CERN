@@ -84,17 +84,17 @@ export const LawViolationLab: React.FC = () => {
       {
         label: 'p + p → μ⁺ + ν_μ  (Delete Baryons & Invent Leptons)',
         inIds: ['p', 'p'],
-        outIds: ['mu_plus', 'nu_mu'],
+        outIds: ['mu+', 'nu_mu'],
       },
       {
         label: 'e⁻ + e⁺ → μ⁻ + e⁺  (Violates Electron & Muon Lepton Family)',
-        inIds: ['e_minus', 'e_plus'],
-        outIds: ['mu_minus', 'e_plus'],
+        inIds: ['e-', 'e+'],
+        outIds: ['mu-', 'e+'],
       },
       {
         label: 'p → e⁺ + γ  (Forbidden Proton Decay in Standard Model)',
         inIds: ['p'],
-        outIds: ['e_plus', 'gamma'],
+        outIds: ['e+', 'gamma'],
       },
     ],
     []
@@ -102,7 +102,7 @@ export const LawViolationLab: React.FC = () => {
 
   const selectedReaction = ILLEGAL_REACTIONS[illegalDecayIdx] ?? ILLEGAL_REACTIONS[0];
   const conservationCheck = useMemo(
-    () => validateInteractionConservation(selectedReaction.inIds, selectedReaction.outIds),
+    () => validateInteractionConservation(selectedReaction.inIds, selectedReaction.outIds, 14000),
     [selectedReaction]
   );
 

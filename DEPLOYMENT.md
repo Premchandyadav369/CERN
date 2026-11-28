@@ -1,6 +1,6 @@
 # Deploying PARTON
 
-PARTON is an **npm workspaces monorepo** (`apps/web`, `packages/sim-core`, `packages/content-schema`) requiring **no database and no API keys** (even `/api/arxiv` proxies the public `export.arxiv.org` API directly).
+PARTON is an **npm workspaces monorepo** (`apps/web`, `packages/sim-core`, `packages/content-schema`) requiring **no database and no mandatory API keys** (`/api/arxiv` and `/api/cern-live` work out of the box; optional `GROQ_API_KEY` in `apps/web/.env.local` enables live GroqCloud `openai/gpt-oss-120b` & `openai/gpt-oss-20b` inference on `/api/groq` with automatic deterministic fallback).
 
 ## 1. Recommended Hosting Targets
 

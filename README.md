@@ -80,7 +80,7 @@ flowchart LR
 | `/simulations` | **33 Interactive Physics Labs** | Lazy code-split `tablist` across **5 domains**, **3-Step ELI5 Story + Myth-Buster**, **Interactive Physics Bet Arena (`Beam Credits`)**, `ⓘ` Technical Terms, and **`.py`/`.ipynb` Export** |
 | `/engineering` | **Cryo, Vacuum & RF Twin** | 3D Dipole Cryostat, **$1.9\text{ K}$ Superfluid $\text{He-II}$ Quantized Vortex GLSL Twin**, UHV beam lifetime, and $400.79\text{ MHz}$ RF phase surfing |
 | `/computing` | **WLCG Exascale Grid Simulator** | Multi-tier Tier-0 / Tier-1 / Tier-2 discrete-event throughput, tape archival, and HL-LHC pile-up queue dynamics |
-| `/ai-lab` | **LHC-TriggerMind ML Lab** | Live browser neural-network inference (with `INT8` mode) and **SHAP Explainability** attribution benchmark on ATLAS Higgs data |
+| `/ai-lab` | **LHC-TriggerMind & Groq AI Lab** | Browser TriggerMind MLP inference, **SHAP Explainability**, and **GroqCloud `GPT-OSS 120B / 20B` Physics Copilot (`/api/groq`)** |
 | `/open-data` | **Real CERN Open Data Lab** | Authentic $Z^0 \to \mu^+\mu^-$ dimuon spectrum, live **`/api/cern-live` CERN Open Data Portal** stream + 1-click **`Inspect 3D`** detector handoff |
 | `/challenges` | **Physics Challenges & Law Limits** | **8 Interactive Parameter Challenges** (`101 / BSc / PhD`, `+Beam Credits`) + **8 Law Violation Interlocks** showing physical breakdown (ELI5 + KaTeX) |
 | `/learn` | **Subatomic Dictionary & Timeline** | 3-depth glossary (`Beginner` / `Undergrad` / `Researcher`) with KaTeX math, Standard Model 3D periodic explorer, and CERN history timeline |
@@ -265,7 +265,7 @@ $$
 ## 10. Verification & Automated Checks
 
 Every commit runs dual CI jobs defined in [`.github/workflows/ci.yml`](.github/workflows/ci.yml):
-1. **`verify-web-and-physics`**: Validates [`data/manifest.json`](data/manifest.json), executes 29 deterministic Vitest physics assertions, compiles monorepo TypeScript (`@cern-x/content-schema` → `@cern-x/sim-core` → `@cern-x/web`), builds Next.js, starts the production server, and verifies HTTP `200` across all 41 routes including `/challenges`, `/brand`, `/api/health`, and `/api/cern-live`.
+1. **`verify-web-and-physics`**: Validates [`data/manifest.json`](data/manifest.json), executes 29 deterministic Vitest physics assertions, compiles monorepo TypeScript (`@cern-x/content-schema` → `@cern-x/sim-core` → `@cern-x/web`), builds Next.js, starts the production server, and verifies HTTP `200` across all 42 routes including `/challenges`, `/brand`, `/api/health`, `/api/cern-live`, and `/api/groq`.
 2. **`verify-cpp-and-python`**: Compiles all C++17 kernels with strict `-O2 -Wall -Wextra -Werror`, runs native assertions, and verifies Python RGE, PMNS, and FODO beam-optics scripts.
 
 ---
@@ -291,7 +291,7 @@ npm run start
 | `npm run test:physics` | Runs 29 Vitest physics unit tests in `packages/sim-core` |
 | `npm run typecheck` | Builds workspace declarations and checks strict `tsc --noEmit` across all 3 workspaces |
 | `npm run verify:manifest` | Validates `data/manifest.json` schema integrity |
-| `npm run verify:routes` | Audits HTTP `200` responses across 41 routes, `/api/health` & `/api/cern-live` |
+| `npm run verify:routes` | Audits HTTP `200` responses across 42 routes, `/api/health`, `/api/cern-live` & `/api/groq` |
 | `npm run verify:all` | Runs `verify:manifest && test:physics && typecheck && build` |
 
 ---

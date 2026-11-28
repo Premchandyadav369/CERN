@@ -48,6 +48,7 @@ const ROUTES = [
   '/about',
   '/api/health',
   '/api/cern-live',
+  '/api/groq',
 ];
 
 function checkRoute(path) {

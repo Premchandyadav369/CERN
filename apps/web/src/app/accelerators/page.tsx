@@ -5,6 +5,7 @@ import Link from 'next/link';
 import acceleratorsData from '../../../../../content/accelerators.json';
 import { LhcSimulator } from '@/components/simulations/LhcSimulator';
 import { BeamOpticsSandbox } from '@/components/simulations/BeamOpticsSandbox';
+import { PartonPdfExplorer } from '@/components/simulations/PartonPdfExplorer';
 import { Eli5Card } from '@/components/ui/Eli5Card';
 import { TechnicalTermDeck } from '@/components/ui/TechTermInfo';
 import { Value } from '@/components/provenance/Value';
@@ -65,6 +66,16 @@ export default function AcceleratorsPage() {
           </h2>
         </div>
         <BeamOpticsSandbox />
+      </section>
+
+      {/* PARTON Signature Proton PDF Section */}
+      <section className="space-y-3 cern-offscreen-section">
+        <div className="flex items-center justify-between pb-2 border-b-2 border-black">
+          <h2 className="text-lg font-display font-bold text-white flex items-center gap-2">
+            <Zap className="w-5 h-5 text-[#FFE600]" /> Inside the Colliding Proton (PARTON PDF Kernel)
+          </h2>
+        </div>
+        <PartonPdfExplorer />
       </section>
 
       {/* Medical Accelerators Cross-Link Banner */}

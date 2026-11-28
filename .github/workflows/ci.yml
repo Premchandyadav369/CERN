@@ -26,7 +26,7 @@ jobs:
       - name: Validate manifest, physics unit tests, typecheck & build
         run: npm run verify:all
 
-      - name: Start server and smoke-check all 40 routes
+      - name: Start server and smoke-check all 41 routes
         run: |
           npm run start > /tmp/next.log 2>&1 &
           SERVER_PID=$!

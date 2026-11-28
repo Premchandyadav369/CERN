@@ -57,6 +57,7 @@ const SEARCH_ITEMS: SearchItem[] = [
   { id: '41', title: 'Magneto & CERN MoEDAL Magnetic Monopole Arena', category: 'SIMULATION', path: '/simulations?module=monopole-arena', description: 'Compare Lorentz proton bending with 4700x MIP Dirac magnetic monopoles.' },
   { id: '42', title: 'Bifrost Heavy-Ion Pb-Pb & Cosmic Shower Lab', category: 'SIMULATION', path: '/simulations?module=bifrost-rays', description: 'Prismatic ALICE Quark-Gluon Plasma fireball conserving transverse momentum.' },
   { id: '43', title: 'End-to-End Methodology, Formulas & Verification', category: 'LEARN', path: '/methodology', description: '5-stage architecture, live browser KaTeX equation verifier, and cryptographic provenance manifest.' },
+  { id: '44', title: 'PARTON Brand Logo, App Icons & Downloader', category: 'LEARN', path: '/brand', description: 'Preview collider emblems, installable app icons, and download SVG/PNG brand assets.' },
 ];
 
 export const CommandPalette: React.FC = () => {

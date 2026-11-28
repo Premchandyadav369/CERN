@@ -39,6 +39,11 @@ export const Footer: React.FC = () => {
                 </Link>
               </li>
               <li>
+                <Link href="/brand" className="hover:text-cern-cyan transition-colors flex items-center gap-1 font-bold">
+                  <span>→ PARTON Logo &amp; App Icons</span>
+                </Link>
+              </li>
+              <li>
                 <a
                   href="https://github.com/Premchandyadav369/CERN/blob/main/docs/DATA_AUDIT.md"
                   target="_blank"

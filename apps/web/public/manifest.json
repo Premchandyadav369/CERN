@@ -1,22 +1,23 @@
 {
-  "name": "CERN-X: The Interactive Digital Universe of CERN",
-  "short_name": "CERN-X",
-  "description": "An interactive, open-source scientific digital twin and simulation laboratory modeling CERN accelerators, detectors, trigger pipelines, computing, and research experiments.",
+  "name": "PARTON: Interactive Particle Physics & Accelerator Digital Twin",
+  "short_name": "PARTON",
+  "description": "An interactive, open-source particle physics digital twin and simulation laboratory modeling accelerators, 3D detectors, Parton distributions, Open Data, and ML trigger pipelines.",
   "start_url": "/",
   "display": "standalone",
-  "background_color": "#0B0F17",
+  "background_color": "#05080F",
   "theme_color": "#0053A0",
   "icons": [
     {
-      "src": "/logo.svg",
+      "src": "/favicon.svg",
       "sizes": "any",
       "type": "image/svg+xml",
       "purpose": "any maskable"
     },
     {
-      "src": "/icon.svg",
+      "src": "/logo.svg",
       "sizes": "any",
-      "type": "image/svg+xml"
+      "type": "image/svg+xml",
+      "purpose": "any"
     }
   ]
 }

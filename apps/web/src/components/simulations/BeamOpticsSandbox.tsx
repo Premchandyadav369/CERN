@@ -248,7 +248,7 @@ export function BeamOpticsSandbox() {
   // Export scenario JSON
   const exportJson = () => {
     const data = {
-      scenario: 'CERN-X FODO Beam Optics Sandbox',
+      scenario: 'PARTON FODO Beam Optics Sandbox',
       timestamp: new Date().toISOString(),
       inputs: {
         cellLengthM: cellLength,

@@ -455,7 +455,7 @@ export const ScienceLiteratureBridge: React.FC<{
             }`}
           >
             <BookOpen className="w-4 h-4 text-cern-cyan" />
-            <span>CERN-X Grounded Benchmarks</span>
+            <span>PARTON Grounded Benchmarks</span>
             <span className="ml-1 text-[10px] bg-black text-emerald-400 px-1.5 py-0.2 border border-black">
               12/12 Grounded
             </span>
@@ -487,8 +487,8 @@ export const ScienceLiteratureBridge: React.FC<{
         <div className="space-y-6">
           {/* ELI5 Card for Benchmarks */}
           <Eli5Card
-            title="The Scientific Anchor: Why every number in CERN-X is rooted in a published paper"
-            analogy="Imagine an aircraft flight simulator: you wouldn't trust it if the wings were animated by guesswork. Every single graph, trajectory, and energy curve in CERN-X runs on the exact peer-reviewed formulas published by ATLAS, CMS, ALICE, LHCb, and the international Particle Data Group (PDG)."
+            title="The Scientific Anchor: Why every number in PARTON is rooted in a published paper"
+            analogy="Imagine an aircraft flight simulator: you wouldn't trust it if the wings were animated by guesswork. Every single graph, trajectory, and energy curve in PARTON runs on the exact peer-reviewed formulas published by ATLAS, CMS, ALICE, LHCb, and the international Particle Data Group (PDG)."
             keyPoints={[
               "12/12 Grounded Simulators: From antihydrogen gravitational acceleration to 16 Tesla FCC magnets, each model maps to a verified DOI.",
               "Reproducible Citations: Copy formatted BibTeX references with one click for research papers, thesis bibliographies, or course reports.",
@@ -515,7 +515,7 @@ export const ScienceLiteratureBridge: React.FC<{
               Science Literature &amp; Experimental Benchmarks
             </h2>
             <p className="text-xs md:text-sm text-text-secondary mt-2 max-w-4xl leading-relaxed font-sans">
-              Every mathematical engine in CERN-X maps directly to peer-reviewed Nature, JHEP, PRL, and
+              Every mathematical engine in PARTON maps directly to peer-reviewed Nature, JHEP, PRL, and
               Physical Review publications, open-access arXiv preprints, and official CERN Design Reports.
               Click any arXiv or DOI record to inspect the original experimental results.
             </p>

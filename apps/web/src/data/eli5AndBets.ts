@@ -714,8 +714,8 @@ export const LAB_ELI5_AND_BETS: Record<string, LabEli5AndBetSpec> = {
       { label: 'Export Code', detail: 'Download .py / .ipynb scripts above to reproduce plots locally.' },
     ],
     myth: 'Educational animations cannot be verified against real published experimental data.',
-    reality: 'Every closed-form curve and parameter in CERN-X maps to an auditable DOI and offline Python/C++ kernel!',
-    betQuestion: 'How are all CERN-X constants and curves audited against real publications?',
+    reality: 'Every closed-form curve and parameter in PARTON maps to an auditable DOI and offline Python/C++ kernel!',
+    betQuestion: 'How are all PARTON constants and curves audited against real publications?',
     options: [
       'Via cryptographic manifest verification, Vitest physics bounds & PDG/CERN DOIs',
       'Hand-drawn rough guesses',
@@ -739,7 +739,7 @@ const DEFAULT_FALLBACK: LabEli5AndBetSpec = {
     { label: 'Reconstruct', detail: 'Calorimeters, trackers & triggers turn flashes into precision measurements.' },
   ],
   myth: 'Simulators on educational portals just play pre-recorded cartoon loops.',
-  reality: 'Every visualization on CERN-X calculates live SI/PDG observables using exact relativistic & quantum laws!',
+  reality: 'Every visualization on PARTON calculates live SI/PDG observables using exact relativistic & quantum laws!',
   betQuestion: 'What core engineering pair makes modern TeV colliders like the LHC physically possible?',
   options: [
     'Superconducting electromagnets + 400 MHz RF acceleration cavities',

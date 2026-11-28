@@ -462,7 +462,7 @@ export const ArxivLiveFeed: React.FC<{ className?: string }> = ({ className = ''
         setPapers(filtered);
         setFeedMode('cached');
         setStatusMessage(
-          `Live arXiv connection unavailable or offline. Activated CERN-X pre-cached literature feed (${filtered.length} grounded papers).`
+          `Live arXiv connection unavailable or offline. Activated PARTON pre-cached literature feed (${filtered.length} grounded papers).`
         );
       } finally {
         setIsLoading(false);

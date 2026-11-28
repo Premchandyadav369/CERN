@@ -1,7 +1,7 @@
 import * as THREE from 'three';
 
 /**
- * Shared CERN-X High-Tech Rendering Toolkit
+ * Shared PARTON High-Tech Rendering Toolkit
  * Provides DPR-aware canvas calibration, off-screen RAF pausing,
  * additive volumetric glow sprites, phosphor oscilloscope waveforms,
  * vector-field glyphs, and custom Three.js GLSL shader builders.

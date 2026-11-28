@@ -77,7 +77,7 @@ export const TopBar: React.FC = () => {
           <Link href="/" className="flex items-center gap-2 group shrink-0">
             <AppLogo size={30} />
             <span className="font-mono font-bold text-sm sm:text-base tracking-wider text-white px-2 py-0.5 border-2 border-black bg-cern-blue shadow-[3px_3px_0px_#00E5FF] group-hover:-translate-x-px group-hover:-translate-y-px transition-all">
-              CERN-X
+              PARTON
             </span>
           </Link>
 

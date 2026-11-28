@@ -74,7 +74,7 @@ function MissMinutesInner() {
     }
     return {
       badge: 'TVA / O.B. GUIDE',
-      text: 'Welcome to CERN-X! Check /methodology for live KaTeX proofs, expand any ⓘ card for technical symbol definitions, or launch the 33 labs.',
+      text: 'Welcome to PARTON! Check /methodology for live KaTeX proofs, /brand for downloadable SVG/PNG icons, or press ? for operator shortcuts.',
       nextHref: '/methodology',
       nextLabel: 'View Methodology',
     };

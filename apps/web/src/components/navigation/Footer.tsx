@@ -11,19 +11,19 @@ export const Footer: React.FC = () => {
           <div className="md:col-span-2 space-y-3">
             <div className="flex items-center gap-2">
               <span className="font-mono font-bold text-sm text-white px-2.5 py-1 border-2 border-black bg-cern-blue shadow-[3px_3px_0px_#00E5FF]">
-                CERN-X
+                PARTON
               </span>
               <span className="font-mono text-xs text-text-secondary font-bold">
-                INTERACTIVE SCIENTIFIC DIGITAL UNIVERSE
+                INTERACTIVE PARTICLE PHYSICS DIGITAL TWIN
               </span>
             </div>
             <p className="text-xs text-text-secondary leading-relaxed max-w-lg font-sans">
-              An open-source scientific digital twin modeling CERN&apos;s accelerator complex, experimental
-              detectors, trigger pipelines, distributed computing, and machine learning research.
+              PARTON is an open-source scientific digital twin modeling CERN&apos;s accelerator complex,
+              experimental detectors, Parton distributions, trigger pipelines, and distributed computing.
             </p>
             <div className="p-3 bg-amber-400 border-2 border-black shadow-[4px_4px_0px_#000] text-xs text-black leading-normal">
               <strong className="text-black uppercase font-mono block mb-0.5 font-extrabold">Non-Affiliation Notice</strong>
-              CERN-X is an unofficial educational and research initiative. It is NOT affiliated with, sponsored by, or endorsed by CERN.
+              PARTON is an unofficial educational and research initiative. It is NOT affiliated with, sponsored by, or endorsed by CERN.
             </div>
           </div>
 
@@ -109,9 +109,9 @@ export const Footer: React.FC = () => {
 
         {/* Bottom Bar */}
         <div className="pt-4 border-t-3 border-black flex flex-col sm:flex-row items-center justify-between gap-3 text-xs text-text-muted font-mono font-bold">
-          <span>© 2026 Premchand Yadav. Distributed for open research &amp; education.</span>
+          <span>© 2026 Premchand Yadav. PARTON Open Research &amp; Education.</span>
           <span className="px-2.5 py-1 bg-black border-2 border-black shadow-[2px_2px_0px_#00E5FF] text-cern-cyan">
-            WCAG 2.2 AA · NEOBRUTALIST LAB
+            PRESS ? FOR SHORTCUTS · WCAG 2.2 AA
           </span>
         </div>
       </div>

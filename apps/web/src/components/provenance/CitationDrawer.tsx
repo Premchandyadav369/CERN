@@ -164,7 +164,7 @@ export const CitationDrawer: React.FC = () => {
         {/* Footer */}
         <div className="pt-6 border-t-3 border-black text-xs font-mono text-text-muted">
           <p className="leading-relaxed font-bold">
-            CERN-X STRICT PROVENANCE POLICY: EVERY NUMBER RENDERED IS TRACEABLE TO AN OFFICIAL RECORD.
+            PARTON STRICT PROVENANCE POLICY: EVERY NUMBER RENDERED IS TRACEABLE TO AN OFFICIAL RECORD.
           </p>
         </div>
       </div>

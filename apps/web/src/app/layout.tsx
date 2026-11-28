@@ -12,9 +12,10 @@ import { ScrollBeamProgress } from '@/components/motion/CernMotionPrimitives';
 import { ShortcutHudModal } from '@/components/ui/ShortcutHudModal';
 
 export const metadata: Metadata = {
-  title: 'CERN-X | The Interactive Digital Universe of CERN',
+  title: 'PARTON | Interactive Particle Physics & Accelerator Digital Twin',
   description:
-    'An interactive, open-source scientific digital twin and simulation laboratory modeling CERN accelerators, detectors, trigger pipelines, computing, and research experiments.',
+    'PARTON is an interactive, open-source particle physics digital twin and simulation laboratory modeling CERN accelerators, 3D detectors, Parton distributions, Open Data, and ML trigger pipelines.',
+  manifest: '/manifest.json',
   icons: {
     icon: '/icon.svg',
     shortcut: '/favicon.svg',
